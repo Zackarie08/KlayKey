@@ -2,16 +2,11 @@
 
 Repository: https://github.com/Zackarie08/KlayKey
 Branch: `main`
-Live URL: pending successful deployment verification.
+Live URL: https://klaykey-web-production.up.railway.app
 
 ## Isolated Railway resources
 
-The owner confirmed that the authorized workspace is **Sean Kurt P. Corpuz's Projects** and the existing project is **asset_management** (the dashboard names differ from the initial brief).
-
-- Project: `4d423675-8173-4636-b28d-c8e3c7ce6516`
-- Production environment: `7af68793-6923-4028-974d-af594a6cafdc`
-- New app `klaykey-web`: `663ec9c3-2e94-4441-bbb7-85d54c03d517`
-- New database `klaykey-mysql`: `a7298601-70b7-4cd7-819e-c561c7e00b7b`
+Deployment uses two dedicated services in the owner's confirmed Railway project and production environment: klaykey-web for the application and klaykey-mysql for its database. The operator's private deployment record identifies the exact resources.
 
 The app serves the frontend, API, GLBs, embedded textures, original synthesized audio engine and Three.js modules on one HTTPS origin. MySQL uses a persistent volume at `/var/lib/mysql` and private networking. No public database TCP proxy is needed. No pre-existing service may be modified or used as a database. Do not use project-wide shared variables or accept unrelated staged changes. The protected service ID record is local and intentionally excluded from Git.
 
@@ -33,4 +28,9 @@ To rename the visible brand, change `APP_NAME` on the new app and redeploy it. T
 
 ## Verification and limits
 
-Production deployment verification is pending. Local commerce and production-proxy tests pass. Password recovery, email, an admin dashboard and real payments remain outside scope. All payment choices are simulations; no card number, CVV, OTP or payment-provider password is collected. Contact messages persist in the application database. Configure a backup/retention policy before using this as a real store. No open-source license has been added. Existing assets are original generated models and synthesized sounds; installed dependencies carry their respective licenses.
+Verified on 17 October 2026: both dedicated services reached terminal SUCCESS; the public HTTPS site, /api/health and /api/health/ready responded successfully. The initial release applied migration 001_store.sql and seeded 20 catalog products without creating customer accounts. Subsequent starts preserve existing inventory, prices and customer data.
+
+Live smoke tests passed registration, duplicate-account handling, login/logout, secure session cookies, protected routes, CSRF rejection, catalog filtering, trusted cart pricing, saved builds, simulated checkout, order history and cross-customer build/order isolation. The deployed browser asset checks passed **273/273**, including keyboard interaction and synthesized audio state, with no captured console warnings or errors. All three GLBs loaded with the expected binary content type and validated with zero errors and warnings. Local checks passed 14 commerce/production tests and 9 asset tests. See VALIDATION.md for scope and limits.
+
+Only the two new services were configured by this workflow. A final read-only listing matched all pre-existing service names and IDs; no operation changed their configuration, variables, domains or deployment. No unrelated project was changed. The dedicated MySQL service has no public TCP proxy.
+Password recovery, email, an admin dashboard and real payments remain outside scope. All payment choices are simulations; no card number, CVV, OTP or payment-provider password is collected. Contact messages persist in the application database. Configure a backup/retention policy before using this as a real store. No open-source license has been added. Existing assets are original generated models and synthesized sounds; installed dependencies carry their respective licenses.

@@ -1,6 +1,6 @@
 # KlayKey customer storefront
 
-A local Express + MySQL mechanical-keyboard shop with a vanilla HTML/CSS/JavaScript frontend and the existing Blender/Three.js asset project integrated as a protected builder. Start with [START_HERE.md](START_HERE.md).
+An Express + MySQL mechanical-keyboard shop with a vanilla HTML/CSS/JavaScript frontend and the existing Blender/Three.js asset project integrated as a protected builder. Start with [START_HERE.md](START_HERE.md).
 
 ## Customer experience
 
@@ -84,11 +84,11 @@ Keyboard E-Commerce/
 
 ## Deliberate limits
 
-This is a local academic commerce demonstration. Card and GCash choices create simulated payment records; no card credentials are collected and no provider is called. COD remains pending. Shipping, warranty and returns copy explicitly describes demo behavior. Contact messages stay in the database; email, password recovery, shipping integrations, real payments and an administrator UI are not implemented. Component illustrations are placeholders for future product photography. WebGL and audio require browser support and audio requires a user gesture. Production hosting, HTTPS, backups and operational monitoring are outside this local delivery.
+This is a publicly hosted academic commerce demonstration. Card and GCash choices create simulated payment records; no card credentials are collected and no provider is called. COD remains pending. Shipping, warranty and returns copy explicitly describes demo behavior. Contact messages stay in the database; email, password recovery, shipping integrations, real payments and an administrator UI are not implemented. Component illustrations are placeholders for future product photography. WebGL and audio require browser support and audio requires a user gesture. Railway provides the deployed HTTPS endpoint; backup retention and operational monitoring need an operator policy before commercial use.
 
 ## Production deployment
 
-Repository: https://github.com/Zackarie08/KlayKey (publication status and live URL are recorded in DEPLOYMENT.md).
+Public repository: https://github.com/Zackarie08/KlayKey (branch `main`). Live website: https://klaykey-web-production.up.railway.app. See DEPLOYMENT.md for configuration and verification.
 
 ![75% keyboard preview](keyboard-3d/previews/keyboard_75.png)
 

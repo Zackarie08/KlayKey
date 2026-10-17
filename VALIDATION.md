@@ -1,3 +1,13 @@
+# Hosted release verification — 17 October 2026
+
+The application and dedicated MySQL service reached Railway terminal SUCCESS. The public HTTPS homepage and both health endpoints returned HTTP 200. Migration 001_store.sql applied and the catalog contained 20 products. Production checks exercised registration, duplicate registration rejection, invalid and valid login, persisted sessions, logout, secure cookies, guest route protection, CSRF rejection, catalog/search, server-calculated pricing, cart updates, saved builds, simulated checkout, inventory changes and order history. A separate customer received HTTP 404 when requesting another customer's saved build or order.
+
+The deployed asset lab passed **273/273** browser checks after the audio-unlock gesture, with no captured console warnings or errors; a physical key triggered the typing test. All three GLBs returned HTTP 200 and model/gltf-binary, with sizes 8,942,028 bytes (60%), 11,256,160 bytes (75%) and 14,293,804 bytes (100%). Manifest, compatibility, Three.js and audio-engine resources loaded. Audio remains synthesized in the browser.
+
+The final local suite passed **14 commerce/production tests** and **9 asset tests**. All three GLBs validated with zero errors and warnings. All three Blender sources reopened successfully after removing workstation-path metadata; PNG metadata was also sanitized. Source secret and asset checks passed before publication. These scans are heuristic safeguards, not a guarantee about future commits.
+
+The original local-only limits below describe the 16 October run. Hosting has now been verified, but cross-browser/physical-device testing, production load testing, real payments, email delivery, shipments and subjective audio review remain unverified or outside this demonstration's scope.
+
 # Validation record — 16 October 2026
 
 Environment: Windows, Node 22.20.0, installed MySQL 8 running an isolated development instance on loopback port 3308, and the Codex in-app Chromium browser. Real database queries and transactions were used; the commerce backend was not mocked.
