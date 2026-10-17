@@ -1,0 +1,1122 @@
+{
+  "timestamp": "2026-10-12T22:25:51.285Z",
+  "threeRevision": "186",
+  "audioUnlocked": true,
+  "audioChecks": "executed",
+  "checks": [
+    {
+      "name": "60: GLB loaded",
+      "passed": true
+    },
+    {
+      "name": "60: case black",
+      "passed": true
+    },
+    {
+      "name": "60: case cream",
+      "passed": true
+    },
+    {
+      "name": "60: case green",
+      "passed": true
+    },
+    {
+      "name": "60: case purple",
+      "passed": true
+    },
+    {
+      "name": "60: case silver",
+      "passed": true
+    },
+    {
+      "name": "60: finish anodized",
+      "passed": true
+    },
+    {
+      "name": "60: finish satin",
+      "passed": true
+    },
+    {
+      "name": "60: finish soft",
+      "passed": true
+    },
+    {
+      "name": "60: theme charcoal",
+      "passed": true
+    },
+    {
+      "name": "60: theme forest",
+      "passed": true
+    },
+    {
+      "name": "60: theme lavender",
+      "passed": true
+    },
+    {
+      "name": "60: theme nocturne",
+      "passed": true
+    },
+    {
+      "name": "60: switch switch-red",
+      "passed": true
+    },
+    {
+      "name": "60: switch switch-brown",
+      "passed": true
+    },
+    {
+      "name": "60: switch switch-blue",
+      "passed": true
+    },
+    {
+      "name": "60: RGB off",
+      "passed": true
+    },
+    {
+      "name": "60: RGB static",
+      "passed": true
+    },
+    {
+      "name": "60: RGB multi",
+      "passed": true
+    },
+    {
+      "name": "60: RGB white",
+      "passed": true
+    },
+    {
+      "name": "60: RGB color/intensity",
+      "passed": true
+    },
+    {
+      "name": "60: underglow off",
+      "passed": true
+    },
+    {
+      "name": "60: underglow on",
+      "passed": true
+    },
+    {
+      "name": "60: connection wired",
+      "passed": true
+    },
+    {
+      "name": "60: connection wireless",
+      "passed": true
+    },
+    {
+      "name": "60: connection tri-mode",
+      "passed": true
+    },
+    {
+      "name": "60: module none",
+      "passed": true
+    },
+    {
+      "name": "60: none visibility",
+      "passed": true
+    },
+    {
+      "name": "60: module volume-knob",
+      "passed": true
+    },
+    {
+      "name": "60: volume-knob visibility",
+      "passed": true
+    },
+    {
+      "name": "60: module mini-display",
+      "passed": true
+    },
+    {
+      "name": "60: mini-display visibility",
+      "passed": true
+    },
+    {
+      "name": "60: physical material thick-pbt",
+      "passed": true
+    },
+    {
+      "name": "60: physical material thin-abs",
+      "passed": true
+    },
+    {
+      "name": "60: physical material polycarbonate",
+      "passed": true
+    },
+    {
+      "name": "60: KeyA mapped",
+      "passed": true
+    },
+    {
+      "name": "60: KeyA 3.4 mm travel",
+      "passed": true
+    },
+    {
+      "name": "60: KeyA repeat suppressed",
+      "passed": true
+    },
+    {
+      "name": "60: KeyA exact return",
+      "passed": true
+    },
+    {
+      "name": "60: Space mapped",
+      "passed": true
+    },
+    {
+      "name": "60: Space 3.4 mm travel",
+      "passed": true
+    },
+    {
+      "name": "60: Space repeat suppressed",
+      "passed": true
+    },
+    {
+      "name": "60: Space exact return",
+      "passed": true
+    },
+    {
+      "name": "60: ShiftLeft mapped",
+      "passed": true
+    },
+    {
+      "name": "60: ShiftLeft 3.4 mm travel",
+      "passed": true
+    },
+    {
+      "name": "60: left Shift isolation",
+      "passed": true
+    },
+    {
+      "name": "60: ShiftLeft repeat suppressed",
+      "passed": true
+    },
+    {
+      "name": "60: ShiftLeft exact return",
+      "passed": true
+    },
+    {
+      "name": "60: ShiftRight mapped",
+      "passed": true
+    },
+    {
+      "name": "60: ShiftRight 3.4 mm travel",
+      "passed": true
+    },
+    {
+      "name": "60: ShiftRight repeat suppressed",
+      "passed": true
+    },
+    {
+      "name": "60: ShiftRight exact return",
+      "passed": true
+    },
+    {
+      "name": "60: Enter mapped",
+      "passed": true
+    },
+    {
+      "name": "60: Enter 3.4 mm travel",
+      "passed": true
+    },
+    {
+      "name": "60: Enter repeat suppressed",
+      "passed": true
+    },
+    {
+      "name": "60: Enter exact return",
+      "passed": true
+    },
+    {
+      "name": "60: Backspace mapped",
+      "passed": true
+    },
+    {
+      "name": "60: Backspace 3.4 mm travel",
+      "passed": true
+    },
+    {
+      "name": "60: Backspace repeat suppressed",
+      "passed": true
+    },
+    {
+      "name": "60: Backspace exact return",
+      "passed": true
+    },
+    {
+      "name": "60: simultaneous keys",
+      "passed": true
+    },
+    {
+      "name": "60: fast typing resets exactly",
+      "passed": true
+    },
+    {
+      "name": "60: numpad availability",
+      "passed": true
+    },
+    {
+      "name": "60: numpad Enter availability",
+      "passed": true
+    },
+    {
+      "name": "60: unsupported key is safe",
+      "passed": true
+    },
+    {
+      "name": "60: keyboard event reaches A",
+      "passed": true
+    },
+    {
+      "name": "60: one sound per keydown",
+      "passed": true
+    },
+    {
+      "name": "60: browser shortcut not prevented",
+      "passed": true
+    },
+    {
+      "name": "60: Space scroll suppressed",
+      "passed": true
+    },
+    {
+      "name": "60: Escape exits test",
+      "passed": true
+    },
+    {
+      "name": "60: focus loss releases keys",
+      "passed": true
+    },
+    {
+      "name": "60: slider rotates knob",
+      "passed": true
+    },
+    {
+      "name": "60: mute preserves volume",
+      "passed": true
+    },
+    {
+      "name": "60: unmute restores volume",
+      "passed": true
+    },
+    {
+      "name": "60: orbit released",
+      "passed": true
+    },
+    {
+      "name": "60: sound switch-red+thick-pbt",
+      "passed": true
+    },
+    {
+      "name": "60: sound switch-red+thin-abs",
+      "passed": true
+    },
+    {
+      "name": "60: sound switch-red+polycarbonate",
+      "passed": true
+    },
+    {
+      "name": "60: sound switch-brown+thick-pbt",
+      "passed": true
+    },
+    {
+      "name": "60: sound switch-brown+thin-abs",
+      "passed": true
+    },
+    {
+      "name": "60: sound switch-brown+polycarbonate",
+      "passed": true
+    },
+    {
+      "name": "60: sound switch-blue+thick-pbt",
+      "passed": true
+    },
+    {
+      "name": "60: sound switch-blue+thin-abs",
+      "passed": true
+    },
+    {
+      "name": "60: sound switch-blue+polycarbonate",
+      "passed": true
+    },
+    {
+      "name": "60: space sound variation",
+      "passed": true
+    },
+    {
+      "name": "60: Enter sound variation",
+      "passed": true
+    },
+    {
+      "name": "60: bounded polyphony",
+      "passed": true
+    },
+    {
+      "name": "60: mute blocks voices",
+      "passed": true
+    },
+    {
+      "name": "60: sound off blocks voices",
+      "passed": true
+    },
+    {
+      "name": "75: GLB loaded",
+      "passed": true
+    },
+    {
+      "name": "75: case black",
+      "passed": true
+    },
+    {
+      "name": "75: case cream",
+      "passed": true
+    },
+    {
+      "name": "75: case green",
+      "passed": true
+    },
+    {
+      "name": "75: case purple",
+      "passed": true
+    },
+    {
+      "name": "75: case silver",
+      "passed": true
+    },
+    {
+      "name": "75: finish anodized",
+      "passed": true
+    },
+    {
+      "name": "75: finish satin",
+      "passed": true
+    },
+    {
+      "name": "75: finish soft",
+      "passed": true
+    },
+    {
+      "name": "75: theme charcoal",
+      "passed": true
+    },
+    {
+      "name": "75: theme forest",
+      "passed": true
+    },
+    {
+      "name": "75: theme lavender",
+      "passed": true
+    },
+    {
+      "name": "75: theme nocturne",
+      "passed": true
+    },
+    {
+      "name": "75: switch switch-red",
+      "passed": true
+    },
+    {
+      "name": "75: switch switch-brown",
+      "passed": true
+    },
+    {
+      "name": "75: switch switch-blue",
+      "passed": true
+    },
+    {
+      "name": "75: RGB off",
+      "passed": true
+    },
+    {
+      "name": "75: RGB static",
+      "passed": true
+    },
+    {
+      "name": "75: RGB multi",
+      "passed": true
+    },
+    {
+      "name": "75: RGB white",
+      "passed": true
+    },
+    {
+      "name": "75: RGB color/intensity",
+      "passed": true
+    },
+    {
+      "name": "75: underglow off",
+      "passed": true
+    },
+    {
+      "name": "75: underglow on",
+      "passed": true
+    },
+    {
+      "name": "75: connection wired",
+      "passed": true
+    },
+    {
+      "name": "75: connection wireless",
+      "passed": true
+    },
+    {
+      "name": "75: connection tri-mode",
+      "passed": true
+    },
+    {
+      "name": "75: module none",
+      "passed": true
+    },
+    {
+      "name": "75: none visibility",
+      "passed": true
+    },
+    {
+      "name": "75: module volume-knob",
+      "passed": true
+    },
+    {
+      "name": "75: volume-knob visibility",
+      "passed": true
+    },
+    {
+      "name": "75: module mini-display",
+      "passed": true
+    },
+    {
+      "name": "75: mini-display visibility",
+      "passed": true
+    },
+    {
+      "name": "75: physical material thick-pbt",
+      "passed": true
+    },
+    {
+      "name": "75: physical material thin-abs",
+      "passed": true
+    },
+    {
+      "name": "75: physical material polycarbonate",
+      "passed": true
+    },
+    {
+      "name": "75: KeyA mapped",
+      "passed": true
+    },
+    {
+      "name": "75: KeyA 3.4 mm travel",
+      "passed": true
+    },
+    {
+      "name": "75: KeyA repeat suppressed",
+      "passed": true
+    },
+    {
+      "name": "75: KeyA exact return",
+      "passed": true
+    },
+    {
+      "name": "75: Space mapped",
+      "passed": true
+    },
+    {
+      "name": "75: Space 3.4 mm travel",
+      "passed": true
+    },
+    {
+      "name": "75: Space repeat suppressed",
+      "passed": true
+    },
+    {
+      "name": "75: Space exact return",
+      "passed": true
+    },
+    {
+      "name": "75: ShiftLeft mapped",
+      "passed": true
+    },
+    {
+      "name": "75: ShiftLeft 3.4 mm travel",
+      "passed": true
+    },
+    {
+      "name": "75: left Shift isolation",
+      "passed": true
+    },
+    {
+      "name": "75: ShiftLeft repeat suppressed",
+      "passed": true
+    },
+    {
+      "name": "75: ShiftLeft exact return",
+      "passed": true
+    },
+    {
+      "name": "75: ShiftRight mapped",
+      "passed": true
+    },
+    {
+      "name": "75: ShiftRight 3.4 mm travel",
+      "passed": true
+    },
+    {
+      "name": "75: ShiftRight repeat suppressed",
+      "passed": true
+    },
+    {
+      "name": "75: ShiftRight exact return",
+      "passed": true
+    },
+    {
+      "name": "75: Enter mapped",
+      "passed": true
+    },
+    {
+      "name": "75: Enter 3.4 mm travel",
+      "passed": true
+    },
+    {
+      "name": "75: Enter repeat suppressed",
+      "passed": true
+    },
+    {
+      "name": "75: Enter exact return",
+      "passed": true
+    },
+    {
+      "name": "75: Backspace mapped",
+      "passed": true
+    },
+    {
+      "name": "75: Backspace 3.4 mm travel",
+      "passed": true
+    },
+    {
+      "name": "75: Backspace repeat suppressed",
+      "passed": true
+    },
+    {
+      "name": "75: Backspace exact return",
+      "passed": true
+    },
+    {
+      "name": "75: simultaneous keys",
+      "passed": true
+    },
+    {
+      "name": "75: fast typing resets exactly",
+      "passed": true
+    },
+    {
+      "name": "75: numpad availability",
+      "passed": true
+    },
+    {
+      "name": "75: numpad Enter availability",
+      "passed": true
+    },
+    {
+      "name": "75: unsupported key is safe",
+      "passed": true
+    },
+    {
+      "name": "75: keyboard event reaches A",
+      "passed": true
+    },
+    {
+      "name": "75: one sound per keydown",
+      "passed": true
+    },
+    {
+      "name": "75: browser shortcut not prevented",
+      "passed": true
+    },
+    {
+      "name": "75: Space scroll suppressed",
+      "passed": true
+    },
+    {
+      "name": "75: Escape exits test",
+      "passed": true
+    },
+    {
+      "name": "75: focus loss releases keys",
+      "passed": true
+    },
+    {
+      "name": "75: slider rotates knob",
+      "passed": true
+    },
+    {
+      "name": "75: mute preserves volume",
+      "passed": true
+    },
+    {
+      "name": "75: unmute restores volume",
+      "passed": true
+    },
+    {
+      "name": "75: orbit released",
+      "passed": true
+    },
+    {
+      "name": "75: sound switch-red+thick-pbt",
+      "passed": true
+    },
+    {
+      "name": "75: sound switch-red+thin-abs",
+      "passed": true
+    },
+    {
+      "name": "75: sound switch-red+polycarbonate",
+      "passed": true
+    },
+    {
+      "name": "75: sound switch-brown+thick-pbt",
+      "passed": true
+    },
+    {
+      "name": "75: sound switch-brown+thin-abs",
+      "passed": true
+    },
+    {
+      "name": "75: sound switch-brown+polycarbonate",
+      "passed": true
+    },
+    {
+      "name": "75: sound switch-blue+thick-pbt",
+      "passed": true
+    },
+    {
+      "name": "75: sound switch-blue+thin-abs",
+      "passed": true
+    },
+    {
+      "name": "75: sound switch-blue+polycarbonate",
+      "passed": true
+    },
+    {
+      "name": "75: space sound variation",
+      "passed": true
+    },
+    {
+      "name": "75: Enter sound variation",
+      "passed": true
+    },
+    {
+      "name": "75: bounded polyphony",
+      "passed": true
+    },
+    {
+      "name": "75: mute blocks voices",
+      "passed": true
+    },
+    {
+      "name": "75: sound off blocks voices",
+      "passed": true
+    },
+    {
+      "name": "100: GLB loaded",
+      "passed": true
+    },
+    {
+      "name": "100: case black",
+      "passed": true
+    },
+    {
+      "name": "100: case cream",
+      "passed": true
+    },
+    {
+      "name": "100: case green",
+      "passed": true
+    },
+    {
+      "name": "100: case purple",
+      "passed": true
+    },
+    {
+      "name": "100: case silver",
+      "passed": true
+    },
+    {
+      "name": "100: finish anodized",
+      "passed": true
+    },
+    {
+      "name": "100: finish satin",
+      "passed": true
+    },
+    {
+      "name": "100: finish soft",
+      "passed": true
+    },
+    {
+      "name": "100: theme charcoal",
+      "passed": true
+    },
+    {
+      "name": "100: theme forest",
+      "passed": true
+    },
+    {
+      "name": "100: theme lavender",
+      "passed": true
+    },
+    {
+      "name": "100: theme nocturne",
+      "passed": true
+    },
+    {
+      "name": "100: switch switch-red",
+      "passed": true
+    },
+    {
+      "name": "100: switch switch-brown",
+      "passed": true
+    },
+    {
+      "name": "100: switch switch-blue",
+      "passed": true
+    },
+    {
+      "name": "100: RGB off",
+      "passed": true
+    },
+    {
+      "name": "100: RGB static",
+      "passed": true
+    },
+    {
+      "name": "100: RGB multi",
+      "passed": true
+    },
+    {
+      "name": "100: RGB white",
+      "passed": true
+    },
+    {
+      "name": "100: RGB color/intensity",
+      "passed": true
+    },
+    {
+      "name": "100: underglow off",
+      "passed": true
+    },
+    {
+      "name": "100: underglow on",
+      "passed": true
+    },
+    {
+      "name": "100: connection wired",
+      "passed": true
+    },
+    {
+      "name": "100: connection wireless",
+      "passed": true
+    },
+    {
+      "name": "100: connection tri-mode",
+      "passed": true
+    },
+    {
+      "name": "100: module none",
+      "passed": true
+    },
+    {
+      "name": "100: none visibility",
+      "passed": true
+    },
+    {
+      "name": "100: module volume-knob",
+      "passed": true
+    },
+    {
+      "name": "100: volume-knob visibility",
+      "passed": true
+    },
+    {
+      "name": "100: module mini-display",
+      "passed": true
+    },
+    {
+      "name": "100: mini-display visibility",
+      "passed": true
+    },
+    {
+      "name": "100: physical material thick-pbt",
+      "passed": true
+    },
+    {
+      "name": "100: physical material thin-abs",
+      "passed": true
+    },
+    {
+      "name": "100: physical material polycarbonate",
+      "passed": true
+    },
+    {
+      "name": "100: KeyA mapped",
+      "passed": true
+    },
+    {
+      "name": "100: KeyA 3.4 mm travel",
+      "passed": true
+    },
+    {
+      "name": "100: KeyA repeat suppressed",
+      "passed": true
+    },
+    {
+      "name": "100: KeyA exact return",
+      "passed": true
+    },
+    {
+      "name": "100: Space mapped",
+      "passed": true
+    },
+    {
+      "name": "100: Space 3.4 mm travel",
+      "passed": true
+    },
+    {
+      "name": "100: Space repeat suppressed",
+      "passed": true
+    },
+    {
+      "name": "100: Space exact return",
+      "passed": true
+    },
+    {
+      "name": "100: ShiftLeft mapped",
+      "passed": true
+    },
+    {
+      "name": "100: ShiftLeft 3.4 mm travel",
+      "passed": true
+    },
+    {
+      "name": "100: left Shift isolation",
+      "passed": true
+    },
+    {
+      "name": "100: ShiftLeft repeat suppressed",
+      "passed": true
+    },
+    {
+      "name": "100: ShiftLeft exact return",
+      "passed": true
+    },
+    {
+      "name": "100: ShiftRight mapped",
+      "passed": true
+    },
+    {
+      "name": "100: ShiftRight 3.4 mm travel",
+      "passed": true
+    },
+    {
+      "name": "100: ShiftRight repeat suppressed",
+      "passed": true
+    },
+    {
+      "name": "100: ShiftRight exact return",
+      "passed": true
+    },
+    {
+      "name": "100: Enter mapped",
+      "passed": true
+    },
+    {
+      "name": "100: Enter 3.4 mm travel",
+      "passed": true
+    },
+    {
+      "name": "100: Enter repeat suppressed",
+      "passed": true
+    },
+    {
+      "name": "100: Enter exact return",
+      "passed": true
+    },
+    {
+      "name": "100: Backspace mapped",
+      "passed": true
+    },
+    {
+      "name": "100: Backspace 3.4 mm travel",
+      "passed": true
+    },
+    {
+      "name": "100: Backspace repeat suppressed",
+      "passed": true
+    },
+    {
+      "name": "100: Backspace exact return",
+      "passed": true
+    },
+    {
+      "name": "100: simultaneous keys",
+      "passed": true
+    },
+    {
+      "name": "100: fast typing resets exactly",
+      "passed": true
+    },
+    {
+      "name": "100: numpad availability",
+      "passed": true
+    },
+    {
+      "name": "100: numpad Enter availability",
+      "passed": true
+    },
+    {
+      "name": "100: Numpad0 animates independently",
+      "passed": true
+    },
+    {
+      "name": "100: NumpadEnter animates independently",
+      "passed": true
+    },
+    {
+      "name": "100: unsupported key is safe",
+      "passed": true
+    },
+    {
+      "name": "100: keyboard event reaches A",
+      "passed": true
+    },
+    {
+      "name": "100: one sound per keydown",
+      "passed": true
+    },
+    {
+      "name": "100: browser shortcut not prevented",
+      "passed": true
+    },
+    {
+      "name": "100: Space scroll suppressed",
+      "passed": true
+    },
+    {
+      "name": "100: Escape exits test",
+      "passed": true
+    },
+    {
+      "name": "100: focus loss releases keys",
+      "passed": true
+    },
+    {
+      "name": "100: slider rotates knob",
+      "passed": true
+    },
+    {
+      "name": "100: mute preserves volume",
+      "passed": true
+    },
+    {
+      "name": "100: unmute restores volume",
+      "passed": true
+    },
+    {
+      "name": "100: orbit released",
+      "passed": true
+    },
+    {
+      "name": "100: sound switch-red+thick-pbt",
+      "passed": true
+    },
+    {
+      "name": "100: sound switch-red+thin-abs",
+      "passed": true
+    },
+    {
+      "name": "100: sound switch-red+polycarbonate",
+      "passed": true
+    },
+    {
+      "name": "100: sound switch-brown+thick-pbt",
+      "passed": true
+    },
+    {
+      "name": "100: sound switch-brown+thin-abs",
+      "passed": true
+    },
+    {
+      "name": "100: sound switch-brown+polycarbonate",
+      "passed": true
+    },
+    {
+      "name": "100: sound switch-blue+thick-pbt",
+      "passed": true
+    },
+    {
+      "name": "100: sound switch-blue+thin-abs",
+      "passed": true
+    },
+    {
+      "name": "100: sound switch-blue+polycarbonate",
+      "passed": true
+    },
+    {
+      "name": "100: space sound variation",
+      "passed": true
+    },
+    {
+      "name": "100: Enter sound variation",
+      "passed": true
+    },
+    {
+      "name": "100: bounded polyphony",
+      "passed": true
+    },
+    {
+      "name": "100: mute blocks voices",
+      "passed": true
+    },
+    {
+      "name": "100: sound off blocks voices",
+      "passed": true
+    },
+    {
+      "name": "Layout transition preserves control module",
+      "passed": true
+    },
+    {
+      "name": "Layout transition preserves compatible case color",
+      "passed": true
+    },
+    {
+      "name": "Renderer has non-empty drawing buffer",
+      "passed": true
+    },
+    {
+      "name": "No runtime/console errors",
+      "passed": true
+    }
+  ],
+  "metrics": [
+    {
+      "layout": "60",
+      "triangles": 175727,
+      "drawCalls": 32,
+      "materials": 18
+    },
+    {
+      "layout": "75",
+      "triangles": 223005,
+      "drawCalls": 32,
+      "materials": 18
+    },
+    {
+      "layout": "100",
+      "triangles": 285749,
+      "drawCalls": 32,
+      "materials": 18
+    }
+  ],
+  "runtimeErrors": [],
+  "passed": true
+}

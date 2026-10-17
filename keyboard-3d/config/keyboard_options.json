@@ -1,0 +1,330 @@
+{
+  "caseColors": [
+    {
+      "id": "black",
+      "name": "Matte black aluminum",
+      "color": "#23232B",
+      "metallic": 0.75,
+      "roughness": 0.36,
+      "material": "MAT_CASE_BLACK",
+      "priceAdjustment": 0
+    },
+    {
+      "id": "cream",
+      "name": "Ceramic cream",
+      "color": "#E5DFCC",
+      "metallic": 0.15,
+      "roughness": 0.4,
+      "material": "MAT_CASE_CREAM",
+      "priceAdjustment": 0
+    },
+    {
+      "id": "green",
+      "name": "Forest green",
+      "color": "#254E41",
+      "metallic": 0.65,
+      "roughness": 0.34,
+      "material": "MAT_CASE_GREEN",
+      "priceAdjustment": 0
+    },
+    {
+      "id": "purple",
+      "name": "Deep purple",
+      "color": "#51416D",
+      "metallic": 0.7,
+      "roughness": 0.32,
+      "material": "MAT_CASE_PURPLE",
+      "priceAdjustment": 0
+    },
+    {
+      "id": "silver",
+      "name": "Silver aluminum",
+      "color": "#B9BDC8",
+      "metallic": 0.92,
+      "roughness": 0.27,
+      "material": "MAT_CASE_SILVER",
+      "priceAdjustment": 0
+    }
+  ],
+  "caseFinishes": [
+    {
+      "id": "anodized",
+      "name": "Anodized / coated",
+      "metallicMultiplier": 1,
+      "roughnessOffset": 0,
+      "priceAdjustment": 0
+    },
+    {
+      "id": "satin",
+      "name": "Satin metal",
+      "metallicMultiplier": 1,
+      "roughnessOffset": -0.12,
+      "priceAdjustment": 0
+    },
+    {
+      "id": "soft",
+      "name": "Soft matte coating",
+      "metallicMultiplier": 0.12,
+      "roughnessOffset": 0.2,
+      "priceAdjustment": 0
+    }
+  ],
+  "keycapThemes": [
+    {
+      "id": "charcoal",
+      "name": "Charcoal / violet",
+      "alpha": "#363642",
+      "modifier": "#272632",
+      "accent": "#9464CF",
+      "legend": "#F3ECFF",
+      "legendEmission": 0,
+      "supportedWidths": [
+        1,
+        1.25,
+        1.5,
+        1.75,
+        2,
+        2.25,
+        2.75,
+        6.25
+      ],
+      "supportedHeights": [
+        1,
+        2
+      ],
+      "priceAdjustment": 0
+    },
+    {
+      "id": "forest",
+      "name": "Cream / forest",
+      "alpha": "#E8E1CF",
+      "modifier": "#386353",
+      "accent": "#A5BEA1",
+      "legend": "#101B18",
+      "legendEmission": 0,
+      "supportedWidths": [
+        1,
+        1.25,
+        1.5,
+        1.75,
+        2,
+        2.25,
+        2.75,
+        6.25
+      ],
+      "supportedHeights": [
+        1,
+        2
+      ],
+      "priceAdjustment": 0
+    },
+    {
+      "id": "lavender",
+      "name": "White / lavender",
+      "alpha": "#ECE8F0",
+      "modifier": "#C5B4DF",
+      "accent": "#AC88DA",
+      "legend": "#29203B",
+      "legendEmission": 0,
+      "supportedWidths": [
+        1,
+        1.25,
+        1.5,
+        1.75,
+        2,
+        2.25,
+        2.75,
+        6.25
+      ],
+      "supportedHeights": [
+        1,
+        2
+      ],
+      "priceAdjustment": 0
+    },
+    {
+      "id": "nocturne",
+      "name": "Black / luminous legends",
+      "alpha": "#19191F",
+      "modifier": "#23232D",
+      "accent": "#34303E",
+      "legend": "#CDBDF1",
+      "legendEmission": 1.1,
+      "supportedWidths": [
+        1,
+        1.25,
+        1.5,
+        1.75,
+        2,
+        2.25,
+        2.75,
+        6.25
+      ],
+      "supportedHeights": [
+        1,
+        2
+      ],
+      "priceAdjustment": 0
+    }
+  ],
+  "switches": [
+    {
+      "id": "switch-red",
+      "name": "Red Linear",
+      "type": "linear",
+      "mount": "MX",
+      "description": "Smooth key travel without a tactile bump.",
+      "audioAvailable": true,
+      "visualColor": "#C83A4B",
+      "priceAdjustment": 0,
+      "audioKind": "synthesized-approximation"
+    },
+    {
+      "id": "switch-brown",
+      "name": "Brown Tactile",
+      "type": "tactile",
+      "mount": "MX",
+      "description": "A tactile bump with no added click mechanism.",
+      "audioAvailable": true,
+      "visualColor": "#90643E",
+      "priceAdjustment": 0,
+      "audioKind": "synthesized-approximation"
+    },
+    {
+      "id": "switch-blue",
+      "name": "Blue Clicky",
+      "type": "clicky",
+      "mount": "MX",
+      "description": "A tactile bump and a distinct mechanical click.",
+      "audioAvailable": true,
+      "visualColor": "#3581CB",
+      "priceAdjustment": 0,
+      "audioKind": "synthesized-approximation"
+    }
+  ],
+  "rgbModes": [
+    {
+      "id": "off",
+      "name": "Off"
+    },
+    {
+      "id": "static",
+      "name": "Static color"
+    },
+    {
+      "id": "multi",
+      "name": "Three-zone color"
+    },
+    {
+      "id": "white",
+      "name": "White backlight"
+    }
+  ],
+  "connectionTypes": [
+    {
+      "id": "wired",
+      "name": "Wired"
+    },
+    {
+      "id": "wireless",
+      "name": "Wireless"
+    },
+    {
+      "id": "tri-mode",
+      "name": "Tri-mode"
+    }
+  ],
+  "accessories": [
+    {
+      "id": "none",
+      "name": "No accessory",
+      "priceAdjustment": 0
+    },
+    {
+      "id": "knob",
+      "name": "Rotary knob",
+      "priceAdjustment": 0
+    },
+    {
+      "id": "display",
+      "name": "Mini display",
+      "priceAdjustment": 0
+    }
+  ],
+  "defaults": {
+    "layout": "75",
+    "caseColor": "purple",
+    "caseFinish": "anodized",
+    "keycapTheme": "charcoal",
+    "switch": "switch-red",
+    "rgbMode": "multi",
+    "rgbColor": "#A66AFF",
+    "rgbIntensity": 2,
+    "underglow": true,
+    "connection": "tri-mode",
+    "accessory": "knob",
+    "keycapMaterial": "thick-pbt",
+    "controlModule": "volume-knob",
+    "volume": 0.45,
+    "muted": false,
+    "soundEnabled": true
+  },
+  "controlModule": {
+    "options": [
+      "none",
+      "volume-knob",
+      "mini-display"
+    ],
+    "supportedLayouts": [
+      "60",
+      "75",
+      "100"
+    ]
+  },
+  "keycapMaterials": [
+    {
+      "id": "thick-pbt",
+      "name": "Thick PBT",
+      "roughness": 0.63,
+      "metalness": 0,
+      "transmission": 0,
+      "ior": 1.49,
+      "normalScale": 0.28,
+      "soundProfile": "deep-pbt"
+    },
+    {
+      "id": "thin-abs",
+      "name": "Thin ABS",
+      "roughness": 0.34,
+      "metalness": 0,
+      "transmission": 0,
+      "ior": 1.53,
+      "normalScale": 0.12,
+      "soundProfile": "bright-abs"
+    },
+    {
+      "id": "polycarbonate",
+      "name": "Translucent polycarbonate",
+      "roughness": 0.22,
+      "metalness": 0,
+      "transmission": 0.48,
+      "ior": 1.58,
+      "normalScale": 0.05,
+      "soundProfile": "resonant-pc"
+    }
+  ],
+  "controlModules": [
+    {
+      "id": "none",
+      "name": "Standard / none"
+    },
+    {
+      "id": "volume-knob",
+      "name": "Physical volume knob"
+    },
+    {
+      "id": "mini-display",
+      "name": "Mini display"
+    }
+  ]
+}

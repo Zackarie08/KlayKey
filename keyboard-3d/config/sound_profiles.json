@@ -1,0 +1,19 @@
+{
+  "kind":"original-synthesis",
+  "description":"Synthesized approximations, not real keyboard recordings or acoustic measurements.",
+  "variations":3,
+  "sampleRate":48000,
+  "switches":{
+    "switch-red":{"bodyHz":175,"noise":0.18,"click":0.02,"decay":0.040},
+    "switch-brown":{"bodyHz":225,"noise":0.29,"click":0.15,"decay":0.044},
+    "switch-blue":{"bodyHz":270,"noise":0.25,"click":0.65,"decay":0.035}
+  },
+  "keycaps":{
+    "thick-pbt":{"pitch":0.80,"brightness":0.55,"resonance":0.16,"decay":1.15},
+    "thin-abs":{"pitch":1.18,"brightness":1.15,"resonance":0.08,"decay":0.80},
+    "polycarbonate":{"pitch":1.40,"brightness":0.9,"resonance":0.35,"decay":1.35}
+  },
+  "sampleOverrides":{},
+  "sampleOverrideFormat":"Optional key switch-red+thick-pbt maps to three original/licensed sample URLs relative to viewer/. Failed sample loads retain synthesis.",
+  "master":{"maxVoices":24,"initialVolume":0.45,"peakPerVoice":0.07,"limiterCeiling":0.92}
+}

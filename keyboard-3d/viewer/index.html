@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Keyboard · Asset lab</title><link rel="icon" href="data:,"><link rel="stylesheet" href="styles.css">
+<script type="importmap">{"imports":{"three":"../node_modules/three/build/three.module.js","three/addons/":"../node_modules/three/examples/jsm/"}}</script>
+</head><body>
+<main><section class="stage"><header><span class="mark">K.</span><div><strong>KEYBOARD</strong><small>3D ASSET LAB / 01</small></div><span class="badge">LOCAL PROTOTYPE</span></header>
+<div id="viewport" aria-label="Interactive 3D keyboard"></div><div id="loading" role="status">Loading asset library…</div>
+<footer><div><h1 id="model-name">Your next daily driver.</h1><p>Drag to orbit · Scroll to zoom · Right-drag to pan</p></div><button id="reset-camera">Reset view</button></footer></section>
+<aside><div class="eyebrow">MODULAR BY DESIGN</div><h2>Make it yours.</h2><p class="intro">Three layouts. One shared system.<br>Explore the components and finishes.</p>
+<form id="controls">
+<label>Layout<select id="layout"></select></label>
+<div class="pair"><label>Case color<select id="caseColor"></select></label><label>Surface<select id="caseFinish"></select></label></div>
+<label>Keycap colorway<select id="keycapTheme"></select></label>
+<label>Keycap material / acoustic profile<select id="keycapMaterial"></select></label>
+<label>Switch<select id="switch"></select></label><p id="switch-info" class="hint"></p>
+<section class="typing-panel"><button type="button" id="start-typing">Start Typing Test</button><button type="button" id="stop-typing">Stop</button>
+<p id="typing-status" role="status">Start the test, then type on your physical keyboard.</p>
+<p id="sound-profile"></p><p class="hint">Original synthesized approximations — not recordings.</p>
+<label class="check"><input type="checkbox" id="soundEnabled" checked> Typing sounds</label>
+<label>Sound volume <output id="volume-value">45%</output><input id="volume" type="range" min="0" max="1" step="0.01" value="0.45"></label>
+<label class="check"><input type="checkbox" id="muted"> Mute (preserves volume)</label></section>
+<div class="pair"><label>Lighting<select id="rgbMode"></select></label><label>RGB color<input id="rgbColor" type="color" value="#a66aff"></label></div>
+<label>RGB intensity<input id="rgbIntensity" type="range" min="0" max="5" step="0.1" value="2"></label>
+<label class="check"><input id="underglow" type="checkbox" checked> Seam underglow</label>
+<label>Connection<select id="connection"></select></label>
+<label>Control module<select id="controlModule"></select></label><p id="compatibility" class="hint" role="status"></p>
+</form><p id="status" role="status">Preparing viewer…</p><div class="qa"><button id="run-tests">Run asset checks</button><button id="download-tests" disabled>Save report</button><pre id="test-results" aria-live="polite"></pre></div>
+<p class="fine">Validation viewer · No checkout or pricing.<br>Wheel over the 3D knob to adjust volume. Click it to mute.</p></aside></main>
+<script type="module" src="boot.js"></script></body></html>

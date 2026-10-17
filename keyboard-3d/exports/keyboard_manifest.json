@@ -1,0 +1,882 @@
+{
+  "schemaVersion": 2,
+  "units": "metres",
+  "sourceUnits": "millimetres",
+  "sourceAxes": "Blender Z up, front -Y",
+  "exportAxes": "glTF Y up, front +Z",
+  "typingAngleDegrees": 6,
+  "layouts": [
+    {
+      "id": "60",
+      "name": "ANSI 60%",
+      "glb": "keyboard_60.glb",
+      "dimensionsMM": {
+        "width": 350.28000000000003,
+        "depth": 110.25,
+        "approximateHeight": 39.6
+      },
+      "camera": {
+        "target": [
+          0,
+          0.018,
+          0
+        ],
+        "distance": 0.56
+      },
+      "keyCount": 61,
+      "requiredWidths": [
+        1,
+        1.25,
+        1.5,
+        1.75,
+        2,
+        2.25,
+        2.75,
+        6.25
+      ],
+      "requiredHeights": [
+        1
+      ],
+      "rgbCapable": true,
+      "switchMount": "MX",
+      "knobSupported": true,
+      "displaySupported": true,
+      "caseVariant": "case-60",
+      "priceAdjustment": 0
+    },
+    {
+      "id": "75",
+      "name": "ANSI 75%",
+      "glb": "keyboard_75.glb",
+      "dimensionsMM": {
+        "width": 324.5625,
+        "depth": 135.9675,
+        "approximateHeight": 42.3
+      },
+      "camera": {
+        "target": [
+          0,
+          0.018,
+          0
+        ],
+        "distance": 0.519
+      },
+      "keyCount": 81,
+      "requiredWidths": [
+        1,
+        1.25,
+        1.5,
+        1.75,
+        2,
+        2.25,
+        6.25
+      ],
+      "requiredHeights": [
+        1
+      ],
+      "rgbCapable": true,
+      "switchMount": "MX",
+      "knobSupported": true,
+      "displaySupported": true,
+      "caseVariant": "case-75",
+      "priceAdjustment": 0
+    },
+    {
+      "id": "100",
+      "name": "ANSI 100%",
+      "glb": "keyboard_100.glb",
+      "dimensionsMM": {
+        "width": 462.675,
+        "depth": 135.9675,
+        "approximateHeight": 42.3
+      },
+      "camera": {
+        "target": [
+          0,
+          0.018,
+          0
+        ],
+        "distance": 0.74
+      },
+      "keyCount": 104,
+      "requiredWidths": [
+        1,
+        1.25,
+        1.5,
+        1.75,
+        2,
+        2.25,
+        2.75,
+        6.25
+      ],
+      "requiredHeights": [
+        1,
+        2
+      ],
+      "rgbCapable": true,
+      "switchMount": "MX",
+      "knobSupported": true,
+      "displaySupported": true,
+      "caseVariant": "case-100",
+      "priceAdjustment": 0
+    }
+  ],
+  "caseColors": [
+    {
+      "id": "black",
+      "name": "Matte black aluminum",
+      "color": "#23232B",
+      "metallic": 0.75,
+      "roughness": 0.36,
+      "material": "MAT_CASE_BLACK",
+      "priceAdjustment": 0
+    },
+    {
+      "id": "cream",
+      "name": "Ceramic cream",
+      "color": "#E5DFCC",
+      "metallic": 0.15,
+      "roughness": 0.4,
+      "material": "MAT_CASE_CREAM",
+      "priceAdjustment": 0
+    },
+    {
+      "id": "green",
+      "name": "Forest green",
+      "color": "#254E41",
+      "metallic": 0.65,
+      "roughness": 0.34,
+      "material": "MAT_CASE_GREEN",
+      "priceAdjustment": 0
+    },
+    {
+      "id": "purple",
+      "name": "Deep purple",
+      "color": "#51416D",
+      "metallic": 0.7,
+      "roughness": 0.32,
+      "material": "MAT_CASE_PURPLE",
+      "priceAdjustment": 0
+    },
+    {
+      "id": "silver",
+      "name": "Silver aluminum",
+      "color": "#B9BDC8",
+      "metallic": 0.92,
+      "roughness": 0.27,
+      "material": "MAT_CASE_SILVER",
+      "priceAdjustment": 0
+    }
+  ],
+  "caseFinishes": [
+    {
+      "id": "anodized",
+      "name": "Anodized / coated",
+      "metallicMultiplier": 1,
+      "roughnessOffset": 0,
+      "priceAdjustment": 0
+    },
+    {
+      "id": "satin",
+      "name": "Satin metal",
+      "metallicMultiplier": 1,
+      "roughnessOffset": -0.12,
+      "priceAdjustment": 0
+    },
+    {
+      "id": "soft",
+      "name": "Soft matte coating",
+      "metallicMultiplier": 0.12,
+      "roughnessOffset": 0.2,
+      "priceAdjustment": 0
+    }
+  ],
+  "keycapThemes": [
+    {
+      "id": "charcoal",
+      "name": "Charcoal / violet",
+      "alpha": "#363642",
+      "modifier": "#272632",
+      "accent": "#9464CF",
+      "legend": "#F3ECFF",
+      "legendEmission": 0,
+      "supportedWidths": [
+        1,
+        1.25,
+        1.5,
+        1.75,
+        2,
+        2.25,
+        2.75,
+        6.25
+      ],
+      "supportedHeights": [
+        1,
+        2
+      ],
+      "priceAdjustment": 0
+    },
+    {
+      "id": "forest",
+      "name": "Cream / forest",
+      "alpha": "#E8E1CF",
+      "modifier": "#386353",
+      "accent": "#A5BEA1",
+      "legend": "#101B18",
+      "legendEmission": 0,
+      "supportedWidths": [
+        1,
+        1.25,
+        1.5,
+        1.75,
+        2,
+        2.25,
+        2.75,
+        6.25
+      ],
+      "supportedHeights": [
+        1,
+        2
+      ],
+      "priceAdjustment": 0
+    },
+    {
+      "id": "lavender",
+      "name": "White / lavender",
+      "alpha": "#ECE8F0",
+      "modifier": "#C5B4DF",
+      "accent": "#AC88DA",
+      "legend": "#29203B",
+      "legendEmission": 0,
+      "supportedWidths": [
+        1,
+        1.25,
+        1.5,
+        1.75,
+        2,
+        2.25,
+        2.75,
+        6.25
+      ],
+      "supportedHeights": [
+        1,
+        2
+      ],
+      "priceAdjustment": 0
+    },
+    {
+      "id": "nocturne",
+      "name": "Black / luminous legends",
+      "alpha": "#19191F",
+      "modifier": "#23232D",
+      "accent": "#34303E",
+      "legend": "#CDBDF1",
+      "legendEmission": 1.1,
+      "supportedWidths": [
+        1,
+        1.25,
+        1.5,
+        1.75,
+        2,
+        2.25,
+        2.75,
+        6.25
+      ],
+      "supportedHeights": [
+        1,
+        2
+      ],
+      "priceAdjustment": 0
+    }
+  ],
+  "switches": [
+    {
+      "id": "switch-red",
+      "name": "Red Linear",
+      "type": "linear",
+      "mount": "MX",
+      "description": "Smooth key travel without a tactile bump.",
+      "audioAvailable": true,
+      "visualColor": "#C83A4B",
+      "priceAdjustment": 0,
+      "audioKind": "synthesized-approximation"
+    },
+    {
+      "id": "switch-brown",
+      "name": "Brown Tactile",
+      "type": "tactile",
+      "mount": "MX",
+      "description": "A tactile bump with no added click mechanism.",
+      "audioAvailable": true,
+      "visualColor": "#90643E",
+      "priceAdjustment": 0,
+      "audioKind": "synthesized-approximation"
+    },
+    {
+      "id": "switch-blue",
+      "name": "Blue Clicky",
+      "type": "clicky",
+      "mount": "MX",
+      "description": "A tactile bump and a distinct mechanical click.",
+      "audioAvailable": true,
+      "visualColor": "#3581CB",
+      "priceAdjustment": 0,
+      "audioKind": "synthesized-approximation"
+    }
+  ],
+  "rgbModes": [
+    {
+      "id": "off",
+      "name": "Off"
+    },
+    {
+      "id": "static",
+      "name": "Static color"
+    },
+    {
+      "id": "multi",
+      "name": "Three-zone color"
+    },
+    {
+      "id": "white",
+      "name": "White backlight"
+    }
+  ],
+  "connectionTypes": [
+    {
+      "id": "wired",
+      "name": "Wired"
+    },
+    {
+      "id": "wireless",
+      "name": "Wireless"
+    },
+    {
+      "id": "tri-mode",
+      "name": "Tri-mode"
+    }
+  ],
+  "accessories": [
+    {
+      "id": "none",
+      "name": "No accessory",
+      "priceAdjustment": 0
+    },
+    {
+      "id": "knob",
+      "name": "Rotary knob",
+      "priceAdjustment": 0
+    },
+    {
+      "id": "display",
+      "name": "Mini display",
+      "priceAdjustment": 0
+    }
+  ],
+  "defaults": {
+    "layout": "75",
+    "caseColor": "purple",
+    "caseFinish": "anodized",
+    "keycapTheme": "charcoal",
+    "switch": "switch-red",
+    "rgbMode": "multi",
+    "rgbColor": "#A66AFF",
+    "rgbIntensity": 2,
+    "underglow": true,
+    "connection": "tri-mode",
+    "accessory": "knob",
+    "keycapMaterial": "thick-pbt",
+    "controlModule": "volume-knob",
+    "volume": 0.45,
+    "muted": false,
+    "soundEnabled": true
+  },
+  "controlModule": {
+    "options": [
+      "none",
+      "volume-knob",
+      "mini-display"
+    ],
+    "supportedLayouts": [
+      "60",
+      "75",
+      "100"
+    ]
+  },
+  "keycapMaterials": [
+    {
+      "id": "thick-pbt",
+      "name": "Thick PBT",
+      "roughness": 0.63,
+      "metalness": 0,
+      "transmission": 0,
+      "ior": 1.49,
+      "normalScale": 0.28,
+      "soundProfile": "deep-pbt"
+    },
+    {
+      "id": "thin-abs",
+      "name": "Thin ABS",
+      "roughness": 0.34,
+      "metalness": 0,
+      "transmission": 0,
+      "ior": 1.53,
+      "normalScale": 0.12,
+      "soundProfile": "bright-abs"
+    },
+    {
+      "id": "polycarbonate",
+      "name": "Translucent polycarbonate",
+      "roughness": 0.22,
+      "metalness": 0,
+      "transmission": 0.48,
+      "ior": 1.58,
+      "normalScale": 0.05,
+      "soundProfile": "resonant-pc"
+    }
+  ],
+  "controlModules": [
+    {
+      "id": "none",
+      "name": "Standard / none"
+    },
+    {
+      "id": "volume-knob",
+      "name": "Physical volume knob"
+    },
+    {
+      "id": "mini-display",
+      "name": "Mini display"
+    }
+  ],
+  "compatibility": {
+    "schemaVersion": 2,
+    "layoutAssets": {
+      "60": "keyboard_60.glb",
+      "75": "keyboard_75.glb",
+      "100": "keyboard_100.glb"
+    },
+    "caseLayoutMatch": {
+      "required": true,
+      "reason": "CASE_LAYOUT_MISMATCH",
+      "message": "Case geometry must match the selected layout."
+    },
+    "themeCoverage": {
+      "requireAllWidths": true,
+      "requireAllHeights": true,
+      "reason": "MISSING_KEY_SIZE",
+      "message": "This theme does not support every key size in this layout."
+    },
+    "switchMount": {
+      "allowed": [
+        "MX"
+      ],
+      "reason": "SWITCH_MOUNT",
+      "message": "Only MX-style switches are supported."
+    },
+    "accessories": {
+      "none": {
+        "layouts": [
+          "60",
+          "75",
+          "100"
+        ]
+      },
+      "knob": {
+        "layouts": [
+          "60",
+          "75",
+          "100"
+        ],
+        "node": "OPTION_KNOB"
+      },
+      "display": {
+        "layouts": [
+          "60",
+          "75",
+          "100"
+        ],
+        "node": "OPTION_DISPLAY"
+      }
+    },
+    "mutuallyExclusive": [
+      [
+        "knob",
+        "display"
+      ]
+    ],
+    "connectionVisibility": {
+      "wired": true,
+      "wireless": false,
+      "tri-mode": false
+    },
+    "rgb": {
+      "requires": "rgbCapable",
+      "reason": "RGB_UNSUPPORTED",
+      "message": "RGB requires an RGB-capable PCB and case."
+    },
+    "layoutChange": {
+      "preserveCompatible": true,
+      "accessoryFallback": "none",
+      "invalidSelection": "firstCompatible"
+    },
+    "controlModules": {
+      "options": [
+        "none",
+        "volume-knob",
+        "mini-display"
+      ],
+      "supportedLayouts": [
+        "60",
+        "75",
+        "100"
+      ],
+      "mutuallyExclusive": true
+    }
+  },
+  "bindings": {
+    "caseMaterial": [
+      "MAT_CASE_ACTIVE"
+    ],
+    "keycapMaterials": [
+      "MAT_KEYCAP_ALPHA",
+      "MAT_KEYCAP_MODIFIER",
+      "MAT_KEYCAP_ACCENT",
+      "MAT_KEYCAP_LEGEND"
+    ],
+    "switchMaterial": [
+      "MAT_SWITCH_STEM"
+    ],
+    "rgbNodes": [
+      "GROUP_RGB",
+      "RGB_PER_KEY",
+      "RGB_UNDERGLOW"
+    ],
+    "rgbMaterials": [
+      "MAT_RGB_EMISSIVE",
+      "MAT_RGB_CYAN",
+      "MAT_RGB_ROSE"
+    ],
+    "connectionNode": "OPTION_CABLE",
+    "knobNode": "OPTION_KNOB",
+    "displayNode": "OPTION_DISPLAY",
+    "volumeKnob": "VOLUME_KNOB_ROOT",
+    "displayScreen": "MINI_DISPLAY_SCREEN",
+    "keyPrefix": "KEY_"
+  },
+  "typing": {
+    "travelMM": 3.4,
+    "downMS": 45,
+    "upMS": 95,
+    "physicalCodes": {
+      "60": [
+        "Escape",
+        "Digit1",
+        "Digit2",
+        "Digit3",
+        "Digit4",
+        "Digit5",
+        "Digit6",
+        "Digit7",
+        "Digit8",
+        "Digit9",
+        "Digit0",
+        "Minus",
+        "Equal",
+        "Backspace",
+        "Tab",
+        "KeyQ",
+        "KeyW",
+        "KeyE",
+        "KeyR",
+        "KeyT",
+        "KeyY",
+        "KeyU",
+        "KeyI",
+        "KeyO",
+        "KeyP",
+        "BracketLeft",
+        "BracketRight",
+        "Backslash",
+        "CapsLock",
+        "KeyA",
+        "KeyS",
+        "KeyD",
+        "KeyF",
+        "KeyG",
+        "KeyH",
+        "KeyJ",
+        "KeyK",
+        "KeyL",
+        "Semicolon",
+        "Quote",
+        "Enter",
+        "ShiftLeft",
+        "KeyZ",
+        "KeyX",
+        "KeyC",
+        "KeyV",
+        "KeyB",
+        "KeyN",
+        "KeyM",
+        "Comma",
+        "Period",
+        "Slash",
+        "ShiftRight",
+        "ControlLeft",
+        "MetaLeft",
+        "AltLeft",
+        "Space",
+        "AltRight",
+        "MetaRight",
+        "ContextMenu",
+        "ControlRight"
+      ],
+      "75": [
+        "Backquote",
+        "Digit1",
+        "Digit2",
+        "Digit3",
+        "Digit4",
+        "Digit5",
+        "Digit6",
+        "Digit7",
+        "Digit8",
+        "Digit9",
+        "Digit0",
+        "Minus",
+        "Equal",
+        "Backspace",
+        "Tab",
+        "KeyQ",
+        "KeyW",
+        "KeyE",
+        "KeyR",
+        "KeyT",
+        "KeyY",
+        "KeyU",
+        "KeyI",
+        "KeyO",
+        "KeyP",
+        "BracketLeft",
+        "BracketRight",
+        "Backslash",
+        "CapsLock",
+        "KeyA",
+        "KeyS",
+        "KeyD",
+        "KeyF",
+        "KeyG",
+        "KeyH",
+        "KeyJ",
+        "KeyK",
+        "KeyL",
+        "Semicolon",
+        "Quote",
+        "Enter",
+        "ShiftLeft",
+        "KeyZ",
+        "KeyX",
+        "KeyC",
+        "KeyV",
+        "KeyB",
+        "KeyN",
+        "KeyM",
+        "Comma",
+        "Period",
+        "Slash",
+        "ShiftRight",
+        "ControlLeft",
+        "MetaLeft",
+        "AltLeft",
+        "Space",
+        "AltRight",
+        "Fn",
+        "ControlRight",
+        "ArrowLeft",
+        "ArrowDown",
+        "ArrowRight",
+        "ArrowUp",
+        "Delete",
+        "Home",
+        "PageUp",
+        "End",
+        "Escape",
+        "F1",
+        "F2",
+        "F3",
+        "F4",
+        "F5",
+        "F6",
+        "F7",
+        "F8",
+        "F9",
+        "F10",
+        "F11",
+        "F12"
+      ],
+      "100": [
+        "Backquote",
+        "Digit1",
+        "Digit2",
+        "Digit3",
+        "Digit4",
+        "Digit5",
+        "Digit6",
+        "Digit7",
+        "Digit8",
+        "Digit9",
+        "Digit0",
+        "Minus",
+        "Equal",
+        "Backspace",
+        "Tab",
+        "KeyQ",
+        "KeyW",
+        "KeyE",
+        "KeyR",
+        "KeyT",
+        "KeyY",
+        "KeyU",
+        "KeyI",
+        "KeyO",
+        "KeyP",
+        "BracketLeft",
+        "BracketRight",
+        "Backslash",
+        "CapsLock",
+        "KeyA",
+        "KeyS",
+        "KeyD",
+        "KeyF",
+        "KeyG",
+        "KeyH",
+        "KeyJ",
+        "KeyK",
+        "KeyL",
+        "Semicolon",
+        "Quote",
+        "Enter",
+        "ShiftLeft",
+        "KeyZ",
+        "KeyX",
+        "KeyC",
+        "KeyV",
+        "KeyB",
+        "KeyN",
+        "KeyM",
+        "Comma",
+        "Period",
+        "Slash",
+        "ShiftRight",
+        "ControlLeft",
+        "MetaLeft",
+        "AltLeft",
+        "Space",
+        "AltRight",
+        "MetaRight",
+        "ContextMenu",
+        "ControlRight",
+        "Escape",
+        "F1",
+        "F2",
+        "F3",
+        "F4",
+        "F5",
+        "F6",
+        "F7",
+        "F8",
+        "F9",
+        "F10",
+        "F11",
+        "F12",
+        "PrintScreen",
+        "ScrollLock",
+        "Pause",
+        "Insert",
+        "Home",
+        "PageUp",
+        "Delete",
+        "End",
+        "PageDown",
+        "ArrowUp",
+        "ArrowLeft",
+        "ArrowDown",
+        "ArrowRight",
+        "NumLock",
+        "NumpadDivide",
+        "NumpadMultiply",
+        "NumpadSubtract",
+        "Numpad7",
+        "Numpad8",
+        "Numpad9",
+        "NumpadAdd",
+        "Numpad4",
+        "Numpad5",
+        "Numpad6",
+        "Numpad1",
+        "Numpad2",
+        "Numpad3",
+        "NumpadEnter",
+        "Numpad0",
+        "NumpadDecimal"
+      ]
+    }
+  },
+  "soundProfiles": {
+    "kind": "original-synthesis",
+    "description": "Synthesized approximations, not real keyboard recordings or acoustic measurements.",
+    "variations": 3,
+    "sampleRate": 48000,
+    "switches": {
+      "switch-red": {
+        "bodyHz": 175,
+        "noise": 0.18,
+        "click": 0.02,
+        "decay": 0.04
+      },
+      "switch-brown": {
+        "bodyHz": 225,
+        "noise": 0.29,
+        "click": 0.15,
+        "decay": 0.044
+      },
+      "switch-blue": {
+        "bodyHz": 270,
+        "noise": 0.25,
+        "click": 0.65,
+        "decay": 0.035
+      }
+    },
+    "keycaps": {
+      "thick-pbt": {
+        "pitch": 0.8,
+        "brightness": 0.55,
+        "resonance": 0.16,
+        "decay": 1.15
+      },
+      "thin-abs": {
+        "pitch": 1.18,
+        "brightness": 1.15,
+        "resonance": 0.08,
+        "decay": 0.8
+      },
+      "polycarbonate": {
+        "pitch": 1.4,
+        "brightness": 0.9,
+        "resonance": 0.35,
+        "decay": 1.35
+      }
+    },
+    "sampleOverrides": {},
+    "sampleOverrideFormat": "Optional key switch-red+thick-pbt maps to three original/licensed sample URLs relative to viewer/. Failed sample loads retain synthesis.",
+    "master": {
+      "maxVoices": 24,
+      "initialVolume": 0.45,
+      "peakPerVoice": 0.07,
+      "limiterCeiling": 0.92
+    }
+  },
+  "pricingNote": "All adjustments are placeholders, not quotes.",
+  "audioNote": "Original procedural synthesis approximations, not recordings. Optional licensed sample replacement is supported."
+}

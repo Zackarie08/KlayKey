@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 2,
+  "layoutAssets": {
+    "60": "keyboard_60.glb",
+    "75": "keyboard_75.glb",
+    "100": "keyboard_100.glb"
+  },
+  "caseLayoutMatch": {
+    "required": true,
+    "reason": "CASE_LAYOUT_MISMATCH",
+    "message": "Case geometry must match the selected layout."
+  },
+  "themeCoverage": {
+    "requireAllWidths": true,
+    "requireAllHeights": true,
+    "reason": "MISSING_KEY_SIZE",
+    "message": "This theme does not support every key size in this layout."
+  },
+  "switchMount": {
+    "allowed": [
+      "MX"
+    ],
+    "reason": "SWITCH_MOUNT",
+    "message": "Only MX-style switches are supported."
+  },
+  "accessories": {
+    "none": {
+      "layouts": [
+        "60",
+        "75",
+        "100"
+      ]
+    },
+    "knob": {
+      "layouts": [
+        "60",
+        "75",
+        "100"
+      ],
+      "node": "OPTION_KNOB"
+    },
+    "display": {
+      "layouts": [
+        "60",
+        "75",
+        "100"
+      ],
+      "node": "OPTION_DISPLAY"
+    }
+  },
+  "mutuallyExclusive": [
+    [
+      "knob",
+      "display"
+    ]
+  ],
+  "connectionVisibility": {
+    "wired": true,
+    "wireless": false,
+    "tri-mode": false
+  },
+  "rgb": {
+    "requires": "rgbCapable",
+    "reason": "RGB_UNSUPPORTED",
+    "message": "RGB requires an RGB-capable PCB and case."
+  },
+  "layoutChange": {
+    "preserveCompatible": true,
+    "accessoryFallback": "none",
+    "invalidSelection": "firstCompatible"
+  },
+  "controlModules": {
+    "options": [
+      "none",
+      "volume-knob",
+      "mini-display"
+    ],
+    "supportedLayouts": [
+      "60",
+      "75",
+      "100"
+    ],
+    "mutuallyExclusive": true
+  }
+}

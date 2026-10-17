@@ -1,0 +1,32 @@
+{
+  "triangles": 225663,
+  "materials": 18,
+  "drawCallsAllOptions": 275,
+  "glbBytes": 11256160,
+  "glbMiB": 10.735,
+  "textures": [
+    {
+      "name": "SURFACE_MICRO_NORMAL",
+      "dimensions": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "SURFACE_MICRO_ROUGHNESS",
+      "dimensions": [
+        256,
+        256
+      ]
+    }
+  ],
+  "keyCount": 81,
+  "layoutOverlapCheck": "passed",
+  "keycapContainment": "passed",
+  "requiredNames": "passed",
+  "appliedScale": "passed",
+  "keyNodeMapping": "passed",
+  "controlBayClearance": "passed",
+  "travelPlateClearanceMM": 2.2,
+  "blendReopened": "passed"
+}

@@ -1,0 +1,32 @@
+{
+  "name": "klaykeys-store",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server/server.js",
+    "start": "node server/server.js",
+    "db:migrate": "node server/database/setup.js migrate",
+    "db:seed": "node server/database/setup.js seed",
+    "db:reset": "node server/database/setup.js reset",
+    "db:local": "node scripts/local-mysql.js",
+    "test": "node --test tests/*.test.js",
+    "test:assets": "npm --prefix keyboard-3d test",
+    "db:setup": "node server/database/setup.js setup",
+    "lint": "node scripts/check-project.js lint",
+    "check:secrets": "node scripts/check-project.js secrets",
+    "check:assets": "node scripts/check-project.js assets"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "express-session": "^1.18.2",
+    "helmet": "^8.1.0",
+    "mysql2": "^3.15.3"
+  },
+  "devDependencies": {
+    "sharp": "^0.35.5"
+  }
+}

@@ -1,0 +1,16 @@
+import fs from 'node:fs/promises';
+import {root} from '../../config.js';
+export const categories=[['prebuilt','Prebuilt keyboards'],['case','Cases & chassis'],['keycaps','Keycap sets'],['switch','Switches'],['accessory','Accessories']];
+export async function catalog(){
+ const m=JSON.parse(await fs.readFile(root+'/keyboard-3d/exports/keyboard_manifest.json','utf8'));const products=[];
+ const add=(slug,name,category,price,extra={})=>products.push({slug,name,category,price,stock:35,description:`${name} is part of the original modular modular collection. Designed around our shared ANSI MX platform, with clear component compatibility and a considered everyday typing experience. Demo catalog pricing; no real purchase or shipment is made.`,short:'Original modular modular collection',images:[`/assets/images/${category}.svg`],compatibility:{layouts:['60','75','100'],mount:'MX',rgb:true,connections:['wired','wireless','tri-mode'],family:'klay-modular'},...extra});
+ for(const [i,layout] of ['60','75','100'].entries())for(const variant of [0,1])add(`form-${layout}-${variant?'tactile':'linear'}`,`Form ${layout} / ${variant?'Tactile':'Linear'}`,'prebuilt',499000+i*90000+variant*30000,{layout,switch_type:variant?'tactile':'linear',connection_type:variant?'tri-mode':'wired',material:'Aluminum / PBT',short:`${layout}% ANSI · ${variant?'Brown tactile · Tri-mode':'Red linear · Wired'}`,featured:variant===0,images:[`/assets/images/keyboard_${layout}.webp`,`/assets/images/keyboard_${layout}.webp`]});
+ for(const [i,l] of m.layouts.entries())add(`chassis-${l.id}`,`Form ${l.id} chassis kit`,'case',220000+i*45000,{layout:l.id,material:'Aluminum',short:'Case, plate, PCB, gasket and stabilizers',option_field:'layout',option_value:l.id,compatibility:{layouts:[l.id],mount:l.switchMount,rgb:l.rgbCapable,connections:m.connectionTypes.map(c=>c.id),family:'klay-modular'}});
+ for(const [i,t] of m.keycapThemes.entries())add(`keycaps-${t.id}`,t.name+' keycap set','keycaps',110000+i*10000,{material:'PBT / ABS / PC options',short:'Full ANSI kit · includes numpad and compact modifiers',option_field:'keycapTheme',option_value:t.id,compatibility:{layouts:m.layouts.filter(l=>l.requiredWidths.every(w=>t.supportedWidths.includes(w))&&l.requiredHeights.every(h=>t.supportedHeights.includes(h))).map(l=>l.id),mount:'MX',widths:t.supportedWidths,heights:t.supportedHeights,rgb:true,connections:['wired','wireless','tri-mode'],family:'klay-modular'}});
+ for(const [i,s] of m.switches.entries())add(s.id,s.name+' switch','switch',1800+i*300,{material:'Polycarbonate / nylon',stock:1500,short:s.description+' Sold per switch.',switch_type:s.type,option_field:'switch',option_value:s.id});
+ add('volume-knob','Precision volume knob','accessory',65000,{short:'Machined knob · every modular layout',material:'Aluminum',option_field:'controlModule',option_value:'volume-knob'});
+ add('mini-display','Mini status display','accessory',120000,{short:'Volume, switch and RGB readout',material:'Glass / aluminum',option_field:'controlModule',option_value:'mini-display'});
+ add('usb-c-cable','Studio USB-C cable','accessory',39000,{short:'1.5 m detachable cable · USB-C',material:'Braided polymer'});
+ add('desk-mat','Orbit desk mat','accessory',79000,{short:'900 × 400 mm · soft woven surface',material:'Fabric / rubber',stock:0});
+ return products;
+}

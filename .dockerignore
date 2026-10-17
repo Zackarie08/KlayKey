@@ -1,0 +1,15 @@
+.git
+**/node_modules
+.env
+.env.*
+.local-mysql
+.deployment
+.railway
+**/*.blend*
+**/__pycache__
+**/*.pyc
+**/*.log
+test-results
+tests
+uploads
+keyboard-3d/exports/baseline_inventory.json
