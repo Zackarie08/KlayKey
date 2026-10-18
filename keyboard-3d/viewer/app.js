@@ -2,16 +2,16 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
-import {normalize} from './configuration.js';
-import {KeyAnimation,TypingController} from './key-animation.js';
+import {normalize} from './configuration.js?v=3';
+import {KeyAnimation,TypingController} from './key-animation.js?v=3';
 import {TypingAudio} from './typing-audio.js';
-import {ControlModule} from './control-module.js';
+import {ControlModule} from './control-module.js?v=3';
 import {runInteractionChecks} from './interaction-checks.js';
 
 export async function mountKeyboard(root,options={}){
 const lifetime=new AbortController();const signal=lifetime.signal;
 const $=id=>root.querySelector('#'+id);
-const manifestURL=new URL('../exports/keyboard_manifest.json',import.meta.url);
+const manifestURL=new URL('../exports/keyboard_manifest.json?v=3',import.meta.url);
 const loader=new GLTFLoader();
 let manifest,state,model,layoutInfo,materials=new Map(),ticket=0,lastReport;
 let animation,typing,audio,hardware,lastFrame=performance.now();
@@ -36,7 +36,7 @@ controls.enableDamping=true;controls.minDistance=.15;controls.maxDistance=1.5;
 controls.maxPolarAngle=Math.PI*.9;controls.zoomToCursor=true;
 controls.addEventListener('change',()=>controls.target.clamp(new THREE.Vector3(-.3,-.1,-.3),new THREE.Vector3(.3,.25,.3)));
 renderer.domElement.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'&&!root.querySelector('.builder-preview')?.classList.contains('interacting'))e.stopImmediatePropagation();},{capture:true,signal});
-const resize=()=>{const el=$('viewport');if(!el.clientWidth||!el.clientHeight)return;renderer.setSize(el.clientWidth,el.clientHeight);camera.aspect=el.clientWidth/el.clientHeight;camera.updateProjectionMatrix();resetCamera();};
+const resize=()=>{const el=$('viewport');if(!el||!el.clientWidth||!el.clientHeight)return;renderer.setSize(el.clientWidth,el.clientHeight);camera.aspect=el.clientWidth/el.clientHeight;camera.updateProjectionMatrix();resetCamera();};
 const observer=new ResizeObserver(resize);observer.observe($('viewport'));resize();
 renderer.setAnimationLoop(now=>{const dt=Math.min(.05,(now-lastFrame)/1000);lastFrame=now;animation?.update(now);hardware?.update(dt);controls.update();renderer.render(scene,camera);});
 function resetCamera(){
