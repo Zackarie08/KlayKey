@@ -6,7 +6,7 @@ import {normalize} from './configuration.js?v=3';
 import {KeyAnimation,TypingController} from './key-animation.js?v=3';
 import {TypingAudio} from './typing-audio.js';
 import {ControlModule} from './control-module.js?v=3';
-import {runInteractionChecks} from './interaction-checks.js';
+import {runInteractionChecks} from './interaction-checks.js?v=3';
 
 export async function mountKeyboard(root,options={}){
 const lifetime=new AbortController();const signal=lifetime.signal;
