@@ -13,7 +13,7 @@ An Express + MySQL mechanical-keyboard shop with a vanilla HTML/CSS/JavaScript f
 - Validated simulated checkout, immutable order confirmation and customer order history.
 - About, contact, FAQ, privacy, terms and a real 404 response.
 
-The original `keyboard-3d` generator, exports, manifests, audio synthesis and validation tooling are retained. The storefront adds a same-origin iframe bridge and embedded layout styles. ANSI 60%, 75% and 100% models, case finishes, keycaps/materials, switch profiles, RGB, connection modes, knob/display modules, orbit controls and physical-key typing remain in the existing viewer.
+The original `keyboard-3d` generator, exports, manifests, audio synthesis and validation tooling are retained. The storefront mounts the reusable Three.js module directly in the builder page, sharing navigation, controls and document scrolling. ANSI 60%, 75% and 100% models, case finishes, keycaps/materials, switch profiles, RGB, connection modes, knob/display modules on 75% and 100%, orbit controls and physical-key typing remain in the existing viewer.
 
 ## Backend and data
 

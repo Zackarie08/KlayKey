@@ -10,14 +10,14 @@ test('Every supported combination normalizes without changing compatible choices
     assert.equal(state.caseVariant,`case-${l.id}`);
   }
 });
-test('Layout changes preserve all modules and compatible settings',()=>{
+test('Compact layout removes the control bay but preserves other selections',()=>{
   const {state,reasons}=normalize(m,{layout:'60',accessory:'display',caseColor:'green',connection:'wired'});
-  assert.equal(state.accessory,'display');assert.equal(state.controlModule,'mini-display');assert.equal(state.caseColor,'green');assert.equal(state.connection,'wired');assert.equal(reasons.length,0);
+  assert.equal(state.accessory,'none');assert.equal(state.controlModule,'none');assert.equal(state.caseColor,'green');assert.equal(state.connection,'wired');assert.equal(reasons[0].code,'CONTROL_REMOVED');
 });
-test('Every module and acoustic material supports every layout',()=>{
+test('Modules follow layout support while acoustic materials remain compatible',()=>{
   for(const layout of m.layouts)for(const module of m.controlModules)for(const cap of m.keycapMaterials){
     const {state,reasons}=normalize(m,{layout:layout.id,controlModule:module.id,keycapMaterial:cap.id,volume:.73,muted:true});
-    assert.equal(state.controlModule,module.id);assert.equal(state.keycapMaterial,cap.id);assert.equal(state.volume,.73);assert.equal(state.muted,true);assert.equal(reasons.length,0);
+    assert.equal(state.controlModule,layout.id==='60'?'none':module.id);assert.equal(state.keycapMaterial,cap.id);assert.equal(state.volume,.73);assert.equal(state.muted,true);assert.equal(reasons.length,layout.id==='60'&&module.id!=='none'?1:0);
   }
 });
 test('Unsupported sizes, mounts and RGB metadata produce compatible fallbacks',()=>{
@@ -36,4 +36,12 @@ test('Saved layout data has no overlapping rectangles and exact key counts',()=>
       const a=l.keys[i];assert.ok(Math.min(a.x+a.width,b.x+b.width)<=Math.max(a.x,b.x)||Math.min(a.y+a.height,b.y+b.height)<=Math.max(a.y,b.y));
     }
   }
+});
+
+test('Compact geometry has no bay; larger layouts retain their controls',()=>{
+ for(const id of ['60','75','100']){
+  const bytes=fs.readFileSync(new URL('../exports/keyboard_'+id+'.glb',import.meta.url));const doc=JSON.parse(bytes.subarray(20,20+bytes.readUInt32LE(12)));const names=doc.nodes.map(n=>n.name);
+  for(const name of ['ACCESSORY_BAY','CONTROL_MODULE','OPTION_KNOB','VOLUME_KNOB_ROOT','OPTION_DISPLAY'])assert.equal(names.includes(name),id!=='60',id+': '+name);
+ }
+ const compact=m.layouts.find(l=>l.id==='60');assert.equal(compact.dimensionsMM.width,300.75);assert.equal(compact.dimensionsMM.depth,110.25);assert.equal(compact.knobSupported,false);assert.equal(compact.displaySupported,false);
 });

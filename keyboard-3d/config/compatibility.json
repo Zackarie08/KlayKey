@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "layoutAssets": {
     "60": "keyboard_60.glb",
     "75": "keyboard_75.glb",
@@ -33,7 +33,6 @@
     },
     "knob": {
       "layouts": [
-        "60",
         "75",
         "100"
       ],
@@ -41,7 +40,6 @@
     },
     "display": {
       "layouts": [
-        "60",
         "75",
         "100"
       ],
@@ -76,7 +74,6 @@
       "mini-display"
     ],
     "supportedLayouts": [
-      "60",
       "75",
       "100"
     ],

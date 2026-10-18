@@ -8,16 +8,16 @@ import {TypingAudio} from './typing-audio.js';
 import {ControlModule} from './control-module.js';
 import {runInteractionChecks} from './interaction-checks.js';
 
-const $=id=>document.getElementById(id);
+export async function mountKeyboard(root,options={}){
+const lifetime=new AbortController();const signal=lifetime.signal;
+const $=id=>root.querySelector('#'+id);
 const manifestURL=new URL('../exports/keyboard_manifest.json',import.meta.url);
 const loader=new GLTFLoader();
 let manifest,state,model,layoutInfo,materials=new Map(),ticket=0,lastReport;
 let animation,typing,audio,hardware,lastFrame=performance.now();
 const runtimeErrors=[];
-window.addEventListener('error',e=>runtimeErrors.push(e.message));
-window.addEventListener('unhandledrejection',e=>runtimeErrors.push(String(e.reason)));
-const originalConsoleError=console.error.bind(console);
-console.error=(...args)=>{runtimeErrors.push(args.map(String).join(' '));originalConsoleError(...args);};
+window.addEventListener('error',e=>runtimeErrors.push(e.message),{signal});
+window.addEventListener('unhandledrejection',e=>runtimeErrors.push(String(e.reason)),{signal});
 const scene=new THREE.Scene();
 const camera=new THREE.PerspectiveCamera(34,1,.005,8);
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
@@ -35,10 +35,27 @@ const controls=new OrbitControls(camera,renderer.domElement);
 controls.enableDamping=true;controls.minDistance=.15;controls.maxDistance=1.5;
 controls.maxPolarAngle=Math.PI*.9;controls.zoomToCursor=true;
 controls.addEventListener('change',()=>controls.target.clamp(new THREE.Vector3(-.3,-.1,-.3),new THREE.Vector3(.3,.25,.3)));
-const resize=()=>{const el=$('viewport');renderer.setSize(el.clientWidth,el.clientHeight);camera.aspect=el.clientWidth/el.clientHeight;camera.updateProjectionMatrix();resetCamera();};
-new ResizeObserver(resize).observe($('viewport'));resize();
+renderer.domElement.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'&&!root.querySelector('.builder-preview')?.classList.contains('interacting'))e.stopImmediatePropagation();},{capture:true,signal});
+const resize=()=>{const el=$('viewport');if(!el.clientWidth||!el.clientHeight)return;renderer.setSize(el.clientWidth,el.clientHeight);camera.aspect=el.clientWidth/el.clientHeight;camera.updateProjectionMatrix();resetCamera();};
+const observer=new ResizeObserver(resize);observer.observe($('viewport'));resize();
 renderer.setAnimationLoop(now=>{const dt=Math.min(.05,(now-lastFrame)/1000);lastFrame=now;animation?.update(now);hardware?.update(dt);controls.update();renderer.render(scene,camera);});
-function resetCamera(){if(!layoutInfo)return;const d=layoutInfo.camera.distance*Math.max(1,1.4/camera.aspect)*(state.connection==='wired'?1.15:1);controls.target.fromArray(layoutInfo.camera.target);camera.position.copy(controls.target).add(new THREE.Vector3(.65,.85,1).normalize().multiplyScalar(d));controls.update();}
+function resetCamera(){
+ if(!model)return;
+ model.updateMatrixWorld(true);
+ const box=new THREE.Box3().setFromObject(model.getObjectByName('GROUP_CASE'));
+ if(state.connection==='wired')box.expandByObject(model.getObjectByName('OPTION_CABLE'));
+ const center=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3());
+ const direction=new THREE.Vector3(.35,.9,1).normalize();
+ const right=new THREE.Vector3().crossVectors(new THREE.Vector3(0,1,0),direction).normalize();
+ const up=new THREE.Vector3().crossVectors(direction,right).normalize();
+ const tan=Math.tan(THREE.MathUtils.degToRad(camera.fov/2));let distance=0;
+ for(const x of [-.5,.5])for(const y of [-.5,.5])for(const z of [-.5,.5]){
+   const corner=new THREE.Vector3(x*size.x,y*size.y,z*size.z);
+   distance=Math.max(distance,Math.abs(corner.dot(right))/(tan*camera.aspect)+corner.dot(direction),Math.abs(corner.dot(up))/tan+corner.dot(direction));
+ }
+ distance*=1.22;controls.target.copy(center);camera.position.copy(center).addScaledVector(direction,distance);
+ controls.minDistance=distance*.65;controls.maxDistance=distance*2.5;controls.update();
+}
 $('reset-camera').addEventListener('click',resetCamera);
 function dispose(root){const geometries=new Set(),mats=new Set(),textures=new Set();root.traverse(o=>{if(o.isMesh){geometries.add(o.geometry);(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>mats.add(m));}});geometries.forEach(g=>g.dispose());mats.forEach(m=>{for(const value of Object.values(m))if(value?.isTexture)textures.add(value);m.dispose();});textures.forEach(t=>{t.dispose();t.source?.data?.close?.();});}
 function select(id,items){$(id).replaceChildren(...items.map(item=>new Option(item.name,item.id)));}
@@ -48,7 +65,10 @@ function syncControls(reasons=[]){
   $('rgbColor').disabled=state.rgbMode!=='static';
   $('rgbIntensity').disabled=state.rgbMode==='off';
   $('compatibility').textContent=reasons.map(r=>r.message).join(' ')||
-    'All layouts support the same modules. Knob and display share one bay.';
+    (state.layout==='60'?'Compact 60% chassis — no additional control bay.':'Compatible components. Choose a knob, mini display, or neither.');
+  for(const field of ['keycapTheme','switch','controlModule'])for(const option of $(field).options){const p=options.components?.find(p=>p.option_field===field&&p.option_value===option.value);if(p)option.disabled=!p.compatibility.layouts.includes(state.layout)||!p.compatibility.connections.includes(state.connection);}
+  const moduleSelect=$('controlModule');for(const option of moduleSelect.options){const unsupported=state.layout==='60'&&option.value!=='none';option.hidden=unsupported;const product=options.components?.find(p=>p.option_field==='controlModule'&&p.option_value===option.value);option.disabled=unsupported||!!product&&(!product.compatibility.layouts.includes(state.layout)||!product.compatibility.connections.includes(state.connection));}
+  moduleSelect.closest('label').hidden=state.layout==='60';
   const sw=manifest.switches.find(s=>s.id===state.switch);$('switch-info').textContent=sw.description;
   const cap=manifest.keycapMaterials.find(c=>c.id===state.keycapMaterial);
   $('sound-profile').textContent=sw.name+' + '+cap.name;$('volume-value').textContent=Math.round(state.volume*100)+'%';
@@ -75,13 +95,13 @@ function apply(){
   model.userData.configuration={...state};
   syncControls();renderer.render(scene,camera);
   $('status').textContent=`${layoutInfo.keyCount} keys · ${renderer.info.render.triangles.toLocaleString()} triangles · ${renderer.info.render.calls} draw calls`;
-  if(window.parent!==window)window.parent.postMessage({type:'klay-state',configuration:{...state}},location.origin);
+
 }
 async function loadLayout(id){
   const request=++ticket;const next=manifest.layouts.find(l=>l.id===id);
   $('loading').hidden=false;$('loading').textContent=`Loading ${next.name}…`;
   try{
-    const gltf=await loader.loadAsync(new URL(next.glb,manifestURL).href);
+    const gltf=await loader.loadAsync(new URL(next.glb+'?v='+manifest.schemaVersion,manifestURL).href);
     if(request!==ticket){dispose(gltf.scene);return;}
     if(model){typing?.bind(null);scene.remove(model);dispose(model);}
     model=gltf.scene;layoutInfo=next;materials=new Map();
@@ -93,19 +113,19 @@ async function loadLayout(id){
       const list=Array.isArray(o.material)?o.material:[o.material];list.forEach(m=>materials.set(m.name,m));o.frustumCulled=false;
     }});replacements.forEach((_,old)=>old.dispose());
     scene.add(model);animation=new KeyAnimation(model,manifest.typing);typing.bind(animation);hardware.bind(model);
-    resetCamera();apply();$('loading').hidden=true;
+    apply();resetCamera();$('loading').hidden=true;
     $('model-name').textContent=`${next.name} · ${next.dimensionsMM.width.toFixed(0)} mm`;
-  }catch(error){if(request!==ticket)return;$('loading').hidden=false;$('loading').textContent=`Could not load ${next.name}. Run the Blender generator and check the local server. ${error.message}`;throw error;}
+  }catch(error){if(request!==ticket)return;$('loading').hidden=false;$('loading').textContent=`Could not load ${next.name}. Please reload the page or try again later. ${error.message}`;throw error;}
 }
 async function configure(patch){
   if(patch.accessory!==undefined&&patch.controlModule===undefined)patch={...patch,controlModule:{none:'none',knob:'volume-knob',display:'mini-display'}[patch.accessory]||'none'};
   const previous=state?.layout;const result=normalize(manifest,{...state,...patch});state=result.state;
   if(previous!==state.layout||!model)await loadLayout(state.layout);else apply();
-  syncControls(result.reasons);return result;
+  syncControls(result.reasons);options.onChange?.({...state});if(result.reasons.length)options.onNotice?.(result.reasons.map(r=>r.message).join(' '));return result;
 }
 $('controls').addEventListener('input',async e=>{if(!e.target.id)return;try{await configure({[e.target.id]:e.target.type==='checkbox'?e.target.checked:e.target.value});}catch(error){$('status').textContent=error.message;}});
-$('start-typing').addEventListener('click',async()=>{try{await typing.start();}catch(e){$('typing-status').textContent='Audio could not start: '+e.message;}});
-$('stop-typing').addEventListener('click',()=>typing.stop());
+$('start-typing').addEventListener('click',async()=>{try{if(typing.active)typing.stop();else await typing.start();}catch(e){$('typing-status').textContent='Audio could not start: '+e.message;}});
+$('stop-typing')?.addEventListener('click',()=>typing.stop());
 
 async function runTests(){
   const saved={...state};const checks=[];const metrics=[];
@@ -126,14 +146,14 @@ async function runTests(){
       assert(`${layout.id}: underglow off`,!model.getObjectByName('RGB_UNDERGLOW').visible);
       await configure({underglow:true});assert(`${layout.id}: underglow on`,model.getObjectByName('RGB_UNDERGLOW').visible);
       for(const c of manifest.connectionTypes){await configure({connection:c.id});assert(`${layout.id}: connection ${c.id}`,model.getObjectByName('OPTION_CABLE').visible===(c.id==='wired'));}
-      for(const a of manifest.controlModules){await configure({controlModule:a.id});assert(`${layout.id}: module ${a.id}`,state.controlModule===a.id);assert(`${layout.id}: ${a.id} visibility`,model.getObjectByName('OPTION_KNOB').visible===(a.id==='volume-knob')&&model.getObjectByName('OPTION_DISPLAY').visible===(a.id==='mini-display'));}
+      for(const a of manifest.controlModules.filter(a=>layout.id!=='60'||a.id==='none')){await configure({controlModule:a.id});assert(`${layout.id}: module ${a.id}`,state.controlModule===a.id);assert(`${layout.id}: ${a.id} visibility`,!!model.getObjectByName('OPTION_KNOB')?.visible===(a.id==='volume-knob')&&!!model.getObjectByName('OPTION_DISPLAY')?.visible===(a.id==='mini-display'));}
       for(const cap of manifest.keycapMaterials){await configure({keycapMaterial:cap.id});assert(`${layout.id}: physical material ${cap.id}`,materials.get('MAT_KEYCAP_ALPHA').roughness===cap.roughness&&materials.get('MAT_KEYCAP_ALPHA').transmission===cap.transmission);}
       await runInteractionChecks({assert,animation,typing,audio,hardware,canvas:renderer.domElement,configure,state:()=>state,layout:layout.id});
       await configure({...manifest.defaults,layout:layout.id});renderer.render(scene,camera);
       metrics.push({layout:layout.id,triangles:renderer.info.render.triangles,drawCalls:renderer.info.render.calls,materials:materials.size});
     }
     await configure({layout:'75',accessory:'display',caseColor:'green'});await configure({layout:'60'});
-    assert('Layout transition preserves control module',state.accessory==='display');
+    assert('Compact layout removes incompatible control module',state.accessory==='none');
     assert('Layout transition preserves compatible case color',state.caseColor==='green');
     assert('Renderer has non-empty drawing buffer',renderer.domElement.width>0&&renderer.domElement.height>0);
     assert('No runtime/console errors',runtimeErrors.length===0);
@@ -148,17 +168,17 @@ async function runTests(){
   }
   return lastReport;
 }
-$('run-tests').addEventListener('click',runTests);
-$('download-tests').addEventListener('click',()=>{const url=URL.createObjectURL(new Blob([JSON.stringify(lastReport,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='viewer-validation.json';a.click();URL.revokeObjectURL(url);});
+$('run-tests')?.addEventListener('click',runTests);
+$('download-tests')?.addEventListener('click',()=>{const url=URL.createObjectURL(new Blob([JSON.stringify(lastReport,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='viewer-validation.json';a.click();URL.revokeObjectURL(url);});
 try{
   const response=await fetch(manifestURL);if(!response.ok)throw new Error(`Manifest HTTP ${response.status}`);manifest=await response.json();
   audio=new TypingAudio(manifest.soundProfiles);
-  typing=new TypingController(renderer.domElement,audio,()=>state,message=>{$('typing-status').textContent=message;});
-  hardware=new ControlModule(renderer.domElement,camera,controls,()=>model,()=>state,configure);
+  typing=new TypingController(renderer.domElement,audio,()=>state,message=>{$('typing-status').textContent=message;$('start-typing').textContent=typing?.active?'Stop typing test':'Start typing test';$('start-typing').setAttribute('aria-pressed',String(!!typing?.active));},signal);
+  hardware=new ControlModule(renderer.domElement,camera,controls,()=>model,()=>state,configure,signal);
   for(const [id,key] of Object.entries({layout:'layouts',caseColor:'caseColors',caseFinish:'caseFinishes',keycapTheme:'keycapThemes',keycapMaterial:'keycapMaterials',switch:'switches',rgbMode:'rgbModes',connection:'connectionTypes',controlModule:'controlModules'}))select(id,manifest[key]);
-  await configure(manifest.defaults);
+  await configure(options.initial||manifest.defaults);
   // Public integration API: configuration remains serializable; model assets stay modular.
-  window.keyboardLab={configure,runTests,getState:()=>({...state}),getReport:()=>lastReport};
-  if(window.parent!==window)window.parent.postMessage({type:'klay-ready'},location.origin);
-  if(new URLSearchParams(location.search).has('test'))await runTests();
-}catch(error){$('loading').hidden=false;$('loading').textContent=`Viewer startup failed: ${error.message}. Run npm install, generate the assets, then npm start.`;}
+  if($('run-tests')&&new URLSearchParams(location.search).has('test'))await runTests();
+}catch(error){$('loading').hidden=false;$('loading').textContent='The 3D preview is unavailable. Please reload or enable WebGL in your browser.';options.onError?.(error);}
+return {configure,runTests,getState:()=>({...state}),getReport:()=>lastReport,dispose(){ticket++;lifetime.abort();observer.disconnect();typing?.stop();audio?.context?.close();controls.dispose();renderer.setAnimationLoop(null);if(model)dispose(model);environment.dispose();renderer.dispose();renderer.domElement.remove();}};
+}

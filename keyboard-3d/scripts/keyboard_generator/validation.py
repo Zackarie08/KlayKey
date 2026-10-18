@@ -16,8 +16,11 @@ MATERIALS=['MAT_CASE_ACTIVE','MAT_PLATE','MAT_KEYCAP_ALPHA','MAT_KEYCAP_MODIFIER
 
 def validate_scene(spec):
     validate_layout(spec)
-    for name in REQUIRED + ['CONTROL_MODULE','OPTION_VOLUME_KNOB','VOLUME_KNOB_ROOT','VOLUME_KNOB_BODY','VOLUME_KNOB_INDICATOR','OPTION_MINI_DISPLAY','MINI_DISPLAY_SCREEN','STABILIZER_HOUSINGS','STABILIZER_WIRES','PCB_LAYER']:
+    control_names=['CONTROL_MODULE','OPTION_VOLUME_KNOB','VOLUME_KNOB_ROOT','VOLUME_KNOB_BODY','VOLUME_KNOB_INDICATOR','OPTION_MINI_DISPLAY','MINI_DISPLAY_SCREEN']
+    for name in REQUIRED + ['STABILIZER_HOUSINGS','STABILIZER_WIRES','PCB_LAYER'] + (control_names if spec['bay'] else []):
         assert bpy.data.objects.get(name), f'Missing node {name}'
+    if not spec['bay']:
+        assert not any(bpy.data.objects.get(n) for n in control_names+['ACCESSORY_BAY','OPTION_KNOB','OPTION_DISPLAY']), 'Compact case contains a control bay'
     for name in MATERIALS: assert bpy.data.materials.get(name), f'Missing material {name}'
     vertices=[]
     for obj in bpy.context.scene.objects:

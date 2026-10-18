@@ -54,6 +54,7 @@ def stabilizers(k,x,y,mats,parent):
 
 
 def controls(spec,mats,root,case):
+    if spec['bay'] is None: return None
     bay=spec['bay']; x=(bay['x']-spec['widthU']/2)*19.05; y=(spec['heightU']/2-bay['y'])*19.05
     g.box('ACCESSORY_BAY',(x,y,15.5),(44,19,1.2),1.2,mats['MAT_PLATE'],case,.2)
     group=g.empty('CONTROL_MODULE',root)

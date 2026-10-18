@@ -37,7 +37,7 @@ export async function runInteractionChecks({assert,animation,typing,audio,hardwa
   typing.active=true;event('keydown','KeyA');canvas.blur();
   assert(label('focus loss releases keys'),!typing.active&&!animation.keys.get('KeyA').isPressed&&animation.keys.get('KeyA').currentAmount===0);
   await configure({volume:.73,muted:false});hardware.update(1);
-  assert(label('slider rotates knob'),Math.abs(hardware.angle-(-135+270*.73)*Math.PI/180)<.001);
+  if(layout!=='60')assert(label('slider rotates knob'),Math.abs(hardware.angle-(-135+270*.73)*Math.PI/180)<.001);
   hardware.toggleMute();assert(label('mute preserves volume'),state().muted&&state().volume===.73);
   hardware.toggleMute();assert(label('unmute restores volume'),!state().muted&&state().volume===.73);
   assert(label('orbit released'),hardware.orbit.enabled);

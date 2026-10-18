@@ -75,7 +75,8 @@ export function isBrowserShortcut(event){return event.ctrlKey||event.metaKey||ev
 
 /** Installed exactly once; bind() replaces the current key map, never listeners. */
 export class TypingController {
-  constructor(canvas,audio,getState,onStatus){
+  constructor(canvas,audio,getState,onStatus,signal){
+    const listen=(target,type,fn,options={})=>target.addEventListener(type,fn,{...options,signal});
     Object.assign(this,{canvas,audio,getState,onStatus});this.active=false;this.map=null;this.soundCount=0;
     canvas.tabIndex=0;canvas.setAttribute('aria-label','Keyboard typing test canvas');
     this.down=e=>{
@@ -87,9 +88,9 @@ export class TypingController {
       else if(!this.map?.keys.has(e.code))this.onStatus(e.code+' is unavailable on this layout.');
     };
     this.up=e=>this.map?.release(e.code);
-    canvas.addEventListener('keydown',this.down);window.addEventListener('keyup',this.up);
-    window.addEventListener('blur',()=>this.stop());canvas.addEventListener('blur',()=>this.stop());
-    document.addEventListener('visibilitychange',()=>{if(document.hidden)this.stop();});
+    listen(canvas,'keydown',this.down);listen(window,'keyup',this.up);
+    listen(window,'blur',()=>this.stop());listen(canvas,'blur',e=>{if(e.relatedTarget?.id!=='start-typing')this.stop();});
+    listen(document,'visibilitychange',()=>{if(document.hidden)this.stop();});
   }
   bind(map){this.map?.reset();this.map=map;}
   async start(){await this.audio.unlock();this.active=true;this.canvas.focus();this.onStatus('Typing test active — press any key. Escape exits.');}

@@ -71,10 +71,7 @@ def layout(size):
         keys[0]['legend'] = '`'
         keys[0]['group'] = 'alpha'
     # Dedicated bays preserve every existing physical key.
-    if size == '60':
-        width = 17.6
-        bay = dict(x=16.3,y=.6,width=2.3,height=1.05)
-    elif size == '100':
+    if size == '100':
         bay = dict(x=21.5,y=.5,width=2.3,height=1.0)
     for k in keys:
         k['code'] = event_code(k,size)
@@ -95,6 +92,7 @@ def validate_layout(spec):
     assert len({k['code'] for k in keys}) == len(keys), 'Duplicate physical key codes'
     bay=spec['bay']
     for k in keys:
+        if bay is None: break
         assert not (min(k['x']+k['width'],bay['x']+bay['width']/2)>max(k['x'],bay['x']-bay['width']/2) and
                     min(k['y']+k['height'],bay['y']+bay['height']/2)>max(k['y'],bay['y']-bay['height']/2)), 'Control bay overlaps key'
     for i, a in enumerate(keys):

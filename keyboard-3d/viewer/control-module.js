@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 
 export class ControlModule {
-  constructor(canvas,camera,orbit,getModel,getState,configure){
+  constructor(canvas,camera,orbit,getModel,getState,configure,signal){
+    const listen=(target,type,fn,options={})=>target.addEventListener(type,fn,{...options,signal});
     Object.assign(this,{canvas,camera,orbit,getModel,getState,configure});this.ray=new THREE.Raycaster();this.pointer=new THREE.Vector2();this.angle=0;this.lastNonzero=.45;
     const over=e=>{
       if(this.getState()?.controlModule!=='volume-knob')return false;
@@ -9,17 +10,17 @@ export class ControlModule {
       const rect=canvas.getBoundingClientRect();this.pointer.set((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1);
       this.ray.setFromCamera(this.pointer,camera);return this.ray.intersectObject(knob,true).length>0;
     };
-    canvas.addEventListener('pointermove',e=>{canvas.style.cursor=over(e)?'pointer':'';});
-    canvas.addEventListener('wheel',e=>{if(!over(e))return;e.preventDefault();e.stopImmediatePropagation();this.configure({volume:Math.max(0,Math.min(1,this.getState().volume+(e.deltaY<0?.04:-.04))),muted:false});},{capture:true,passive:false});
-    canvas.addEventListener('pointerdown',e=>{if(e.button!==0||!over(e))return;e.preventDefault();e.stopImmediatePropagation();this.down={x:e.clientX,y:e.clientY};orbit.enabled=false;},{capture:true});
-    window.addEventListener('pointerup',e=>{if(!this.down)return;e.stopImmediatePropagation();const delta=Math.hypot(e.clientX-this.down.x,e.clientY-this.down.y);this.down=null;orbit.enabled=true;if(delta<5&&over(e))this.toggleMute();},{capture:true});
-    window.addEventListener('pointercancel',()=>this.release());window.addEventListener('blur',()=>this.release());
+    listen(canvas,'pointermove',e=>{canvas.style.cursor=over(e)?'pointer':'';});
+    listen(canvas,'wheel',e=>{if(!over(e))return;e.preventDefault();e.stopImmediatePropagation();this.configure({volume:Math.max(0,Math.min(1,this.getState().volume+(e.deltaY<0?.04:-.04))),muted:false});},{capture:true,passive:false});
+    listen(canvas,'pointerdown',e=>{if(e.button!==0||!over(e))return;e.preventDefault();e.stopImmediatePropagation();this.down={x:e.clientX,y:e.clientY};orbit.enabled=false;},{capture:true});
+    listen(window,'pointerup',e=>{if(!this.down)return;e.stopImmediatePropagation();const delta=Math.hypot(e.clientX-this.down.x,e.clientY-this.down.y);this.down=null;orbit.enabled=true;if(delta<5&&over(e))this.toggleMute();},{capture:true});
+    listen(window,'pointercancel',()=>this.release());listen(window,'blur',()=>this.release());
   }
   release(){this.down=null;this.orbit.enabled=true;}
   toggleMute(){const s=this.getState();this.configure({muted:!s.muted,volume:s.muted&&s.volume===0?this.lastNonzero:s.volume});}
   bind(root){
     this.release();this.knob=root.getObjectByName('VOLUME_KNOB_ROOT');this.baseQuaternion=this.knob?.quaternion.clone();
-    this.screen=root.getObjectByName('MINI_DISPLAY_SCREEN');this.display=document.createElement('canvas');this.display.width=512;this.display.height=180;
+    this.texture?.dispose();this.screen=root.getObjectByName('MINI_DISPLAY_SCREEN');if(!this.screen)return;this.display=document.createElement('canvas');this.display.width=512;this.display.height=180;
     this.texture=new THREE.CanvasTexture(this.display);this.texture.colorSpace=THREE.SRGBColorSpace;
     const material=this.screen.material;material.map=this.texture;material.emissiveMap=this.texture;
     material.emissive.set('#ffffff');material.color.set('#ffffff');material.emissiveIntensity=.65;material.needsUpdate=true;

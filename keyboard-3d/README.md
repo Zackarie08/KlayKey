@@ -1,6 +1,6 @@
 # KlayKey modular keyboard asset lab — v2
 
-The existing Blender generator, configuration files, named materials, manifest and Three.js viewer have been extended in place. One generator produces ANSI 60%, 75% and 100% models with 61, 81 and 104 independently addressable keys. Every layout supports Standard / none, Physical volume knob, and Mini display.
+The existing Blender generator, configuration files, named materials, manifest and Three.js viewer have been extended in place. One generator produces ANSI 60%, 75% and 100% models with 61, 81 and 104 independently addressable keys. The compact 60% has no control bay. The 75% and 100% support Standard / none, Physical volume knob, and Mini display.
 
 ## Open the viewer
 
@@ -39,7 +39,7 @@ Models use 19.05 mm key pitch, a 6-degree typing slope, controlled case bevels, 
 
 USB-C has a real wall opening, tongue and contacts. The cable has a connector and strain relief. Underside screw recesses, slots and rubber feet are separate components. Small embedded normal/roughness textures provide surface grain without disguising the geometry.
 
-The 60% keeps its original key arrangement and adds a right-side control bay; its 350 mm case is consequently wider than the compact 325 mm 75%. The full-size case is about 463 mm. These are visual product assets, not manufacturing CAD or mechanically certified designs.
+The 60% keeps its original 61-key arrangement in a 300.75 × 110.25 mm case, with no knob, display, socket or right-side bay. The 75% case remains about 325 mm wide. The full-size case is about 463 mm. These are visual product assets, not manufacturing CAD or mechanically certified designs.
 
 Geometry is authored in millimetres and baked to metres. Blender is Z-up; glTF is Y-up. Mesh scales are identity. Key and knob parents intentionally retain useful local pivot rotations. Do not rescale or rotate the complete loaded GLB again.
 
@@ -63,7 +63,7 @@ The viewer batches visible key geometry by material and applies per-key translat
 
 MAT_CASE_ACTIVE supports case finish/color changes; alpha/modifier/accent key materials support colorways independently of physical material. Thick PBT, thin ABS and polycarbonate change roughness, micro-normal strength and transmission as well as sound. RGB has off/static/three-zone/white modes plus separate seam underglow. Three-zone is a fixed palette, not an animated rainbow. Wireless and tri-mode hide the cable.
 
-Standard glTF does not store option visibility. All mutually exclusive modules are included in each GLB: apply configuration immediately after loading. Generic viewers may initially show both modules. Blender previews save knob-only visibility.
+Standard glTF does not store option visibility. Mutually exclusive modules are included only in the 75% and 100% GLBs: apply configuration immediately after loading. Generic viewers may initially show both modules. Blender previews save knob-only visibility.
 
 ## Typing and audio
 

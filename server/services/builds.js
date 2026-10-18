@@ -9,7 +9,7 @@ const fields=['layout','caseColor','caseFinish','keycapTheme','keycapMaterial','
 export async function quote(input,db=pool){
  requireValue(input&&typeof input==='object'&&!Array.isArray(input),'Choose a keyboard configuration.');
  const clean=Object.fromEntries(fields.filter(k=>input[k]!==undefined).map(k=>[k,input[k]]));
- const normalized=normalize(manifest,clean);requireValue(!normalized.reasons.length,'This build contains an incompatible or unknown selection.');
+ const normalized=normalize(manifest,clean);requireValue(!normalized.reasons.some(r=>r.code!=='CONTROL_REMOVED'),'This build contains an incompatible or unknown selection.');
  const s=normalized.state;
  if(input.caseVariant!==undefined)requireValue(input.caseVariant===s.caseVariant,'The chassis does not match the layout.');
  const products=await rows('SELECT * FROM products WHERE option_field IS NOT NULL AND is_active=1',[],db);
@@ -24,6 +24,8 @@ export async function quote(input,db=pool){
  }
  const lines=components.map(c=>({name:c.name,quantity:c.quantity,amount:c.unitPrice*c.quantity}));
  for(const [name,amount] of [['Keycap material: '+s.keycapMaterial,fees.material[s.keycapMaterial]],['Finish: '+s.caseFinish,fees.finish[s.caseFinish]],['Connection: '+s.connection,fees.connection[s.connection]],['RGB kit',s.rgbMode==='off'?0:fees.rgb],['Assembly & quality check',fees.assembly]])lines.push({name,quantity:1,amount});
- return {name:'Custom Form '+s.layout,configuration:s,components,lines,price_cents:lines.reduce((n,l)=>n+l.amount,0),image:`/assets/images/keyboard_${s.layout}.webp`,compatibilityVersion:manifest.schemaVersion,available:components.every(c=>c.stock>=c.quantity)};
+ return {notices:normalized.reasons.map(r=>r.message),name:'Custom Form '+s.layout,configuration:s,components,lines,price_cents:lines.reduce((n,l)=>n+l.amount,0),image:`/assets/images/keyboard_${s.layout}.webp?v=3`,compatibilityVersion:manifest.schemaVersion,available:components.every(c=>c.stock>=c.quantity)};
 }
-export async function ownedBuild(id,userId,db=pool){const b=(await rows('SELECT * FROM custom_builds WHERE id=? AND user_id=?',[id,userId],db))[0];if(!b)throw new HttpError(404,'Build not found.');return {...b,configuration:json(b.configuration),snapshot:json(b.snapshot)};}
+export async function ownedBuild(id,userId,db=pool){const b=(await rows('SELECT * FROM custom_builds WHERE id=? AND user_id=?',[id,userId],db))[0];if(!b)throw new HttpError(404,'Build not found.');const original=json(b.configuration);const n=normalize(manifest,original);
+ if(n.reasons.some(r=>r.code==='CONTROL_REMOVED')){const q=await quote(original,db);return {...b,configuration:q.configuration,snapshot:q,price_cents:q.price_cents,notices:q.notices,compatibility_version:q.compatibilityVersion};}
+ return {...b,configuration:original,snapshot:json(b.snapshot)};}

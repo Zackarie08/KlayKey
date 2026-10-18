@@ -18,6 +18,10 @@ export function normalize(manifest,input){
   fallback('switch',switches); fallback('rgbMode',manifest.rgbModes);
   fallback('connection',manifest.connectionTypes);fallback('keycapMaterial',manifest.keycapMaterials);
   fallback('controlModule',manifest.controlModules);
+  if((state.controlModule==='volume-knob'&&!layout.knobSupported)||(state.controlModule==='mini-display'&&!layout.displaySupported)){
+    const name=state.controlModule==='volume-knob'?'volume knob':'mini display';
+    state.controlModule='none';reasons.push({code:'CONTROL_REMOVED',message:'The '+name+' was removed because it is not available for the '+state.layout+'% layout.'});
+  }
   state.accessory={'none':'none','volume-knob':'knob','mini-display':'display'}[state.controlModule];
   state.volume=Number.isFinite(Number(state.volume))?Math.max(0,Math.min(1,Number(state.volume))):.45;
   state.muted=!!state.muted;state.soundEnabled=!!state.soundEnabled;

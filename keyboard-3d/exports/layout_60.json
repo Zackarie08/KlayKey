@@ -796,16 +796,11 @@
       "travelMM": 3.4
     }
   ],
-  "widthU": 17.6,
+  "widthU": 15,
   "heightU": 5,
-  "bay": {
-    "x": 16.3,
-    "y": 0.6,
-    "width": 2.3,
-    "height": 1.05
-  },
+  "bay": null,
   "rgbCapable": true,
   "switchMount": "MX",
-  "caseWidthMM": 350.28000000000003,
+  "caseWidthMM": 300.75,
   "caseDepthMM": 110.25
 }

@@ -106,7 +106,7 @@ def write_manifest(folder,specs,options,compatibility):
             requiredHeights=sorted({k['height'] for k in spec['keys']}),
             rgbCapable=True,switchMount='MX',knobSupported=bool(spec['bay']),displaySupported=bool(spec['bay']),
             caseVariant='case-'+spec['id'],priceAdjustment=0))
-    manifest=dict(schemaVersion=2,units='metres',sourceUnits='millimetres',
+    manifest=dict(schemaVersion=3,units='metres',sourceUnits='millimetres',
         sourceAxes='Blender Z up, front -Y',exportAxes='glTF Y up, front +Z',
         typingAngleDegrees=6,layouts=layouts,**options,compatibility=compatibility,
         bindings=dict(caseMaterial=['MAT_CASE_ACTIVE'],
@@ -117,6 +117,6 @@ def write_manifest(folder,specs,options,compatibility):
             volumeKnob='VOLUME_KNOB_ROOT',displayScreen='MINI_DISPLAY_SCREEN',keyPrefix='KEY_'),
         typing=dict(travelMM=3.4,downMS=45,upMS=95,physicalCodes={s['id']:[k['code'] for k in s['keys']] for s in specs}),
         soundProfiles=json.loads((Path(__file__).resolve().parents[2]/'config'/'sound_profiles.json').read_text()),
-        pricingNote='All adjustments are placeholders, not quotes.',
+        pricingNote='The storefront calculates prices from its catalog.',
         audioNote='Original procedural synthesis approximations, not recordings. Optional licensed sample replacement is supported.')
     (folder/'exports'/'keyboard_manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')

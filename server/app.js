@@ -24,7 +24,7 @@ export function createApp(){
  // Public audio modules reuse the exact existing sound engine without loading Three.js.
  for(const name of ['typing-audio.js','sound-synthesis.js'])app.get('/keyboard-3d/viewer/'+name,(req,res)=>res.sendFile(root+'/keyboard-3d/viewer/'+name));
  app.get('/keyboard-3d/config/sound_profiles.json',(req,res)=>res.sendFile(root+'/keyboard-3d/config/sound_profiles.json'));
- app.use('/keyboard-3d',auth,express.static(root+'/keyboard-3d',{dotfiles:'deny',index:false,maxAge:'1h',setHeaders:(res,file)=>{if(file.endsWith('.glb'))res.type('model/gltf-binary');if(file.endsWith('.html'))res.set('Cache-Control','no-store');}}));
+ app.use('/keyboard-3d',auth,express.static(root+'/keyboard-3d',{dotfiles:'deny',index:false,maxAge:'1h',setHeaders:(res,file)=>{if(file.endsWith('.glb'))res.type('model/gltf-binary');if(/\.(html|js|json|css)$/.test(file))res.set('Cache-Control','no-store');}}));
  app.post('/__qa/report',auth,(req,res)=>res.json({message:'Use Save report to download the asset QA report.'}));
  app.get('/health',(req,res)=>res.json({service:config.appName,status:'ok'}));
  app.get(['/builder','/cart','/checkout','/account','/account/builds','/account/orders','/order-confirmation/:number'],(req,res,next)=>{if(!req.session.userId)return res.redirect('/login?returnTo='+encodeURIComponent(safeReturn(req.originalUrl))+'&reason=protected');next();});

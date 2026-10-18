@@ -1,6 +1,6 @@
 import {rows,json} from '../database/connection.js';
 import {HttpError} from '../validators.js';
-export const product=p=>({...p,images:json(p.images),compatibility:json(p.compatibility)});
+export const product=p=>{const compatibility=json(p.compatibility);if(p.option_field==='controlModule')compatibility.layouts=compatibility.layouts.filter(l=>l!=='60');return {...p,images:json(p.images).map(src=>src.replace(/(keyboard_60\.webp)(?:\?.*)?$/, '$1?v=3')),compatibility};};
 export async function listProducts(q={}){
  const where=['is_active=1'],args=[];
  if(q.parts==='1')where.push("category_id<>'prebuilt'");

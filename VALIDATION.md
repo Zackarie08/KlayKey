@@ -1,3 +1,5 @@
+See [UI_REFINEMENT.md](UI_REFINEMENT.md) for the 18 October UI and compact-model release checks.
+
 # Hosted release verification — 17 October 2026
 
 The application and dedicated MySQL service reached Railway terminal SUCCESS. The public HTTPS homepage and both health endpoints returned HTTP 200. Migration 001_store.sql applied and the catalog contained 20 products. Production checks exercised registration, duplicate registration rejection, invalid and valid login, persisted sessions, logout, secure cookies, guest route protection, CSRF rejection, catalog/search, server-calculated pricing, cart updates, saved builds, simulated checkout, inventory changes and order history. A separate customer received HTTP 404 when requesting another customer's saved build or order.

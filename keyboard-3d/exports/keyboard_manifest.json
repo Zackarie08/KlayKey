@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "units": "metres",
   "sourceUnits": "millimetres",
   "sourceAxes": "Blender Z up, front -Y",
@@ -11,7 +11,7 @@
       "name": "ANSI 60%",
       "glb": "keyboard_60.glb",
       "dimensionsMM": {
-        "width": 350.28000000000003,
+        "width": 300.75,
         "depth": 110.25,
         "approximateHeight": 39.6
       },
@@ -21,7 +21,7 @@
           0.018,
           0
         ],
-        "distance": 0.56
+        "distance": 0.481
       },
       "keyCount": 61,
       "requiredWidths": [
@@ -39,8 +39,8 @@
       ],
       "rgbCapable": true,
       "switchMount": "MX",
-      "knobSupported": true,
-      "displaySupported": true,
+      "knobSupported": false,
+      "displaySupported": false,
       "caseVariant": "case-60",
       "priceAdjustment": 0
     },
@@ -450,7 +450,7 @@
     }
   ],
   "compatibility": {
-    "schemaVersion": 2,
+    "schemaVersion": 3,
     "layoutAssets": {
       "60": "keyboard_60.glb",
       "75": "keyboard_75.glb",
@@ -484,7 +484,6 @@
       },
       "knob": {
         "layouts": [
-          "60",
           "75",
           "100"
         ],
@@ -492,7 +491,6 @@
       },
       "display": {
         "layouts": [
-          "60",
           "75",
           "100"
         ],
@@ -527,7 +525,6 @@
         "mini-display"
       ],
       "supportedLayouts": [
-        "60",
         "75",
         "100"
       ],
@@ -877,6 +874,6 @@
       "limiterCeiling": 0.92
     }
   },
-  "pricingNote": "All adjustments are placeholders, not quotes.",
+  "pricingNote": "The storefront calculates prices from its catalog.",
   "audioNote": "Original procedural synthesis approximations, not recordings. Optional licensed sample replacement is supported."
 }

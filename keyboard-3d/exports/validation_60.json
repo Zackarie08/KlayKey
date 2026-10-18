@@ -1,9 +1,9 @@
 {
-  "triangles": 178385,
-  "materials": 18,
-  "drawCallsAllOptions": 215,
-  "glbBytes": 8942028,
-  "glbMiB": 8.528,
+  "triangles": 175467,
+  "materials": 15,
+  "drawCallsAllOptions": 207,
+  "glbBytes": 8712216,
+  "glbMiB": 8.309,
   "textures": [
     {
       "name": "SURFACE_MICRO_NORMAL",
