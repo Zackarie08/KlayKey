@@ -19,3 +19,13 @@ label{font-size:14px;line-height:1.5;gap:var(--space-2)}input,select,textarea{fo
 @media(max-width:560px){.container{width:calc(100% - 32px)}.nav-tools{gap:10px}.nav-tools .account-link{max-width:65px}.nav-shell{gap:8px}.brand{font-size:18px}.section{padding-block:40px}.page-head{padding-block:32px 24px}.panel{padding:24px}.hero{padding-top:32px;gap:16px}.hero-label{font-size:13px;letter-spacing:.06em}.hero h1{font-size:clamp(36px,10vw,48px)}.hero-art{height:280px}.art-spec{font-size:13px;padding:8px;gap:8px;right:0}.category-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.category h3{font-size:17px}.category:last-child{grid-column:1/-1}.category img{height:100px}.stat-strip span{font-size:13px}.stat-strip strong{font-size:25px}.switch-buttons{grid-template-columns:1fr}.switch-buttons button{min-height:56px}.switch-buttons small{display:inline;margin-left:12px}.trust-grid{gap:24px}.account-nav{gap:14px;font-size:14px}.account-nav button{margin-left:0}.builder-heading{flex-direction:column;align-items:start;padding-top:32px;gap:16px}.builder-heading>.text-link{font-size:14px}.builder-progress{margin-bottom:24px}.builder-progress a{font-size:14px}.preview-caption{padding:20px 20px 0}.preview-help{padding:16px 20px}.builder-options fieldset{padding-bottom:24px}.typing-panel{padding:20px}.viewer-toolbar{padding-inline:12px}.viewer-toolbar .button{font-size:13px;padding:10px}.builder-layout{padding-bottom:40px}.footer-bottom{margin-inline:auto}.line.total{font-size:22px}.cart-item-actions{gap:12px}.build-card-actions .button{padding:10px}.hero .button{font-size:14px}.detail-copy h1{font-size:32px}}
 
 .auth-panel h1{font-size:clamp(30px,3vw,38px);line-height:1.2}.auth-story h2{font-size:clamp(40px,4vw,56px)}.builder-progress{scrollbar-width:thin;scrollbar-color:#68567e transparent}.hero-copy{min-width:0}
+
+/* Keep homepage section spacing independent of the shared container padding reset. */
+.container.trust-grid{padding-block:var(--space-6) var(--space-12)}
+.container.closing{padding-block:var(--space-12) var(--space-16);gap:var(--space-8)}
+.closing>div{min-width:0}.closing .button{flex-shrink:0}
+@media(max-width:560px){
+ .container.trust-grid{padding-block:var(--space-4) var(--space-8)}
+ .container.closing{padding-block:var(--space-8) var(--space-10);flex-direction:column;align-items:flex-start;gap:var(--space-6)}
+ .closing .button{width:100%}
+}
