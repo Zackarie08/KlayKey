@@ -1,4 +1,6 @@
-import {Router} from 'express';
+import {Router,raw} from 'express';
+import rateLimit from 'express-rate-limit';
+import {saveProductImage} from '../services/product-images.js';
 import {rows,json,transaction} from '../database/connection.js';
 import {auth} from '../middleware/security.js';
 import {HttpError,requireValue,text} from '../validators.js';
@@ -8,6 +10,7 @@ export const admin=Router();
 export function adminOnly(req,res,next){if(!['admin','super_admin'].includes(req.user?.role))return next(new HttpError(403,'Administrator access required.'));next();}
 admin.use(auth,adminOnly);
 admin.use((req,res,next)=>{res.set('Cache-Control','no-store');next();});
+admin.post('/images',rateLimit({windowMs:60000,limit:20,standardHeaders:true,legacyHeaders:false}),raw({type:'application/octet-stream',limit:'5mb'}),async(req,res)=>{const url=await saveProductImage(req.body);res.status(201).json({url});});
 const audit=(db,user,action,type,id,details)=>rows('INSERT INTO admin_audit(actor_id,action,entity_type,entity_id,details) VALUES(?,?,?,?,?)',[user.id,action,type,String(id),JSON.stringify(details)],db);
 const page=q=>{const p=Math.max(1,Math.min(10000,parseInt(q.page)||1));return {page:p,offset:(p-1)*25};};
 const id=v=>integer(v,1,Number.MAX_SAFE_INTEGER,'ID');
@@ -21,7 +24,7 @@ admin.get('/products',async(req,res)=>{const where=['1=1'],args=[];if(req.query.
 admin.get('/products/:id',async(req,res)=>{const p=(await rows('SELECT * FROM products WHERE id=?',[id(req.params.id)]))[0];if(!p)throw new HttpError(404,'Product not found.');res.json({...p,images:json(p.images),compatibility:json(p.compatibility),movements:await rows('SELECT delta,balance,reason,created_at FROM stock_movements WHERE product_id=? ORDER BY id DESC LIMIT 30',[p.id])});});
 function productInput(b){
  const slug=text(b.slug,'Slug',1,100);requireValue(/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug),'Slug must contain lowercase letters, numbers and hyphens.');
- requireValue(Array.isArray(b.images)&&b.images.length>0&&b.images.length<=8&&b.images.every(s=>typeof s==='string'&&s.length<500&&/^\/assets\/images\/[a-zA-Z0-9_./-]+\.(?:webp|png|jpg|jpeg|svg)$/.test(s)&&!s.includes('..')),'Use 1–8 existing /assets/images/ image paths.');
+ requireValue(Array.isArray(b.images)&&b.images.length>0&&b.images.length<=8&&b.images.every(s=>typeof s==='string'&&s.length<500&&(/^\/assets\/images\/[a-zA-Z0-9_./-]+\.(?:webp|png|jpg|jpeg|svg)$/.test(s)||/^\/uploads\/[a-f0-9-]{36}\.webp$/.test(s))&&!s.includes('..')),'Upload or select 1–8 product images.');
  const c=b.compatibility;requireValue(c&&typeof c==='object'&&!Array.isArray(c),'Compatibility is required.');for(const key of ['layouts','connections'])requireValue(Array.isArray(c[key])&&c[key].length>0&&c[key].length<=10&&c[key].every(x=>typeof x==='string'&&x.length<=30),'Compatibility needs '+key+'.');
  for(const [key,allowed] of [['layouts',['60','75','100']],['connections',['wired','wireless','tri-mode']]])requireValue(c[key].every(x=>allowed.includes(x)),'Unsupported compatibility '+key+'.');
  for(const key of ['widths','heights'])if(c[key]!==undefined)requireValue(Array.isArray(c[key])&&c[key].length<=30&&c[key].every(x=>typeof x==='number'&&x>0&&x<=10),'Invalid keycap '+key+'.');

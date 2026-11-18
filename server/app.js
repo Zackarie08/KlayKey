@@ -1,4 +1,5 @@
 import express from 'express';
+import {uploadDirectory} from './services/product-images.js';
 import fs from 'node:fs';
 import {rows} from './database/connection.js';
 import helmet from 'helmet';
@@ -20,6 +21,7 @@ export function createApp(){
  app.use(express.json({limit:'40kb'}));
  app.use(session({name:config.cookieName,secret:config.secret,store:new MySQLSessionStore(),resave:false,saveUninitialized:false,cookie:{httpOnly:true,sameSite:'lax',secure:config.production,maxAge:config.sessionMaxAge}}));
  app.use('/api',csrf,api);app.use('/api',(req,res)=>res.status(404).json({error:'API route not found.'}));
+ app.use('/uploads',express.static(uploadDirectory,{dotfiles:'deny',index:false,maxAge:'1y',immutable:true}));
  app.use('/assets',express.static(root+'/public/assets',{maxAge:'1d'}));app.use('/css',express.static(root+'/public/css'));app.use('/js',express.static(root+'/public/js'));
  app.use('/keyboard-3d/previews',express.static(root+'/keyboard-3d/previews'));
  // Public audio modules reuse the exact existing sound engine without loading Three.js.
