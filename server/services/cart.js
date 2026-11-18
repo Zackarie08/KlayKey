@@ -1,9 +1,10 @@
 import {rows,json,pool,transaction} from '../database/connection.js';
 import {quote} from './builds.js';
 import {HttpError,quantity,requireValue} from '../validators.js';
+import {getPromotion,discountedProduct} from './promotions.js';
 export async function lockCart(userId,db){await rows('INSERT IGNORE INTO carts(user_id) VALUES(?)',[userId],db);return (await rows('SELECT id FROM carts WHERE user_id=? FOR UPDATE',[userId],db))[0].id;}
 export async function snapshot(item,db=pool){
- if(item.product_id){const p=(await rows('SELECT * FROM products WHERE id=? AND is_active=1',[item.product_id],db))[0];if(!p)throw new HttpError(409,'An item is no longer available. Remove it from your cart.');return {name:p.name,price_cents:p.price_cents,image:json(p.images)[0],slug:p.slug,components:[{productId:p.id,name:p.name,quantity:1,stock:p.stock_quantity}],available:p.stock_quantity>=item.quantity};}
+ if(item.product_id){const raw=(await rows('SELECT * FROM products WHERE id=? AND is_active=1',[item.product_id],db))[0];if(!raw)throw new HttpError(409,'An item is no longer available. Remove it from your cart.');const p=discountedProduct(raw,await getPromotion(db));return {name:p.name,price_cents:p.price_cents,original_price_cents:p.original_price_cents||p.price_cents,discount_cents:p.discount_cents||0,promotion:p.promotion||null,image:json(p.images)[0],slug:p.slug,components:[{productId:p.id,name:p.name,quantity:1,stock:p.stock_quantity}],available:p.stock_quantity>=item.quantity};}
  return {...await quote(json(item.configuration),db),name:item.name};
 }
 export async function getCart(userId,db=pool){const items=await rows('SELECT ci.* FROM cart_items ci JOIN carts c ON c.id=ci.cart_id WHERE c.user_id=? ORDER BY ci.id',[userId],db);const result=[];for(const item of items){try{const s=await snapshot(item,db);result.push({...item,snapshot:s,configuration:s.configuration||json(item.configuration),notices:s.notices||[],available:s.components.every(c=>c.stock>=c.quantity*item.quantity),lineTotal:s.price_cents*item.quantity});}catch(e){if(!e.status)throw e;result.push({...item,snapshot:json(item.snapshot),available:false,error:e.message,lineTotal:0});}}return {items:result,count:items.reduce((n,i)=>n+i.quantity,0),subtotal:result.reduce((n,i)=>n+i.lineTotal,0)};}

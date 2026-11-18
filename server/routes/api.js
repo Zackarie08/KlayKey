@@ -10,7 +10,11 @@ import {listProducts,getProduct,product} from '../services/catalog.js';
 import {manifest,quote,fees,ownedBuild} from '../services/builds.js';
 import {getCart,addCart,updateCart,lockCart} from '../services/cart.js';
 import {checkout,orderDetails,deliveryFees} from '../services/orders.js';
+import {admin} from './admin.js';
+import {getPromotion,activePromotion} from '../services/promotions.js';
 export const api=Router();
+api.use('/admin',admin);
+api.get('/promotion',async(req,res)=>{res.set('Cache-Control','no-store');const p=await getPromotion();res.json(activePromotion(p)?p:null);});
 const limit=rateLimit({windowMs:15*60*1000,limit:30,standardHeaders:'draft-8',legacyHeaders:false,message:{error:'Too many attempts. Please try again in 15 minutes.'}});
 const publicUser=u=>u?{id:u.id,first_name:u.first_name,last_name:u.last_name,email:u.email,role:u.role}:null;
 async function signIn(req,id){await new Promise((resolve,reject)=>req.session.regenerate(e=>e?reject(e):resolve()));req.session.userId=id;req.session.csrf=crypto.randomBytes(24).toString('hex');await new Promise((resolve,reject)=>req.session.save(e=>e?reject(e):resolve()));}

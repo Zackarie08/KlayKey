@@ -2,6 +2,7 @@ import crypto from 'node:crypto';
 import {rows,json,transaction} from '../database/connection.js';
 import {lockCart,getCart} from './cart.js';
 import {shipping,requireValue,HttpError,text} from '../validators.js';
+import {recordCheckoutStock} from './inventory.js';
 export const deliveryFees={standard:15000,express:30000,pickup:0};
 export async function checkout(userId,input){
  const address=shipping(input.address);requireValue(Object.hasOwn(deliveryFees,input.delivery),'Choose a delivery option.');requireValue(['cod','gcash-demo','card-demo'].includes(input.payment),'Choose a simulated payment method.');requireValue(input.simulationConsent===true,'Confirm that this is a simulated order.');
@@ -15,7 +16,7 @@ export async function checkout(userId,input){
   const number='KK-'+new Date().toISOString().slice(0,10).replaceAll('-','')+'-'+crypto.randomBytes(5).toString('hex').toUpperCase();const fee=deliveryFees[input.delivery];
   const order=await rows('INSERT INTO orders(order_number,user_id,shipping_address,delivery_method,payment_method,subtotal_cents,shipping_cents,total_cents,idempotency_key) VALUES(?,?,?,?,?,?,?,?,?)',[number,userId,JSON.stringify(address),input.delivery,input.payment,cart.subtotal,fee,cart.subtotal+fee,key],db);
   for(const item of cart.items)await rows('INSERT INTO order_items(order_id,snapshot,quantity,unit_price_cents) VALUES(?,?,?,?)',[order.insertId,JSON.stringify(item.snapshot),item.quantity,item.snapshot.price_cents],db);
-  for(const [id,count] of demand){const result=await rows('UPDATE products SET stock_quantity=stock_quantity-? WHERE id=? AND stock_quantity>=?',[count,id,count],db);requireValue(result.affectedRows===1,'Stock changed. Your cart has been kept.');}
+  for(const [id,count] of demand){const result=await rows('UPDATE products SET stock_quantity=stock_quantity-? WHERE id=? AND stock_quantity>=?',[count,id,count],db);requireValue(result.affectedRows===1,'Stock changed. Your cart has been kept.');await recordCheckoutStock(db,id,count,number);}
   await rows('INSERT INTO payments(order_id,method,reference,status,amount_cents) VALUES(?,?,?,?,?)',[order.insertId,input.payment,'DEMO-'+crypto.randomBytes(8).toString('hex'),input.payment==='cod'?'pending-cod':'simulated-paid',cart.subtotal+fee],db);
   await rows('DELETE FROM cart_items WHERE cart_id=?',[cartId],db);return number;
  });
