@@ -1,6 +1,6 @@
-import {Router,raw} from 'express';
+import {Router} from 'express';
 import rateLimit from 'express-rate-limit';
-import {saveProductImage} from '../services/product-images.js';
+import {receiveProductImage} from '../services/product-images.js';
 import {rows,json,transaction} from '../database/connection.js';
 import {auth} from '../middleware/security.js';
 import {HttpError,requireValue,text} from '../validators.js';
@@ -10,7 +10,7 @@ export const admin=Router();
 export function adminOnly(req,res,next){if(!['admin','super_admin'].includes(req.user?.role))return next(new HttpError(403,'Administrator access required.'));next();}
 admin.use(auth,adminOnly);
 admin.use((req,res,next)=>{res.set('Cache-Control','no-store');next();});
-admin.post('/images',rateLimit({windowMs:60000,limit:20,standardHeaders:true,legacyHeaders:false}),raw({type:'application/octet-stream',limit:'5mb'}),async(req,res)=>{const url=await saveProductImage(req.body);res.status(201).json({url});});
+admin.post('/images',rateLimit({windowMs:60000,limit:20,standardHeaders:true,legacyHeaders:false}),receiveProductImage);
 const audit=(db,user,action,type,id,details)=>rows('INSERT INTO admin_audit(actor_id,action,entity_type,entity_id,details) VALUES(?,?,?,?,?)',[user.id,action,type,String(id),JSON.stringify(details)],db);
 const page=q=>{const p=Math.max(1,Math.min(10000,parseInt(q.page)||1));return {page:p,offset:(p-1)*25};};
 const id=v=>integer(v,1,Number.MAX_SAFE_INTEGER,'ID');
