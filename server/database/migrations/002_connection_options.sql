@@ -1,0 +1,1 @@
+UPDATE products SET compatibility=JSON_ARRAY_APPEND(compatibility,'$.connections','bluetooth') WHERE option_field IS NOT NULL AND JSON_CONTAINS(compatibility,'"bluetooth"','$.connections')=0;

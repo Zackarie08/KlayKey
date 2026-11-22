@@ -44,7 +44,12 @@
       "roughness": 0.27,
       "material": "MAT_CASE_SILVER",
       "priceAdjustment": 0
-    }
+    },
+    {"id":"navy","name":"Midnight blue","color":"#1F3A68","metallic":0.7,"roughness":0.33,"material":"MAT_CASE_NAVY","priceAdjustment":0},
+    {"id":"crimson","name":"Crimson red","color":"#8E2B35","metallic":0.65,"roughness":0.34,"material":"MAT_CASE_CRIMSON","priceAdjustment":0},
+    {"id":"sakura","name":"Sakura pink","color":"#E3A6B8","metallic":0.35,"roughness":0.38,"material":"MAT_CASE_SAKURA","priceAdjustment":0},
+    {"id":"teal","name":"Deep teal","color":"#1F6F73","metallic":0.7,"roughness":0.32,"material":"MAT_CASE_TEAL","priceAdjustment":0},
+    {"id":"champagne","name":"Champagne gold","color":"#C2A56B","metallic":0.88,"roughness":0.3,"material":"MAT_CASE_CHAMPAGNE","priceAdjustment":0}
   ],
   "caseFinishes": [
     {
@@ -67,7 +72,14 @@
       "metallicMultiplier": 0.12,
       "roughnessOffset": 0.2,
       "priceAdjustment": 0
-    }
+    },
+    {"id":"mirror","name":"Mirror polish","metallicMultiplier":1,"roughnessOffset":-0.25,"priceAdjustment":0},
+    {"id":"brushed","name":"Brushed metal","metallicMultiplier":1,"roughnessOffset":0.12,"priceAdjustment":0},
+    {"id":"blasted","name":"Bead-blasted","metallicMultiplier":0.9,"roughnessOffset":0.22,"priceAdjustment":0},
+    {"id":"cerakote","name":"Cerakote matte","metallicMultiplier":0.35,"roughnessOffset":0.1,"priceAdjustment":0},
+    {"id":"gloss","name":"High-gloss coat","metallicMultiplier":0.25,"roughnessOffset":-0.15,"priceAdjustment":0},
+    {"id":"cast","name":"Raw cast","metallicMultiplier":0.8,"roughnessOffset":0.3,"priceAdjustment":0},
+    {"id":"pearl","name":"Pearl lacquer","metallicMultiplier":0.55,"roughnessOffset":-0.06,"priceAdjustment":0}
   ],
   "keycapThemes": [
     {
@@ -165,7 +177,13 @@
         2
       ],
       "priceAdjustment": 0
-    }
+    },
+    {"id":"sakura","name":"Sakura / rose","alpha":"#F2D7DF","modifier":"#D98FA8","accent":"#8E3B5C","legend":"#3A1F2B","legendEmission":0,"supportedWidths":[1,1.25,1.5,1.75,2,2.25,2.75,6.25],"supportedHeights":[1,2],"priceAdjustment":0},
+    {"id":"ocean","name":"Ocean / amber","alpha":"#DCE9F2","modifier":"#2F5C8A","accent":"#F0A04B","legend":"#12263A","legendEmission":0,"supportedWidths":[1,1.25,1.5,1.75,2,2.25,2.75,6.25],"supportedHeights":[1,2],"priceAdjustment":0},
+    {"id":"sunset","name":"Sunset / coral","alpha":"#F3E1CF","modifier":"#C8553D","accent":"#F2B544","legend":"#3B1D14","legendEmission":0,"supportedWidths":[1,1.25,1.5,1.75,2,2.25,2.75,6.25],"supportedHeights":[1,2],"priceAdjustment":0},
+    {"id":"mint","name":"Mint / jade","alpha":"#DDF0E6","modifier":"#6FB89C","accent":"#2E6B5A","legend":"#17352B","legendEmission":0,"supportedWidths":[1,1.25,1.5,1.75,2,2.25,2.75,6.25],"supportedHeights":[1,2],"priceAdjustment":0},
+    {"id":"midnight","name":"Midnight / cyan glow","alpha":"#20242F","modifier":"#12151D","accent":"#3FA9F5","legend":"#CFE8FF","legendEmission":0.9,"supportedWidths":[1,1.25,1.5,1.75,2,2.25,2.75,6.25],"supportedHeights":[1,2],"priceAdjustment":0},
+    {"id":"retro","name":"Retro beige / red","alpha":"#D9D2C0","modifier":"#8A8578","accent":"#B03A2E","legend":"#2B2A26","legendEmission":0,"supportedWidths":[1,1.25,1.5,1.75,2,2.25,2.75,6.25],"supportedHeights":[1,2],"priceAdjustment":0}
   ],
   "switches": [
     {
@@ -200,7 +218,14 @@
       "visualColor": "#3581CB",
       "priceAdjustment": 0,
       "audioKind": "synthesized-approximation"
-    }
+    },
+    {"id":"switch-black","name":"Black Linear","type":"linear","mount":"MX","description":"Heavy, smooth linear travel with a deep, full thock. For typists who want more resistance.","audioAvailable":true,"visualColor":"#2A2A2E","priceAdjustment":0,"audioKind":"synthesized-approximation"},
+    {"id":"switch-yellow","name":"Yellow Linear","type":"linear","mount":"MX","description":"Light, buttery linear with a soft, quick bottom-out. Easy on the fingers during long sessions.","audioAvailable":true,"visualColor":"#E3C23A","priceAdjustment":0,"audioKind":"synthesized-approximation"},
+    {"id":"switch-silent","name":"Silent Red","type":"linear","mount":"MX","description":"Dampened linear that muffles the bottom-out. The quietest option for shared spaces.","audioAvailable":true,"visualColor":"#B84A5A","priceAdjustment":0,"audioKind":"synthesized-approximation"},
+    {"id":"switch-speed","name":"Speed Silver","type":"linear","mount":"MX","description":"Short, light linear with a bright, crisp sound. Built for fast typing and gaming.","audioAvailable":true,"visualColor":"#C9CED6","priceAdjustment":0,"audioKind":"synthesized-approximation"},
+    {"id":"switch-clear","name":"Clear Tactile","type":"tactile","mount":"MX","description":"A pronounced tactile bump with a firm, rounded sound. Clear feedback without any click.","audioAvailable":true,"visualColor":"#E8E8EC","priceAdjustment":0,"audioKind":"synthesized-approximation"},
+    {"id":"switch-jade","name":"Jade Clicky","type":"clicky","mount":"MX","description":"A sharp, loud click with a crisp tactile bump. The most audible option in the lineup.","audioAvailable":true,"visualColor":"#2FA37A","priceAdjustment":0,"audioKind":"synthesized-approximation"},
+    {"id":"switch-cream","name":"Cream Linear","type":"linear","mount":"MX","description":"Smooth linear with a low, creamy thock that lingers slightly. Muted and satisfying.","audioAvailable":true,"visualColor":"#E8D9B5","priceAdjustment":0,"audioKind":"synthesized-approximation"}
   ],
   "rgbModes": [
     {
@@ -213,26 +238,22 @@
     },
     {
       "id": "multi",
-      "name": "Three-zone color"
+      "name": "Five-zone color"
     },
     {
       "id": "white",
       "name": "White backlight"
+    },
+    {
+      "id": "rainbow",
+      "name": "Rainbow wave (animated)"
     }
   ],
   "connectionTypes": [
-    {
-      "id": "wired",
-      "name": "Wired"
-    },
-    {
-      "id": "wireless",
-      "name": "Wireless"
-    },
-    {
-      "id": "tri-mode",
-      "name": "Tri-mode"
-    }
+    {"id": "wired", "name": "Wired (USB-C)"},
+    {"id": "bluetooth", "name": "Bluetooth 5.0"},
+    {"id": "wireless", "name": "2.4GHz Wireless"},
+    {"id": "tri-mode", "name": "Tri-mode (Wired + Bluetooth + 2.4GHz)"}
   ],
   "accessories": [
     {
@@ -311,7 +332,14 @@
       "ior": 1.58,
       "normalScale": 0.05,
       "soundProfile": "resonant-pc"
-    }
+    },
+    {"id":"pom-matte","name":"POM matte","roughness":0.55,"metalness":0,"transmission":0,"ior":1.48,"normalScale":0.2,"soundProfile":"marbly-pom"},
+    {"id":"glossy-abs","name":"Glossy ABS (piano finish)","roughness":0.12,"metalness":0,"transmission":0,"ior":1.53,"normalScale":0.02,"soundProfile":"sharp-abs"},
+    {"id":"frosted-pc","name":"Frosted polycarbonate","roughness":0.45,"metalness":0,"transmission":0.35,"ior":1.58,"normalScale":0.05,"soundProfile":"frosted-pc"},
+    {"id":"clear-acrylic","name":"Clear acrylic","roughness":0.08,"metalness":0,"transmission":0.7,"ior":1.49,"normalScale":0.02,"soundProfile":"ringing-acrylic"},
+    {"id":"pvd-metal","name":"Metal-coated (PVD)","roughness":0.28,"metalness":0.55,"transmission":0,"ior":1.5,"normalScale":0.1,"soundProfile":"metal-ping"},
+    {"id":"textured-pbt","name":"Textured PBT (grainy)","roughness":0.78,"metalness":0,"transmission":0,"ior":1.49,"normalScale":0.55,"soundProfile":"damped-pbt"},
+    {"id":"soft-touch","name":"Soft-touch rubberized","roughness":0.85,"metalness":0,"transmission":0,"ior":1.45,"normalScale":0.15,"soundProfile":"dull-thud"}
   ],
   "controlModules": [
     {

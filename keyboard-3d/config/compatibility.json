@@ -54,6 +54,7 @@
   ],
   "connectionVisibility": {
     "wired": true,
+    "bluetooth": false,
     "wireless": false,
     "tri-mode": false
   },

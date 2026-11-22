@@ -16,6 +16,40 @@ const loader=new GLTFLoader();
 let manifest,state,model,layoutInfo,materials=new Map(),ticket=0,lastReport;
 let animation,typing,audio,hardware,lastFrame=performance.now();
 const runtimeErrors=[];
+const ZONE_COLORS=['#FF3B5C','#FF9F1C','#2EE6A6','#2D9CFF','#B44CFF'];
+const rgbUniforms={uMode:{value:0},uTime:{value:0},uIntensity:{value:2},uZone:{value:ZONE_COLORS.map(c=>new THREE.Color(c))}};
+function setupRgb(){
+  const caseGroup=model.getObjectByName('GROUP_CASE');if(!caseGroup)return;
+  model.updateMatrixWorld(true);
+  const box=new THREE.Box3().setFromObject(caseGroup),span=Math.max(1e-6,box.max.x-box.min.x),p=new THREE.Vector3();
+  const names=new Set(manifest.bindings.rgbMaterials);
+  model.traverse(o=>{
+    if(!o.isMesh||Array.isArray(o.material)||!names.has(o.material.name))return;
+    const pos=o.geometry.attributes.position,zone=new Float32Array(pos.count);
+    for(let i=0;i<pos.count;i++){p.fromBufferAttribute(pos,i).applyMatrix4(o.matrixWorld);zone[i]=Math.min(1,Math.max(0,(p.x-box.min.x)/span));}
+    o.geometry.setAttribute('zoneT',new THREE.BufferAttribute(zone,1));
+  });
+  for(const name of names){
+    const m=materials.get(name);if(!m||m.userData.klayRgb)continue;m.userData.klayRgb=true;
+    m.onBeforeCompile=shader=>{
+      shader.uniforms.uMode=rgbUniforms.uMode;shader.uniforms.uTime=rgbUniforms.uTime;
+      shader.uniforms.uIntensity=rgbUniforms.uIntensity;shader.uniforms.uZone=rgbUniforms.uZone;
+      shader.vertexShader='attribute float zoneT;\nvarying float vZoneT;\n'+shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvZoneT=zoneT;');
+      shader.fragmentShader='uniform float uMode;\nuniform float uTime;\nuniform float uIntensity;\nuniform vec3 uZone[5];\nvarying float vZoneT;\n'+shader.fragmentShader.replace('vec3 totalEmissiveRadiance = emissive;',`vec3 totalEmissiveRadiance = emissive;
+if(uMode>0.5){
+  vec3 zoneColor;
+  if(uMode>1.5){
+    vec3 k=clamp(abs(mod(fract(vZoneT-uTime*0.12)*6.0+vec3(0.0,4.0,2.0),6.0)-3.0)-1.0,0.0,1.0);
+    zoneColor=pow(k,vec3(2.2));
+  }else{
+    zoneColor=uZone[int(min(4.0,floor(vZoneT*5.0)))];
+  }
+  totalEmissiveRadiance=zoneColor*uIntensity;
+}`);
+    };
+    m.customProgramCacheKey=()=>'klay-rgb-v1';m.needsUpdate=true;
+  }
+}
 window.addEventListener('error',e=>runtimeErrors.push(e.message),{signal});
 window.addEventListener('unhandledrejection',e=>runtimeErrors.push(String(e.reason)),{signal});
 const scene=new THREE.Scene();
@@ -38,7 +72,7 @@ controls.addEventListener('change',()=>controls.target.clamp(new THREE.Vector3(-
 renderer.domElement.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'&&!root.querySelector('.builder-preview')?.classList.contains('interacting'))e.stopImmediatePropagation();},{capture:true,signal});
 const resize=()=>{const el=$('viewport');if(!el||!el.clientWidth||!el.clientHeight)return;renderer.setSize(el.clientWidth,el.clientHeight);camera.aspect=el.clientWidth/el.clientHeight;camera.updateProjectionMatrix();resetCamera();};
 const observer=new ResizeObserver(resize);observer.observe($('viewport'));resize();
-renderer.setAnimationLoop(now=>{const dt=Math.min(.05,(now-lastFrame)/1000);lastFrame=now;animation?.update(now);hardware?.update(dt);controls.update();renderer.render(scene,camera);});
+renderer.setAnimationLoop(now=>{const dt=Math.min(.05,(now-lastFrame)/1000);lastFrame=now;rgbUniforms.uTime.value=now/1000;animation?.update(now);hardware?.update(dt);controls.update();renderer.render(scene,camera);});
 function resetCamera(){
  if(!model)return;
  model.updateMatrixWorld(true);
@@ -88,6 +122,8 @@ function apply(){
   const sw=byId(manifest.switches,state.switch);materials.get('MAT_SWITCH_STEM').color.set(sw.visualColor);
   const palette=['#A66AFF','#51CDFF','#EF6BB2'];
   manifest.bindings.rgbMaterials.forEach((name,i)=>{const m=materials.get(name);const color=state.rgbMode==='white'?'#ffffff':state.rgbMode==='multi'?palette[i]:state.rgbColor;m.color.set(color);m.emissive.set(color);m.emissiveIntensity=state.rgbIntensity;});
+  rgbUniforms.uMode.value=state.rgbMode==='rainbow'?2:state.rgbMode==='multi'?1:0;
+  rgbUniforms.uIntensity.value=state.rgbIntensity;
   visible('GROUP_RGB',state.rgbMode!=='off');visible('RGB_UNDERGLOW',state.underglow);
   visible(manifest.bindings.connectionNode,manifest.compatibility.connectionVisibility[state.connection]);
   visible(manifest.bindings.knobNode,state.accessory==='knob');visible(manifest.bindings.displayNode,state.accessory==='display');
@@ -112,7 +148,7 @@ async function loadLayout(id){
       }
       const list=Array.isArray(o.material)?o.material:[o.material];list.forEach(m=>materials.set(m.name,m));o.frustumCulled=false;
     }});replacements.forEach((_,old)=>old.dispose());
-    scene.add(model);animation=new KeyAnimation(model,manifest.typing);typing.bind(animation);hardware.bind(model);
+    scene.add(model);setupRgb();animation=new KeyAnimation(model,manifest.typing);typing.bind(animation);hardware.bind(model);
     apply();resetCamera();$('loading').hidden=true;
     $('model-name').textContent=`${next.name} · ${next.dimensionsMM.width.toFixed(0)} mm`;
   }catch(error){if(request!==ticket)return;$('loading').hidden=false;$('loading').textContent=`Could not load ${next.name}. Please reload the page or try again later. ${error.message}`;throw error;}

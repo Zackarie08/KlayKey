@@ -10,11 +10,7 @@ export class TypingAudio {
       const limiter=this.context.createWaveShaper();const curve=new Float32Array(2048);
       for(let i=0;i<curve.length;i++){const x=i/(curve.length-1)*2-1;curve[i]=.92*Math.tanh(x/.92);}
       limiter.curve=curve;limiter.oversample='2x';compressor.connect(limiter);limiter.connect(this.master);this.master.connect(this.context.destination);this.input=compressor;
-      for(const sw of Object.keys(this.profiles.switches))for(const cap of Object.keys(this.profiles.keycaps)){
-        const variants=[];for(let i=0;i<this.profiles.variations;i++){
-          const pcm=synthesize(this.profiles,sw,cap,i,this.context.sampleRate),b=this.context.createBuffer(1,pcm.length,this.context.sampleRate);b.copyToChannel(pcm,0);variants.push(b);
-        }this.buffers.set(sw+'+'+cap,variants);
-      }
+      // Buffers are now synthesized on first use (see variantsFor).
       // Optional replacement recordings are opt-in and loaded once. Synthesis is always ready.
       this.loadSamples();
     }
@@ -27,10 +23,21 @@ export class TypingAudio {
       }catch(e){this.sampleErrors.push({profile:id,message:e.message});}
     }
   }
+  variantsFor(sw,cap){
+    const id=sw+'+'+cap;let variants=this.buffers.get(id);
+    if(variants)return variants;
+    if(!this.context||!this.profiles.switches[sw]||!this.profiles.keycaps[cap])return null;
+    variants=[];
+    for(let i=0;i<this.profiles.variations;i++){
+      const pcm=synthesize(this.profiles,sw,cap,i,this.context.sampleRate),b=this.context.createBuffer(1,pcm.length,this.context.sampleRate);
+      b.copyToChannel(pcm,0);variants.push(b);
+    }
+    this.buffers.set(id,variants);return variants;
+  }
   setState(state){this.state={...state};if(this.master){this.master.gain.setTargetAtTime(state.muted||!state.soundEnabled?0:Math.max(0,Math.min(1,state.volume)),this.context.currentTime,.008);}}
   play(state,code){
     this.setState(state);if(!this.context||this.context.state!=='running'||state.muted||!state.soundEnabled||state.volume<=0)return false;
-    const variants=this.buffers.get(state.switch+'+'+state.keycapMaterial);if(!variants)return false;
+    const variants=this.variantsFor(state.switch,state.keycapMaterial);if(!variants)return false;
     const now=this.context.currentTime;this.voices=this.voices.filter(v=>v.end>now);
     if(this.voices.length>=this.profiles.master.maxVoices){const oldest=this.voices.shift();oldest.source.stop();}
     const source=this.context.createBufferSource(),gain=this.context.createGain();source.buffer=variants[this.roundRobin++%variants.length];

@@ -10,7 +10,7 @@ test('Nine original sound profiles are finite, distinct and below the voice ceil
     assert.ok(Math.max(...signal.map(Math.abs))<=.070001);
     signatures.add(signal.slice(30,200).join(','));
   }
-  assert.equal(signatures.size,9);
+  assert.equal(signatures.size,Object.keys(profiles.switches).length*Object.keys(profiles.keycaps).length);
 });
 test('Three round-robin variants and broad-key pitch shifts are distinct',()=>{
   const variants=[0,1,2].map(v=>synthesize(profiles,'switch-brown','thick-pbt',v));

@@ -6,12 +6,26 @@
   "switches":{
     "switch-red":{"bodyHz":175,"noise":0.18,"click":0.02,"decay":0.040},
     "switch-brown":{"bodyHz":225,"noise":0.29,"click":0.15,"decay":0.044},
-    "switch-blue":{"bodyHz":270,"noise":0.25,"click":0.65,"decay":0.035}
+    "switch-blue":{"bodyHz":270,"noise":0.25,"click":0.65,"decay":0.035},
+    "switch-black":{"bodyHz":140,"noise":0.30,"click":0.01,"decay":0.045},
+    "switch-yellow":{"bodyHz":200,"noise":0.10,"click":0.01,"decay":0.032},
+    "switch-silent":{"bodyHz":120,"noise":0.05,"click":0.0,"decay":0.026},
+    "switch-speed":{"bodyHz":245,"noise":0.12,"click":0.03,"decay":0.027},
+    "switch-clear":{"bodyHz":185,"noise":0.36,"click":0.12,"decay":0.048},
+    "switch-jade":{"bodyHz":310,"noise":0.20,"click":0.95,"decay":0.030},
+    "switch-cream":{"bodyHz":165,"noise":0.08,"click":0.05,"decay":0.058}
   },
   "keycaps":{
     "thick-pbt":{"pitch":0.80,"brightness":0.55,"resonance":0.16,"decay":1.15},
     "thin-abs":{"pitch":1.18,"brightness":1.15,"resonance":0.08,"decay":0.80},
-    "polycarbonate":{"pitch":1.40,"brightness":0.9,"resonance":0.35,"decay":1.35}
+    "polycarbonate":{"pitch":1.40,"brightness":0.9,"resonance":0.35,"decay":1.35},
+    "pom-matte":{"pitch":0.95,"brightness":0.45,"resonance":0.12,"decay":0.95},
+    "glossy-abs":{"pitch":1.30,"brightness":1.35,"resonance":0.06,"decay":0.70},
+    "frosted-pc":{"pitch":1.25,"brightness":0.8,"resonance":0.28,"decay":1.2},
+    "clear-acrylic":{"pitch":1.55,"brightness":1.2,"resonance":0.4,"decay":1.5},
+    "pvd-metal":{"pitch":1.70,"brightness":1.5,"resonance":0.5,"decay":1.7},
+    "textured-pbt":{"pitch":0.72,"brightness":0.4,"resonance":0.14,"decay":1.0},
+    "soft-touch":{"pitch":0.60,"brightness":0.25,"resonance":0.08,"decay":0.6}
   },
   "sampleOverrides":{},
   "sampleOverrideFormat":"Optional key switch-red+thick-pbt maps to three original/licensed sample URLs relative to viewer/. Failed sample loads retain synthesis.",
