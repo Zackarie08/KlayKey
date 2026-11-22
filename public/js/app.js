@@ -1,7 +1,7 @@
 import {session,errorState,brand} from './core.js';
 import {shell} from './components.js';
 const main=document.querySelector('#main');
-try{await session();document.title=brand+' — Shape your board.';shell();const p=location.pathname;
+try{await session();document.title=brand+' - Shape your board.';shell();const p=location.pathname;
  if(p==='/'){await (await import('./pages/home.js')).render(main);await (await import('./promotion.js')).showPromotion();}
  else if(p==='/admin'||p.startsWith('/admin/'))await (await import('./pages/admin.js')).render(main);
  else if(p==='/shop'||p==='/parts'||p.startsWith('/shop/'))await (await import('./pages/catalog.js')).render(main);

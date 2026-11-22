@@ -99,7 +99,7 @@ function syncControls(reasons=[]){
   $('rgbColor').disabled=state.rgbMode!=='static';
   $('rgbIntensity').disabled=state.rgbMode==='off';
   $('compatibility').textContent=reasons.map(r=>r.message).join(' ')||
-    (state.layout==='60'?'Compact 60% chassis — no additional control bay.':'Compatible components. Choose a knob, mini display, or neither.');
+    (state.layout==='60'?'Compact 60% chassis no additional control bay.':'Compatible components. Choose a knob, mini display, or neither.');
   for(const field of ['keycapTheme','switch','controlModule'])for(const option of $(field).options){const p=options.components?.find(p=>p.option_field===field&&p.option_value===option.value);if(p)option.disabled=!p.compatibility.layouts.includes(state.layout)||!p.compatibility.connections.includes(state.connection);}
   const moduleSelect=$('controlModule');for(const option of moduleSelect.options){const unsupported=state.layout==='60'&&option.value!=='none';option.hidden=unsupported;const product=options.components?.find(p=>p.option_field==='controlModule'&&p.option_value===option.value);option.disabled=unsupported||!!product&&(!product.compatibility.layouts.includes(state.layout)||!product.compatibility.connections.includes(state.connection));}
   moduleSelect.closest('label').hidden=state.layout==='60';

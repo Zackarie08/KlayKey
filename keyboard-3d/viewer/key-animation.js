@@ -84,7 +84,7 @@ export class TypingController {
       if(e.code==='Escape'){this.stop();return;}
       if(isBrowserShortcut(e)||e.repeat)return;
       if(['Space','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.code))e.preventDefault();
-      if(this.map?.press(e.code)){this.soundCount+=this.audio.play(this.getState(),e.code)?1:0;this.onStatus('Typing test active — '+e.code);}
+      if(this.map?.press(e.code)){this.soundCount+=this.audio.play(this.getState(),e.code)?1:0;this.onStatus('Typing test active '+e.code);}
       else if(!this.map?.keys.has(e.code))this.onStatus(e.code+' is unavailable on this layout.');
     };
     this.up=e=>this.map?.release(e.code);
@@ -93,6 +93,6 @@ export class TypingController {
     listen(document,'visibilitychange',()=>{if(document.hidden)this.stop();});
   }
   bind(map){this.map?.reset();this.map=map;}
-  async start(){await this.audio.unlock();this.active=true;this.canvas.focus();this.onStatus('Typing test active — press any key. Escape exits.');}
+  async start(){await this.audio.unlock();this.active=true;this.canvas.focus();this.onStatus('Typing test active press any key. Escape exits.');}
   stop(){this.active=false;this.map?.reset();this.onStatus('Typing test stopped. Press Start Typing Test to resume.');}
 }
