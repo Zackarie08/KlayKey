@@ -30,6 +30,7 @@ export function createApp(){
  app.use('/keyboard-3d',auth,express.static(root+'/keyboard-3d',{dotfiles:'deny',index:false,maxAge:'1h',setHeaders:(res,file)=>{if(file.endsWith('.glb'))res.type('model/gltf-binary');if(/\.(html|js|json|css)$/.test(file))res.set('Cache-Control','no-store');}}));
  app.post('/__qa/report',auth,(req,res)=>res.json({message:'Use Save report to download the asset QA report.'}));
  app.get(['/admin','/admin/{*page}'],(req,res,next)=>{if(!req.session.userId)return res.redirect('/login?returnTo=/admin');next();},auth,adminOnly,sendPage);
+ app.get('/parts',(req,res)=>{const query=new URLSearchParams(req.originalUrl.split('?')[1]||'');query.delete('parts');res.redirect(302,'/shop'+(query.size?'?'+query:''));});
  app.get('/health',(req,res)=>res.json({service:config.appName,status:'ok'}));
  app.get(['/builder','/cart','/checkout','/account','/account/builds','/account/orders','/order-confirmation/:number'],(req,res,next)=>{if(!req.session.userId)return res.redirect('/login?returnTo='+encodeURIComponent(safeReturn(req.originalUrl))+'&reason=protected');next();});
  app.get(['/','/shop','/shop/:slug','/parts','/builder','/cart','/checkout','/order-confirmation/:number','/login','/register','/account','/account/builds','/account/orders','/about','/contact','/faq','/terms','/privacy'],(req,res)=>sendPage(req,res));
