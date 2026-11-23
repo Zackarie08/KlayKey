@@ -12,6 +12,11 @@ test('Custom colors persist in quotes and use the same trusted inventory and pri
  assert.deepEqual(custom.configuration.customKeycapColors,colors);
  assert.equal(custom.configuration.keycapColorMode,'custom');
  assert.equal(custom.price_cents,preset.price_cents);assert.deepEqual(custom.components,preset.components);
+ const caseCustom=await quote({...custom.configuration,caseColorMode:'custom',customCaseColor:'#145a43'},db);
+ assert.equal(caseCustom.configuration.customCaseColor,'#145A43');assert.equal(caseCustom.configuration.caseColorMode,'custom');
+ assert.equal(caseCustom.price_cents,preset.price_cents);assert.deepEqual(caseCustom.components,preset.components);
+ const caseReload=await quote(JSON.parse(JSON.stringify(caseCustom.configuration)),db);assert.deepEqual(caseReload.configuration,caseCustom.configuration);
+ await assert.rejects(quote({...base,caseColorMode:'custom',customCaseColor:'red'},db),/incompatible or unknown/);
  const reopened=await quote(JSON.parse(JSON.stringify(custom.configuration)),db);
  assert.deepEqual(reopened.configuration,custom.configuration);
  await assert.rejects(quote({...base,keycapColorMode:'custom',customKeycapColors:{...colors,alpha:'red'}},db),/incompatible or unknown/);

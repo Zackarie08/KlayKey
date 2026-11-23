@@ -6,7 +6,7 @@ import {rows,json,pool} from '../database/connection.js';
 import {HttpError,requireValue} from '../validators.js';
 export const manifest=JSON.parse(await fs.readFile(root+'/keyboard-3d/exports/keyboard_manifest.json','utf8'));
 export const fees={assembly:35000,connection:{wired:0,bluetooth:35000,wireless:45000,'tri-mode':75000},material:{'thick-pbt':0,'thin-abs':-15000,polycarbonate:25000,'pom-matte':20000,'glossy-abs':-5000,'frosted-pc':30000,'clear-acrylic':45000,'pvd-metal':60000,'textured-pbt':10000,'soft-touch':15000},finish:{anodized:0,satin:12000,soft:18000,mirror:25000,brushed:15000,blasted:14000,cerakote:20000,gloss:10000,cast:5000,pearl:22000},rgb:25000};
-const fields=['layout','caseColor','caseFinish','keycapTheme','keycapColorMode','customKeycapColors','keycapMaterial','switch','rgbMode','rgbColor','rgbIntensity','underglow','connection','controlModule','volume','muted','soundEnabled'];
+const fields=['layout','caseColor','caseColorMode','customCaseColor','caseFinish','keycapTheme','keycapColorMode','customKeycapColors','keycapMaterial','switch','rgbMode','rgbColor','rgbIntensity','underglow','connection','controlModule','volume','muted','soundEnabled'];
 export async function quote(input,db=pool){
  requireValue(input&&typeof input==='object'&&!Array.isArray(input),'Choose a keyboard configuration.');
  const clean=Object.fromEntries(fields.filter(k=>input[k]!==undefined).map(k=>[k,input[k]]));

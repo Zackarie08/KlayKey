@@ -9,6 +9,11 @@ export function normalize(manifest,input){
   const layout=manifest.layouts.find(l=>l.id===state.layout);
   state.caseVariant=layout.caseVariant;
   fallback('caseColor',manifest.caseColors); fallback('caseFinish',manifest.caseFinishes);
+  if(state.caseColorMode===undefined)state.caseColorMode='preset';
+  if(!['preset','custom'].includes(state.caseColorMode)){state.caseColorMode='preset';reasons.push({code:'INVALID_CASE_COLOR',message:'Choose preset or custom case color.'});}
+  const validCaseColor=typeof input.customCaseColor==='string'&&/^#[\da-f]{6}$/i.test(input.customCaseColor);
+  if((input.customCaseColor!==undefined||state.caseColorMode==='custom')&&!validCaseColor)reasons.push({code:'INVALID_CASE_COLOR',message:'Use a six-digit hex color for your case.'});
+  state.customCaseColor=validCaseColor?input.customCaseColor.toUpperCase():manifest.caseColors.find(c=>c.id===state.caseColor).color;
   const rules=manifest.compatibility;
   const themes=manifest.keycapThemes.filter(t=>layout.requiredWidths.every(w=>t.supportedWidths.includes(w))&&layout.requiredHeights.every(h=>t.supportedHeights.includes(h)));
   if(!themes.length) throw new Error('No keycap theme covers this layout.');

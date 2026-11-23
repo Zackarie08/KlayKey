@@ -97,6 +97,9 @@ function syncControls(reasons=[]){
   for(const [id,value] of Object.entries(state)){const el=$(id);if(el){if(el.type==='checkbox')el.checked=value;else el.value=value;}}
   $('rgbColor').disabled=state.rgbMode!=='static';$('rgbColor').closest('label').hidden=state.rgbMode!=='static';
   if($('custom-keycap-colors')){const custom=state.keycapColorMode==='custom';$('custom-keycap-colors').hidden=!custom;if(custom)$('keycapTheme').value='custom';$('custom-color-base').textContent='Base set: '+manifest.keycapThemes.find(t=>t.id===state.keycapTheme).name+'. Colors change the finish; pricing and stock use this set.';for(const role of ['alpha','modifier','accent']){$('cap-'+role).value=state.customKeycapColors[role];const hex=$('cap-hex-'+role);hex.disabled=!custom;$('cap-'+role).disabled=!custom;if(document.activeElement!==hex){hex.value=state.customKeycapColors[role];hex.setCustomValidity('');}}}
+  if($('custom-case-color')){const custom=state.caseColorMode==='custom';$('custom-case-color').hidden=!custom;if(custom)$('caseColor').value='custom';const picker=$('case-color-picker'),hex=$('case-color-hex');picker.disabled=hex.disabled=!custom;picker.value=state.customCaseColor;if(document.activeElement!==hex){hex.value=state.customCaseColor;hex.setCustomValidity('');}}
+  // The visible sound switch also reflects hardware-knob muting.
+  $('soundEnabled').checked=state.soundEnabled&&!state.muted;
   $('rgbIntensity').disabled=state.rgbMode==='off';
   $('compatibility').textContent=reasons.map(r=>r.message).join(' ')||
     (state.layout==='60'?'Compact 60% chassis no additional control bay.':'Compatible components. Choose a knob, mini display, or neither.');
@@ -111,7 +114,7 @@ function apply(){
   if(!model)return;
   const byId=(items,id)=>items.find(i=>i.id===id);
   const c=byId(manifest.caseColors,state.caseColor),f=byId(manifest.caseFinishes,state.caseFinish);
-  for(const name of manifest.bindings.caseMaterial){const m=materials.get(name);m.color.set(c.color);m.metalness=c.metallic*f.metallicMultiplier;m.roughness=THREE.MathUtils.clamp(c.roughness+f.roughnessOffset,.12,.85);}
+  for(const name of manifest.bindings.caseMaterial){const m=materials.get(name);m.color.set(state.caseColorMode==='custom'?state.customCaseColor:c.color);m.metalness=c.metallic*f.metallicMultiplier;m.roughness=THREE.MathUtils.clamp(c.roughness+f.roughnessOffset,.12,.85);}
   const theme={...byId(manifest.keycapThemes,state.keycapTheme),...(state.keycapColorMode==='custom'?state.customKeycapColors:{})};
   const cap=byId(manifest.keycapMaterials,state.keycapMaterial);
   for(const role of ['alpha','modifier','accent','legend']){
@@ -164,6 +167,9 @@ $('controls').addEventListener('submit',e=>e.preventDefault());
 $('controls').addEventListener('input',async e=>{
  const el=e.target;if(!el.id)return;
  try{
+  if(el.id==='case-color-picker'||el.id==='case-color-hex'){if(!/^#[\da-f]{6}$/i.test(el.value)){el.setCustomValidity('Enter a six-digit hex color, for example #145A43.');return;}el.setCustomValidity('');await configure({customCaseColor:el.value});return;}
+  if(el.id==='caseColor'){await configure(el.value==='custom'?{caseColorMode:'custom',customCaseColor:manifest.caseColors.find(c=>c.id===state.caseColor).color}:{caseColor:el.value,caseColorMode:'preset'});return;}
+  if(el.id==='soundEnabled'){await configure({soundEnabled:el.checked,muted:false});return;}
   if(el.dataset.capColor||el.dataset.capHex){const role=el.dataset.capColor||el.dataset.capHex;if(!/^#[\da-f]{6}$/i.test(el.value)){el.setCustomValidity('Enter a six-digit hex color, for example #A66AFF.');return;}el.setCustomValidity('');await configure({customKeycapColors:{...state.customKeycapColors,[role]:el.value}});return;}
   if(el.id==='keycapTheme'){await configure(el.value==='custom'?{keycapColorMode:'custom',customKeycapColors:Object.fromEntries(['alpha','modifier','accent'].map(role=>[role,manifest.keycapThemes.find(t=>t.id===state.keycapTheme)[role]]))}:{keycapTheme:el.value,keycapColorMode:'preset'});return;}
   await configure({[el.id]:el.type==='checkbox'?el.checked:el.value});
@@ -224,6 +230,7 @@ try{
   typing=new TypingController(renderer.domElement,audio,()=>state,message=>{$('typing-status').textContent=message;$('start-typing').textContent=typing?.active?'Stop typing test':'Start typing test';$('start-typing').setAttribute('aria-pressed',String(!!typing?.active));},signal);
   hardware=new ControlModule(renderer.domElement,camera,controls,()=>model,()=>state,configure,signal);
   for(const [id,key] of Object.entries({layout:'layouts',caseColor:'caseColors',caseFinish:'caseFinishes',keycapTheme:'keycapThemes',keycapMaterial:'keycapMaterials',switch:'switches',rgbMode:'rgbModes',connection:'connectionTypes',controlModule:'controlModules'}))select(id,manifest[key]);
+  if($('custom-case-color'))$('caseColor').add(new Option('Custom — choose your own color','custom'));
   if($('custom-keycap-colors'))$('keycapTheme').add(new Option('Custom — choose your own colors','custom'));
   await configure(options.initial||manifest.defaults);
   // Public integration API: configuration remains serializable; model assets stay modular.

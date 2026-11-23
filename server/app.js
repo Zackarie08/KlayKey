@@ -27,6 +27,10 @@ export function createApp(){
  // Public audio modules reuse the exact existing sound engine without loading Three.js.
  for(const name of ['typing-audio.js','sound-synthesis.js'])app.get('/keyboard-3d/viewer/'+name,(req,res)=>res.sendFile(root+'/keyboard-3d/viewer/'+name));
  app.get('/keyboard-3d/config/sound_profiles.json',(req,res)=>res.sendFile(root+'/keyboard-3d/config/sound_profiles.json'));
+ // Public product preview needs only the existing 75% mesh and Three.js runtime.
+ app.get('/keyboard-3d/exports/keyboard_75.glb',(req,res)=>res.type('model/gltf-binary').sendFile(root+'/keyboard-3d/exports/keyboard_75.glb'));
+ app.use('/keyboard-3d/node_modules/three/build',express.static(root+'/keyboard-3d/node_modules/three/build',{index:false}));
+ app.use('/keyboard-3d/node_modules/three/examples/jsm',express.static(root+'/keyboard-3d/node_modules/three/examples/jsm',{index:false}));
  app.use('/keyboard-3d',auth,express.static(root+'/keyboard-3d',{dotfiles:'deny',index:false,maxAge:'1h',setHeaders:(res,file)=>{if(file.endsWith('.glb'))res.type('model/gltf-binary');if(/\.(html|js|json|css)$/.test(file))res.set('Cache-Control','no-store');}}));
  app.post('/__qa/report',auth,(req,res)=>res.json({message:'Use Save report to download the asset QA report.'}));
  app.get(['/admin','/admin/{*page}'],(req,res,next)=>{if(!req.session.userId)return res.redirect('/login?returnTo=/admin');next();},auth,adminOnly,sendPage);

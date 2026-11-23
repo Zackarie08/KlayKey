@@ -32,3 +32,9 @@ Focused automated tests cover Philippine-time boundaries, preview visibility, mi
 The manual SQL has **not** been executed. Real MySQL integration, concurrent checkout and persisted admin edits still need verification against an isolated development database. The attempted local browser preview was blocked by the tool's automatic approval review due to a usage limit; desktop/mobile visual checks and modal close/reopen checks have **not** been verified in a browser.
 
 Before publishing, check the popup at desktop and mobile widths in both themes; close with X/Escape and reopen with the gift icon. Verify a new account receives 10%, an account with orders does not, and an eligible December cart receives 15% without stacking. Test preview/start/end and sold-out cases in an isolated database by changing the campaign schedule. Do not modify the live clock or run checkout test suites against production.
+
+## Compact popup and 3D product preview update
+
+The popup now records dismissal before promo-link navigation and records an initial impression per tab. Product detail pages do not auto-open the popup; their gift button still opens it manually. The landscape layout adapts to mobile and scales down for short viewports without an internal scrollbar.
+
+Both the popup and limited product page use the existing 75% GLB with pine-green case, ivory/cranberry/evergreen keycaps, warm lighting, gold knob and a Noël front badge. Drag or arrow keys rotate the preview. Original product images remain as a WebGL/load fallback; the product gallery and View in 3D button switch views. Only the preview mesh and Three.js library files are served publicly; builder APIs retain their existing protection. No additional SQL is needed for this update. Browser visual validation remains pending.

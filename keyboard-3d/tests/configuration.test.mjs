@@ -67,3 +67,16 @@ test('Compact geometry has no bay; larger layouts retain their controls',()=>{
  }
  const compact=m.layouts.find(l=>l.id==='60');assert.equal(compact.dimensionsMM.width,300.75);assert.equal(compact.dimensionsMM.depth,110.25);assert.equal(compact.knobSupported,false);assert.equal(compact.displaySupported,false);
 });
+
+
+test('Custom case hex colors survive serialization and layout changes; presets remain available',()=>{
+ const original=normalize(m,{caseColor:'green',caseColorMode:'custom',customCaseColor:'#12aBc3'});
+ assert.deepEqual(original.reasons,[]);assert.equal(original.state.customCaseColor,'#12ABC3');
+ for(const layout of ['60','75','100']){const result=normalize(m,{...JSON.parse(JSON.stringify(original.state)),layout});assert.equal(result.state.customCaseColor,'#12ABC3');assert.equal(result.state.caseColorMode,'custom');assert.equal(result.state.caseColor,'green');}
+ const preset=normalize(m,{...original.state,caseColorMode:'preset'});assert.equal(preset.state.caseColor,'green');assert.equal(preset.state.caseColorMode,'preset');
+ assert.equal(normalize(m,{}).state.caseColorMode,'preset');
+});
+test('Custom case color rejects malformed, missing and non-string values',()=>{
+ for(const customCaseColor of [null,undefined,'red','#12345','#1234567',{},123456])assert.ok(normalize(m,{caseColorMode:'custom',customCaseColor}).reasons.some(r=>r.code==='INVALID_CASE_COLOR'));
+ assert.ok(normalize(m,{caseColorMode:'unknown'}).reasons.some(r=>r.code==='INVALID_CASE_COLOR'));
+});

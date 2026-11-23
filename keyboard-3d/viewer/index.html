@@ -9,7 +9,7 @@
 <aside><div class="eyebrow">MODULAR BY DESIGN</div><h2>Make it yours.</h2><p class="intro">Three layouts. One shared system.<br>Explore the components and finishes.</p>
 <form id="controls">
 <label>Layout<select id="layout"></select></label>
-<div class="pair"><label>Case color<select id="caseColor"></select></label><label>Surface<select id="caseFinish"></select></label></div>
+<div class="pair"><label>Case color<select id="caseColor"></select></label><div id="custom-case-color" hidden><div class="custom-color-row"><label>Case color picker<input type="color" id="case-color-picker" disabled></label><label>Hex color<input type="text" id="case-color-hex" pattern="#[A-Fa-f0-9]{6}" maxlength="7" spellcheck="false" placeholder="#145A43" disabled></label></div><p class="hint">Choose your own case color. Your selected finish still applies.</p></div><label>Surface<select id="caseFinish"></select></label></div>
 <label>Keycap colorway<select id="keycapTheme"></select></label>
 <label>Keycap material / acoustic profile<select id="keycapMaterial"></select></label>
 <label>Switch<select id="switch"></select></label><p id="switch-info" class="hint"></p>
@@ -18,7 +18,7 @@
 <p id="sound-profile"></p><p class="hint">Original synthesized approximations not recordings.</p>
 <label class="check"><input type="checkbox" id="soundEnabled" checked> Typing sounds</label>
 <label>Sound volume <output id="volume-value">45%</output><input id="volume" type="range" min="0" max="1" step="0.01" value="0.45"></label>
-<label class="check"><input type="checkbox" id="muted"> Mute (preserves volume)</label></section>
+</section>
 <div class="pair"><label>Lighting<select id="rgbMode"></select></label><label>RGB color<input id="rgbColor" type="color" value="#a66aff"></label></div>
 <label>RGB intensity<input id="rgbIntensity" type="range" min="0" max="5" step="0.1" value="2"></label>
 <label class="check"><input id="underglow" type="checkbox" checked> Seam underglow</label>
