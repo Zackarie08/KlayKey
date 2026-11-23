@@ -1,3 +1,4 @@
+import {SALE_THEMES} from '../../public/js/sale-themes.js';
 import {HttpError,requireValue,text} from '../validators.js';
 export const roles=['customer','admin','super_admin','delivery'];
 export const transitions={pending:['confirmed','cancelled'],confirmed:['processing','cancelled'],processing:['ready-to-ship','cancelled'],'ready-to-ship':['shipped','completed','cancelled'],shipped:['completed'],completed:[],cancelled:[]};
@@ -15,7 +16,7 @@ export function promotionInput(b,{allowBuilds=false}={}){
 
 export function eventInput(b){
  const p=promotionInput(b,{allowBuilds:true});
- requireValue(['popup','floating'].includes(b.display_type),'Choose a display type.');requireValue(['everyone','first_purchase'].includes(b.audience),'Choose an audience.');requireValue(['standard','christmas'].includes(b.theme),'Choose a design.');
+ requireValue(['popup','floating'].includes(b.display_type),'Choose a display type.');requireValue(['everyone','first_purchase'].includes(b.audience),'Choose an audience.');requireValue(SALE_THEMES.some(t=>t.id===b.theme),'Choose a design.');
  const preview=b.preview_at?String(b.preview_at):null;requireValue(!preview||/^\d{4}-\d\d-\d\dT\d\d:\d\d(?::\d\d)?Z$/.test(preview)&&Number.isFinite(Date.parse(preview)),'Use a valid preview date.');
  const preview_at=preview?new Date(preview).toISOString().slice(0,19).replace('T',' '):null;
  if(b.display_type==='popup')requireValue(p.starts_at&&p.ends_at,'Popup events need a start and end date.');

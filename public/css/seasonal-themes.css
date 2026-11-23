@@ -1,0 +1,47 @@
+/* Shared seasonal palettes for the public modal, corner offers and admin preview. */
+[data-sale-theme]{--sale-bg:#24182f;--sale-mid:#5a3b79;--sale-accent:#a280db;--sale-gold:#e4ceff;--sale-soft:#b9a3dd;--sale-text:#fff7ff;--sale-muted:#eadcf7;--sale-plate:#21172dcf}
+[data-sale-theme="christmas"]{--sale-bg:#461321;--sale-mid:#8a283b;--sale-accent:#c7394e;--sale-gold:#f4d492;--sale-soft:#448b68;--sale-text:#fff4dc;--sale-muted:#f4dcca;--sale-plate:#10392edb}
+[data-sale-theme="summer"]{--sale-bg:#073f4a;--sale-mid:#157680;--sale-accent:#ff995b;--sale-gold:#ffe19b;--sale-soft:#63bca0;--sale-text:#fff8dd;--sale-muted:#d7f3e7;--sale-plate:#082e3bbd}
+[data-sale-theme="halloween"]{--sale-bg:#1d122f;--sale-mid:#503064;--sale-accent:#d9692a;--sale-gold:#ffbd68;--sale-soft:#b29cce;--sale-text:#fff2dc;--sale-muted:#ead8f3;--sale-plate:#190f2bd9}
+[data-sale-theme="new-year"]{--sale-bg:#0d1830;--sale-mid:#2e4269;--sale-accent:#a88846;--sale-gold:#ffe0a0;--sale-soft:#afc8ee;--sale-text:#fff7e8;--sale-muted:#dfe7f5;--sale-plate:#0a172cce}
+[data-sale-theme="valentines"]{--sale-bg:#4b1835;--sale-mid:#8b3759;--sale-accent:#e46988;--sale-gold:#ffd5b6;--sale-soft:#f7b7c8;--sale-text:#fff3ed;--sale-muted:#f6d7df;--sale-plate:#4d1a37cf}
+:is(.christmas-dialog,.seasonal-preview)[data-sale-theme] .christmas-scene{background:radial-gradient(ellipse at 35% 0,var(--sale-mid),var(--sale-bg) 85%);border-color:var(--sale-gold);color:var(--sale-text);padding-inline:64px}
+:is(.christmas-dialog,.seasonal-preview)[data-sale-theme] .christmas-scene:before{border-color:var(--sale-gold);opacity:.18;background-image:radial-gradient(var(--sale-gold) .8px,transparent 1px);background-size:39px 47px}
+:is(.christmas-dialog,.seasonal-preview)[data-sale-theme] .christmas-scene h2{color:var(--sale-text);text-wrap:balance}
+:is(.christmas-dialog,.seasonal-preview)[data-sale-theme] :is(.christmas-offer,.christmas-kicker,.christmas-state,.christmas-ribbon){color:var(--sale-gold)}
+:is(.christmas-dialog,.seasonal-preview)[data-sale-theme] :is(.christmas-message,.christmas-dates,.christmas-terms){color:var(--sale-muted)}
+:is(.christmas-dialog,.seasonal-preview)[data-sale-theme] .christmas-product:not(.edition-theme){background:var(--sale-plate);border-color:var(--sale-gold);box-shadow:inset 0 0 0 5px #ffffff06,0 15px 35px #0002}
+.christmas-dialog[data-sale-theme] .button,.seasonal-preview .button{background:var(--sale-gold);border-color:var(--sale-gold);color:var(--sale-bg)}
+.christmas-dialog[data-sale-theme] .button.secondary{background:var(--sale-plate);color:var(--sale-text);border-color:var(--sale-gold)}
+.christmas-dialog[data-sale-theme] .christmas-build{color:var(--sale-gold)}
+.christmas-dialog[data-sale-theme] .christmas-close{background:var(--sale-gold);color:var(--sale-bg);border-color:var(--sale-gold);box-shadow:0 3px 12px #0003}
+.christmas-dialog[data-sale-theme] .event-picker{color:var(--sale-muted)}.christmas-dialog[data-sale-theme] .event-picker select{background:var(--sale-bg);color:var(--sale-text);border-color:var(--sale-soft)}
+.christmas-dialog[data-sale-theme] :focus-visible{outline-color:var(--sale-gold)}
+.seasonal-art{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;border-radius:inherit}
+.seasonal-art span{position:absolute;display:block}.seasonal-art svg{display:block;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 8px 8px #0003)}
+.seasonal-art-top{width:86px;height:86px;top:-8px;left:0;transform:rotate(-9deg)}
+.seasonal-art-bottom{width:91px;height:138px;bottom:-8px;left:-12px;transform:rotate(-8deg)}
+.seasonal-art-right{width:102px;height:102px;bottom:9px;right:-23px;transform:rotate(17deg)}
+.seasonal-art-spark{right:22px;top:104px;color:var(--sale-gold);font-size:23px;opacity:.7}.seasonal-art-spark.second{left:21px;top:45%;font-size:15px}
+.christmas-copy,.christmas-product,.christmas-actions,.christmas-terms{position:relative;z-index:1}
+[data-sale-theme="summer"] .christmas-scene:after{content:'';position:absolute;inset:auto 0 0;height:18px;border-radius:0 0 22px 22px;background:repeating-radial-gradient(ellipse at 50% 120%,transparent 0 18px,#ffe19b40 19px 21px,transparent 22px 37px);pointer-events:none}
+[data-sale-theme="halloween"] .seasonal-art-top{transform:rotate(-15deg);top:0}.christmas-dialog[data-sale-theme="halloween"] .christmas-scene h2{font-family:Georgia,serif;font-weight:700;letter-spacing:-.02em}
+[data-sale-theme="new-year"] .seasonal-art-top{width:105px;height:105px;top:-20px;left:-15px}[data-sale-theme="new-year"] .seasonal-art-right{width:120px;height:120px;right:-35px}
+[data-sale-theme="valentines"] .christmas-scene h2{font-style:italic}
+.christmas-launcher[data-sale-theme]{background:var(--sale-bg);color:var(--sale-text);border-color:var(--sale-gold)}.christmas-launcher[data-sale-theme]>span:first-child{width:36px;height:36px}.christmas-launcher svg{display:block;width:100%;height:100%}.christmas-launcher[data-sale-theme]:hover{background:var(--sale-mid)}
+/* Corner offers inherit the selected design too. Decorations stay behind the copy. */
+html .sale-card[data-sale-theme]{isolation:isolate;background:linear-gradient(135deg,var(--sale-mid),var(--sale-bg));border-color:var(--sale-gold);color:var(--sale-text)}
+.sale-card[data-sale-theme]>.seasonal-art~:not(.sale-close){position:relative;z-index:1}.sale-card[data-sale-theme] .sale-close{z-index:3;color:var(--sale-text)}
+.sale-card[data-sale-theme] .seasonal-art-top{width:48px;height:48px;left:8px;top:0;opacity:.7}.sale-card[data-sale-theme] .seasonal-art-bottom{width:60px;height:90px;opacity:.25}.sale-card[data-sale-theme] .seasonal-art-right{width:65px;height:65px;opacity:.25}
+html .sale-card[data-sale-theme] :is(p,small){color:var(--sale-muted)}html .sale-card[data-sale-theme] :is(.sale-amount,.eyebrow,.text-link){color:var(--sale-gold)}.sale-card[data-sale-theme] .button{background:var(--sale-gold);color:var(--sale-bg)}.sale-card[data-sale-theme] label{color:var(--sale-muted)}.sale-card[data-sale-theme] select{background:var(--sale-bg);color:var(--sale-text);border-color:var(--sale-soft)}
+.sale-tab[data-sale-theme]{background:var(--sale-bg);color:var(--sale-gold);border-color:var(--sale-gold)}
+/* Admin previews use the same graphics and palette, without activating a public offer. */
+.theme-preview-panel{min-width:0}.theme-preview-heading{display:grid;gap:8px;margin-bottom:16px}.theme-preview-heading h3{margin:0}.theme-preview-heading p{font-size:13px}
+.seasonal-preview{container-type:inline-size;overflow:hidden;border-radius:18px}
+.seasonal-preview .christmas-scene{grid-template-columns:1fr 1fr;padding-block:32px 22px;gap:18px;border-radius:18px;overflow:hidden}
+.seasonal-preview .christmas-kicker{font-size:9px;letter-spacing:.12em}.seasonal-preview .christmas-copy h2{font:400 30px/1.1 Georgia,serif;overflow-wrap:anywhere;margin:12px 0}
+.seasonal-preview .christmas-offer{font-size:42px;letter-spacing:-.04em;flex-wrap:wrap}.seasonal-preview .christmas-offer small{font-size:12px;letter-spacing:.1em}.seasonal-preview .christmas-message{font-size:13px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.seasonal-preview .christmas-product{padding:18px 10px 12px}.seasonal-preview .christmas-product>img{width:100%;height:150px;object-fit:contain}.seasonal-preview .christmas-product>.button{font-size:11px;min-height:36px;padding:8px 12px}.seasonal-preview .christmas-terms{grid-column:1/-1;font-size:10px;text-align:center;margin:0}
+@container(max-width:540px){.seasonal-preview[data-sale-theme] .christmas-scene{grid-template-columns:1fr;padding:30px 32px 18px;text-align:center}.seasonal-preview .christmas-product{display:none}.seasonal-preview .christmas-offer{justify-content:center}.seasonal-preview .seasonal-art{opacity:.55}}
+@media(max-width:600px){.christmas-dialog[data-sale-theme] .christmas-scene{padding-inline:22px}.christmas-dialog .seasonal-art-top{width:55px;height:55px;left:0;top:0}.christmas-dialog .seasonal-art-bottom{width:55px;height:84px;opacity:.5}.christmas-dialog .seasonal-art-right{width:65px;height:65px;opacity:.5}.christmas-dialog .seasonal-art-spark{display:none}}
+@media(max-height:440px){.christmas-dialog[data-sale-theme] .christmas-scene{padding-inline:36px}.christmas-dialog .seasonal-art-bottom{opacity:.35}.christmas-dialog .seasonal-art-top{width:50px;height:50px}.christmas-dialog .seasonal-art-right{width:60px;height:60px}}

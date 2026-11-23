@@ -55,7 +55,7 @@ test('Status notification belongs only to order owner and contains public copy',
 test('Proof route rejects other customers and unassigned riders',async t=>{
  t.mock.method(pool,'execute',async()=>[[{user_id:4,rider_id:7,proof_file:'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa.webp'}]]);
  for(const user of [{id:99,role:'customer'},{id:99,role:'delivery'},{id:7,role:'customer'}])await assert.rejects(serveProof({user,params:{id:1}},{}),{status:404});
- for(const user of [{id:4,role:'customer'},rider,{id:99,role:'admin'}]){let file;const res={set(k,v){assert.equal(v,'private, no-store');return this;},type(){return this;},sendFile(v){file=v;}};await serveProof({user,params:{id:1}},res);assert.match(file,/.delivery-proofs/);}
+ for(const user of [{id:4,role:'customer'},rider,{id:99,role:'admin'}]){let file;const res={set(k,v){assert.equal(v,'private, no-store');return this;},type(){return this;},sendFile(v,options){file=options.root;assert.equal(options.dotfiles,'allow');assert.match(v,/^[a-f0-9-]+\.webp$/);}};await serveProof({user,params:{id:1}},res);assert.match(file,/.delivery-proofs/);}
 });
 test('Completion requires proof and receipt confirmation before committing',async t=>{
  const writes=[];let committed=0,rolled=0;const db={async beginTransaction(){},async rollback(){rolled++;},async commit(){committed++;},release(){},async execute(sql,args){if(sql.startsWith('SELECT * FROM orders'))return [[{...order,status:'shipped'}]];if(sql.startsWith('SELECT * FROM delivery_assignments'))return [[{...assignment,status:'out'}]];if(sql.startsWith('SELECT id,role'))return [[{...rider,is_active:1}]];writes.push({sql,args});return [{affectedRows:1}];}};

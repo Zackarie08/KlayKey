@@ -1,0 +1,48 @@
+/* Shared spacing corrections after reviewing storefront, account, admin and delivery layouts. */
+:root{--panel-gap:24px;--panel-inset:clamp(20px,2.4vw,32px)}
+/* Grid/flex children must be allowed to shrink around long copy and form values. */
+:is(.two-col,.form-grid,.product-detail,.admin-detail-grid,.footer-grid)>*{min-width:0}
+.panel{padding:var(--panel-inset);overflow-wrap:anywhere}
+.stack>h2,.stack>h3,.stack>.eyebrow,.admin-content .panel.stack>h3{margin-block:0}
+.stack>.actions,.two-col aside.stack>.button{margin-block:0}
+.stack{align-content:start}
+.panel:not(.stack):not(.form-grid)>h3+p{margin-top:12px}
+.panel:not(.stack):not(.form-grid)>p+p{margin-top:12px}
+.panel:not(.stack):not(.form-grid)>p+:is(form,.actions,.button,.notice){margin-top:20px}
+.panel:not(.stack):not(.form-grid)>h2{margin-bottom:20px}
+.panel.stack>div>.eyebrow{margin-bottom:10px}
+.panel.stack>div>h3+p{margin-top:12px}
+#address-editor:empty,#contact-result:empty,#upload-status:empty,#admin-delivery:empty{display:none}
+.address-card{display:grid;gap:12px}.address-card .actions{gap:12px}.address-card h3{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#saved-address{padding-top:20px;border-top:1px solid var(--color-border)}
+/* Order panels previously touched edge-to-edge; stack spacing now has a single owner. */
+.order-confirmation{display:grid;gap:var(--panel-gap)}
+.order-confirmation>.confirmation-head{margin:0;padding-block:8px 12px}
+.order-confirmation>.order-progress,.admin-content>.order-progress{margin-bottom:0}
+#admin-delivery{display:grid;gap:var(--panel-gap)}
+.proof-photo{margin:0;display:grid;justify-items:start;gap:12px;min-width:0}
+.proof-photo figcaption{font-weight:600}.proof-photo>a{font-size:14px;color:var(--color-primary);text-decoration:underline;text-underline-offset:4px}
+.proof-photo .delivery-proof{width:min(100%,520px);max-height:380px;height:auto;background:var(--color-background);border:1px solid var(--color-border)}
+.proof-photo-error{display:grid;gap:12px;width:100%;padding:16px;border:1px solid var(--color-border);border-radius:10px;background:var(--color-background)}
+.proof-photo-error .button{justify-self:start}.proof-photo-error p{font-size:14px}
+.order-event-list{margin:0;padding-left:22px}.order-event-list li{padding:12px 0}.order-event-list li+li{border-top:1px solid var(--color-border)}.order-event-list p{margin:6px 0 0}
+.delivery-workspace>.eyebrow{margin-bottom:0}.delivery-workspace .panel:not(.stack)>h3{margin-block:0 12px}.delivery-workspace .panel:not(.stack)>a.button{margin-block:16px}.delivery-workspace details[open]>form{margin-top:16px}.delivery-workspace details form>p{padding:0}
+.notification-item{display:grid;gap:12px}.notification-item h2{margin:0!important}.notification-page>p{margin-bottom:24px}
+/* Keep form sections and asset previews apart without adding blank grid rows. */
+.admin-image-editor{display:grid;gap:14px}.admin-image-editor h3,.admin-image-editor p{margin:0}.admin-content fieldset{margin:0;min-width:0}.admin-content fieldset .check{margin-block:8px}
+.admin-heading{align-items:flex-start}.admin-heading h2{line-height:1.2}.admin-content .form-grid>h3{margin:0}.admin-note>p{margin-top:8px}
+.record-edit-actions{padding-bottom:16px;border-bottom:1px solid var(--color-border)}
+/* Standard confirmations can scroll on small screens; the sale modal retains its no-scroll fit. */
+#confirm-dialog{margin:auto;padding:clamp(22px,4vw,32px);width:min(460px,calc(100vw - 32px));max-height:calc(100dvh - 32px);overflow:auto}
+#confirm-dialog h2{font-size:26px;line-height:1.2}#confirm-dialog p{margin:18px 0 24px;overflow-wrap:anywhere}#confirm-dialog .actions{gap:12px}#confirm-dialog .actions>.button{flex:1;min-width:120px}
+/* Reserve space for floating close controls and protect short viewports. */
+.sale-card{max-height:calc(100dvh - var(--header-height) - 40px);overflow-y:auto;overscroll-behavior:contain;padding-top:52px}
+.sale-card>.eyebrow{margin-bottom:12px}.sale-close{display:grid;place-items:center;line-height:1;padding:0}.sale-card>label{margin-bottom:14px}
+.christmas-scene{padding-top:54px}.christmas-close{width:40px;height:40px;min-height:40px;top:8px;right:10px}
+.christmas-editions{flex-wrap:wrap;gap:8px}.christmas-dialog .christmas-product{min-width:0}.christmas-dialog .christmas-terms{padding-top:4px}
+.gallery-thumbs{flex-wrap:wrap;gap:10px}.gallery-thumbs button{flex:0 0 65px}.product-detail .detail-copy .status-badge{white-space:normal;line-height:1.6}
+.section-title{flex-wrap:wrap;row-gap:16px}.section-title>div{min-width:0}.section-title h2{overflow-wrap:anywhere}
+.info-top>div>.notice{margin-block:24px}.footer-grid>div{min-width:0}.footer-grid a{overflow-wrap:anywhere}
+@media(max-width:800px){.auth-layout{gap:32px}.admin-search label{min-width:min(160px,100%)}.admin-heading{gap:16px}}
+@media(max-width:600px){:root{--panel-gap:20px}.panel{padding:20px}.actions{gap:10px}.order-confirmation>.confirmation-head{padding-block:0 8px}.order-confirmation .two-col{gap:20px}.sale-card{padding:48px 20px 20px;bottom:12px;right:12px}.christmas-scene{padding-top:52px}.christmas-actions .button{min-width:0}.notification-page .section-title{gap:16px}.record-edit-actions .button{flex:1}.section-title>a{white-space:normal}}
+@media(max-height:440px){.christmas-scene{padding-top:48px}.christmas-editions{gap:6px}.christmas-dialog .christmas-terms{padding-top:0}}

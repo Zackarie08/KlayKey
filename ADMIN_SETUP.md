@@ -131,3 +131,12 @@ Existing product, promotion and access forms now begin in view mode with Edit. N
 Focused tests (including mocked database transactions, ownership checks, stale updates, address requirements and completion proof requirements) pass. Full MySQL integration and visual/mobile camera testing require a separately prepared development database with this SQL applied; they were not run against the live database. The commerce integration test has been updated for saved-address checkout and fixture cleanup.
 
 Before release, test with a customer, two different delivery accounts and an admin: verify another rider cannot open the assignment/proof; confirm start, failed attempt, retry, photo completion and COD collection; check customer notifications and proof; test pickup separately; test Edit/Cancel and all three addresses on mobile and desktop.
+
+
+## Five seasonal promotion designs
+
+Admin → Promotions → open an event → Edit → Design now offers Default plus Christmas, Summer, Halloween, New Year and Valentine's. The inline Design preview updates as you change the theme, title, message or discount. It is illustrative and does not publish or activate the promotion. The same theme is applied to the large popup, minimized launcher, or corner offer according to the selected display type. Dates and eligibility continue to be controlled by the existing promotion form. Selecting a seasonal design does not change the sale schedule.
+
+Before saving any of the four new themes, manually run **server/database/manual/seasonal-sale-themes.sql** in the selected store database, after multi-promotions.sql. It expands the existing theme enum and preserves all promotions. The statement is safe to repeat. This file is not an automatic migration and has not been executed by the coding agent.
+
+All seasonal decorations are local inline SVG artwork: Christmas ornaments/pine tree, summer sun/palm tree, Halloween pumpkin/bat, New Year fireworks/confetti, and Valentine's hearts/love letter. No external image host, new runtime dependency or image-generation service is needed. The modal continues to fit its viewport without inner scrolling.
