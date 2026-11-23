@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
-import {normalize} from './configuration.js?v=3';
+import {normalize} from './configuration.js?v=4';
 import {KeyAnimation,TypingController} from './key-animation.js?v=3';
 import {TypingAudio} from './typing-audio.js';
 import {ControlModule} from './control-module.js?v=3';
@@ -69,7 +69,6 @@ const controls=new OrbitControls(camera,renderer.domElement);
 controls.enableDamping=true;controls.minDistance=.15;controls.maxDistance=1.5;
 controls.maxPolarAngle=Math.PI*.9;controls.zoomToCursor=true;
 controls.addEventListener('change',()=>controls.target.clamp(new THREE.Vector3(-.3,-.1,-.3),new THREE.Vector3(.3,.25,.3)));
-renderer.domElement.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'&&!root.querySelector('.builder-preview')?.classList.contains('interacting'))e.stopImmediatePropagation();},{capture:true,signal});
 const resize=()=>{const el=$('viewport');if(!el||!el.clientWidth||!el.clientHeight)return;renderer.setSize(el.clientWidth,el.clientHeight);camera.aspect=el.clientWidth/el.clientHeight;camera.updateProjectionMatrix();resetCamera();};
 const observer=new ResizeObserver(resize);observer.observe($('viewport'));resize();
 renderer.setAnimationLoop(now=>{const dt=Math.min(.05,(now-lastFrame)/1000);lastFrame=now;rgbUniforms.uTime.value=now/1000;animation?.update(now);hardware?.update(dt);controls.update();renderer.render(scene,camera);});
@@ -77,7 +76,7 @@ function resetCamera(){
  if(!model)return;
  model.updateMatrixWorld(true);
  const box=new THREE.Box3().setFromObject(model.getObjectByName('GROUP_CASE'));
- if(state.connection==='wired')box.expandByObject(model.getObjectByName('OPTION_CABLE'));
+ if(manifest.compatibility.connectionVisibility[state.connection])box.expandByObject(model.getObjectByName('OPTION_CABLE'));
  const center=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3());
  const direction=new THREE.Vector3(.35,.9,1).normalize();
  const right=new THREE.Vector3().crossVectors(new THREE.Vector3(0,1,0),direction).normalize();
@@ -96,7 +95,8 @@ function select(id,items){$(id).replaceChildren(...items.map(item=>new Option(it
 function visible(name,value){const obj=model.getObjectByName(name);if(obj)obj.visible=value;}
 function syncControls(reasons=[]){
   for(const [id,value] of Object.entries(state)){const el=$(id);if(el){if(el.type==='checkbox')el.checked=value;else el.value=value;}}
-  $('rgbColor').disabled=state.rgbMode!=='static';
+  $('rgbColor').disabled=state.rgbMode!=='static';$('rgbColor').closest('label').hidden=state.rgbMode!=='static';
+  if($('custom-keycap-colors')){const custom=state.keycapColorMode==='custom';$('custom-keycap-colors').hidden=!custom;if(custom)$('keycapTheme').value='custom';$('custom-color-base').textContent='Base set: '+manifest.keycapThemes.find(t=>t.id===state.keycapTheme).name+'. Colors change the finish; pricing and stock use this set.';for(const role of ['alpha','modifier','accent']){$('cap-'+role).value=state.customKeycapColors[role];const hex=$('cap-hex-'+role);hex.disabled=!custom;$('cap-'+role).disabled=!custom;if(document.activeElement!==hex){hex.value=state.customKeycapColors[role];hex.setCustomValidity('');}}}
   $('rgbIntensity').disabled=state.rgbMode==='off';
   $('compatibility').textContent=reasons.map(r=>r.message).join(' ')||
     (state.layout==='60'?'Compact 60% chassis no additional control bay.':'Compatible components. Choose a knob, mini display, or neither.');
@@ -112,7 +112,7 @@ function apply(){
   const byId=(items,id)=>items.find(i=>i.id===id);
   const c=byId(manifest.caseColors,state.caseColor),f=byId(manifest.caseFinishes,state.caseFinish);
   for(const name of manifest.bindings.caseMaterial){const m=materials.get(name);m.color.set(c.color);m.metalness=c.metallic*f.metallicMultiplier;m.roughness=THREE.MathUtils.clamp(c.roughness+f.roughnessOffset,.12,.85);}
-  const theme=byId(manifest.keycapThemes,state.keycapTheme);
+  const theme={...byId(manifest.keycapThemes,state.keycapTheme),...(state.keycapColorMode==='custom'?state.customKeycapColors:{})};
   const cap=byId(manifest.keycapMaterials,state.keycapMaterial);
   for(const role of ['alpha','modifier','accent','legend']){
     const m=materials.get('MAT_KEYCAP_'+role.toUpperCase());m.color.set(theme[role]);
@@ -155,11 +155,20 @@ async function loadLayout(id){
 }
 async function configure(patch){
   if(patch.accessory!==undefined&&patch.controlModule===undefined)patch={...patch,controlModule:{none:'none',knob:'volume-knob',display:'mini-display'}[patch.accessory]||'none'};
-  const previous=state?.layout;const result=normalize(manifest,{...state,...patch});state=result.state;
-  if(previous!==state.layout||!model)await loadLayout(state.layout);else apply();
+  if(patch.keycapTheme!==undefined&&patch.keycapColorMode===undefined)patch={...patch,keycapColorMode:'preset'};
+  const previousConnection=state?.connection;const previous=state?.layout;const result=normalize(manifest,{...state,...patch});state=result.state;
+  if(previous!==state.layout||!model)await loadLayout(state.layout);else {apply();if(previousConnection!==state.connection)resetCamera();}
   syncControls(result.reasons);options.onChange?.({...state});if(result.reasons.length)options.onNotice?.(result.reasons.map(r=>r.message).join(' '));return result;
 }
-$('controls').addEventListener('input',async e=>{if(!e.target.id)return;try{await configure({[e.target.id]:e.target.type==='checkbox'?e.target.checked:e.target.value});}catch(error){$('status').textContent=error.message;}});
+$('controls').addEventListener('submit',e=>e.preventDefault());
+$('controls').addEventListener('input',async e=>{
+ const el=e.target;if(!el.id)return;
+ try{
+  if(el.dataset.capColor||el.dataset.capHex){const role=el.dataset.capColor||el.dataset.capHex;if(!/^#[\da-f]{6}$/i.test(el.value)){el.setCustomValidity('Enter a six-digit hex color, for example #A66AFF.');return;}el.setCustomValidity('');await configure({customKeycapColors:{...state.customKeycapColors,[role]:el.value}});return;}
+  if(el.id==='keycapTheme'){await configure(el.value==='custom'?{keycapColorMode:'custom',customKeycapColors:Object.fromEntries(['alpha','modifier','accent'].map(role=>[role,manifest.keycapThemes.find(t=>t.id===state.keycapTheme)[role]]))}:{keycapTheme:el.value,keycapColorMode:'preset'});return;}
+  await configure({[el.id]:el.type==='checkbox'?el.checked:el.value});
+ }catch(error){$('status').textContent=error.message;}
+});
 $('start-typing').addEventListener('click',async()=>{try{if(typing.active)typing.stop();else await typing.start();}catch(e){$('typing-status').textContent='Audio could not start: '+e.message;}});
 $('stop-typing')?.addEventListener('click',()=>typing.stop());
 
@@ -177,11 +186,14 @@ async function runTests(){
       for(const t of manifest.keycapThemes){await configure({keycapTheme:t.id});assert(`${layout.id}: theme ${t.id}`,['alpha','modifier','accent','legend'].every(role=>sameColor(materials.get('MAT_KEYCAP_'+role.toUpperCase()),t[role])));}
       for(const s of manifest.switches){await configure({switch:s.id});assert(`${layout.id}: switch ${s.id}`,sameColor(materials.get('MAT_SWITCH_STEM'),s.visualColor));}
       for(const r of manifest.rgbModes){await configure({rgbMode:r.id});assert(`${layout.id}: RGB ${r.id}`,model.getObjectByName('GROUP_RGB').visible===(r.id!=='off'));}
+      await configure({keycapColorMode:'custom',customKeycapColors:{alpha:'#123ABC',modifier:'#456DEF',accent:'#FEDCBA'}});
+      for(const [role,color] of Object.entries(state.customKeycapColors))assert(`${layout.id}: custom ${role} color`,sameColor(materials.get('MAT_KEYCAP_'+role.toUpperCase()),color));
+      await configure({keycapColorMode:'preset'});
       await configure({rgbMode:'static',rgbColor:'#18cd82',rgbIntensity:3.1,underglow:false});
       assert(`${layout.id}: RGB color/intensity`,materials.get('MAT_RGB_EMISSIVE').emissive.getHexString()==='18cd82'&&materials.get('MAT_RGB_EMISSIVE').emissiveIntensity===3.1);
       assert(`${layout.id}: underglow off`,!model.getObjectByName('RGB_UNDERGLOW').visible);
       await configure({underglow:true});assert(`${layout.id}: underglow on`,model.getObjectByName('RGB_UNDERGLOW').visible);
-      for(const c of manifest.connectionTypes){await configure({connection:c.id});assert(`${layout.id}: connection ${c.id}`,model.getObjectByName('OPTION_CABLE').visible===(c.id==='wired'));}
+      for(const c of manifest.connectionTypes){await configure({connection:c.id});assert(`${layout.id}: connection ${c.id}`,model.getObjectByName('OPTION_CABLE').visible===['wired','tri-mode'].includes(c.id));}
       for(const a of manifest.controlModules.filter(a=>layout.id!=='60'||a.id==='none')){await configure({controlModule:a.id});assert(`${layout.id}: module ${a.id}`,state.controlModule===a.id);assert(`${layout.id}: ${a.id} visibility`,!!model.getObjectByName('OPTION_KNOB')?.visible===(a.id==='volume-knob')&&!!model.getObjectByName('OPTION_DISPLAY')?.visible===(a.id==='mini-display'));}
       for(const cap of manifest.keycapMaterials){await configure({keycapMaterial:cap.id});assert(`${layout.id}: physical material ${cap.id}`,materials.get('MAT_KEYCAP_ALPHA').roughness===cap.roughness&&materials.get('MAT_KEYCAP_ALPHA').transmission===cap.transmission);}
       await runInteractionChecks({assert,animation,typing,audio,hardware,canvas:renderer.domElement,configure,state:()=>state,layout:layout.id});
@@ -212,6 +224,7 @@ try{
   typing=new TypingController(renderer.domElement,audio,()=>state,message=>{$('typing-status').textContent=message;$('start-typing').textContent=typing?.active?'Stop typing test':'Start typing test';$('start-typing').setAttribute('aria-pressed',String(!!typing?.active));},signal);
   hardware=new ControlModule(renderer.domElement,camera,controls,()=>model,()=>state,configure,signal);
   for(const [id,key] of Object.entries({layout:'layouts',caseColor:'caseColors',caseFinish:'caseFinishes',keycapTheme:'keycapThemes',keycapMaterial:'keycapMaterials',switch:'switches',rgbMode:'rgbModes',connection:'connectionTypes',controlModule:'controlModules'}))select(id,manifest[key]);
+  if($('custom-keycap-colors'))$('keycapTheme').add(new Option('Custom — choose your own colors','custom'));
   await configure(options.initial||manifest.defaults);
   // Public integration API: configuration remains serializable; model assets stay modular.
   if($('run-tests')&&new URLSearchParams(location.search).has('test'))await runTests();

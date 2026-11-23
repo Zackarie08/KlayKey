@@ -900,7 +900,7 @@
       "wired": true,
       "bluetooth": false,
       "wireless": false,
-      "tri-mode": false
+      "tri-mode": true
     },
     "rgb": {
       "requires": "rgbCapable",

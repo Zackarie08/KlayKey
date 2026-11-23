@@ -13,6 +13,16 @@ export function normalize(manifest,input){
   const themes=manifest.keycapThemes.filter(t=>layout.requiredWidths.every(w=>t.supportedWidths.includes(w))&&layout.requiredHeights.every(h=>t.supportedHeights.includes(h)));
   if(!themes.length) throw new Error('No keycap theme covers this layout.');
   fallback('keycapTheme',themes);
+  const baseTheme=themes.find(t=>t.id===state.keycapTheme);
+  if(state.keycapColorMode===undefined)state.keycapColorMode='preset';
+  if(!['preset','custom'].includes(state.keycapColorMode)){state.keycapColorMode='preset';reasons.push({code:'INVALID_KEYCAP_COLORS',message:'Choose preset or custom keycap colors.'});}
+  const colors=input.customKeycapColors;
+  state.customKeycapColors=Object.fromEntries(['alpha','modifier','accent'].map(role=>{
+    const color=colors?.[role];
+    if(color!==undefined&&!/^#[\da-f]{6}$/i.test(color))reasons.push({code:'INVALID_KEYCAP_COLORS',message:'Use six-digit hex colors for your keycaps.'});
+    return [role,typeof color==='string'&&/^#[\da-f]{6}$/i.test(color)?color.toUpperCase():baseTheme[role]];
+  }));
+  if(state.keycapColorMode==='custom'&&(!colors||typeof colors!=='object'||Array.isArray(colors)||['alpha','modifier','accent'].some(role=>typeof colors[role]!=='string'))){reasons.push({code:'INVALID_KEYCAP_COLORS',message:'Choose all three custom keycap colors.'});}
   const switches=manifest.switches.filter(s=>rules.switchMount.allowed.includes(s.mount)&&s.mount===layout.switchMount);
   if(!switches.length) throw new Error('No compatible switch mount.');
   fallback('switch',switches); fallback('rgbMode',manifest.rgbModes);

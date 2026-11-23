@@ -11,25 +11,25 @@ import {manifest,quote,fees,ownedBuild} from '../services/builds.js';
 import {getCart,addCart,updateCart,lockCart} from '../services/cart.js';
 import {checkout,orderDetails,deliveryFees} from '../services/orders.js';
 import {admin} from './admin.js';
-import {getPromotion,activePromotion} from '../services/promotions.js';
+import {getPromotion,getOffers,activePromotion,visibleCampaign} from '../services/promotions.js';
 export const api=Router();
 api.use('/admin',admin);
-api.get('/promotion',async(req,res)=>{res.set('Cache-Control','no-store');const p=await getPromotion();res.json(activePromotion(p)?p:null);});
+api.get('/promotion',async(req,res)=>{res.set('Cache-Control','no-store');const c=await getOffers(req.session.userId);res.json(activePromotion(c.first)&&(!req.session.userId||c.eligible)?c.first:null);});
 const limit=rateLimit({windowMs:15*60*1000,limit:30,standardHeaders:'draft-8',legacyHeaders:false,message:{error:'Too many attempts. Please try again in 15 minutes.'}});
 const publicUser=u=>u?{id:u.id,first_name:u.first_name,last_name:u.last_name,email:u.email,role:u.role}:null;
 async function signIn(req,id){await new Promise((resolve,reject)=>req.session.regenerate(e=>e?reject(e):resolve()));req.session.userId=id;req.session.csrf=crypto.randomBytes(24).toString('hex');await new Promise((resolve,reject)=>req.session.save(e=>e?reject(e):resolve()));}
 api.get('/auth/session',async(req,res)=>{const u=req.session.userId?(await rows('SELECT id,first_name,last_name,email,role FROM users WHERE id=? AND is_active=1',[req.session.userId]))[0]:null;res.json({user:publicUser(u),csrf:req.session.csrf,brand:config.appName});});
 api.post('/auth/register',limit,async(req,res)=>{
  const b=req.body,first=text(b.first_name,'first_name',1,60),last=text(b.last_name,'last_name',1,60),mail=email(b.email);
- requireValue(typeof b.password==='string'&&b.password.length>=10&&b.password.length<=72,'Use a password with 10–72 characters.',{password:'Use 10–72 characters.'});requireValue(b.password===b.confirm_password,'Passwords do not match.',{confirm_password:'Passwords must match.'});requireValue(b.agree===true,'Accept the demonstration Terms and Privacy Policy.',{agree:'Agreement is required.'});
+ requireValue(typeof b.password==='string'&&b.password.length>=10&&b.password.length<=72,'Use a password with 10–72 characters.',{password:'Use 10–72 characters.'});requireValue(b.password===b.confirm_password,'Passwords do not match.',{confirm_password:'Passwords must match.'});requireValue(b.agree===true,'Accept the Terms and Privacy Policy.',{agree:'Agreement is required.'});
  requireValue(Buffer.byteLength(b.password,'utf8')<=72&&/[a-zA-Z]/.test(b.password)&&/[^a-zA-Z]/.test(b.password)&&!/(.)\1{4}/.test(b.password),'Use letters plus a number or symbol, without repeated runs. Maximum 72 UTF-8 bytes.',{password:'Use a strong passphrase with letters and a number or symbol.'});
  const hash=await bcrypt.hash(b.password,12);let id;try{const result=await rows('INSERT INTO users(first_name,last_name,email,password_hash) VALUES(?,?,?,?)',[first,last,mail,hash]);id=result.insertId;}catch(e){if(e.code==='ER_DUP_ENTRY')throw new HttpError(409,'This email cannot be registered. Try signing in.',{email:'This email cannot be registered.'});throw e;}
  await signIn(req,id);res.status(201).json({ok:true});
 });
 api.post('/auth/login',limit,async(req,res)=>{const mail=email(req.body.email);requireValue(typeof req.body.password==='string'&&req.body.password.length<=200,'Email or password is incorrect.');const u=(await rows('SELECT * FROM users WHERE email=? AND is_active=1',[mail]))[0];const hash=u?.password_hash||'$2b$12$5Bv9W6yqOO.f2HFq8OcDp.vVK39G6EVKnZc/Hb69O4JEp3tZGxGgy';const valid=await bcrypt.compare(req.body.password,hash);if(!u||!valid)throw new HttpError(401,'Email or password is incorrect.');await signIn(req,u.id);res.json({ok:true});});
 api.post('/auth/logout',auth,async(req,res)=>{await new Promise((resolve,reject)=>req.session.destroy(e=>e?reject(e):resolve()));res.clearCookie(config.cookieName,{path:'/',httpOnly:true,sameSite:'lax',secure:config.production}).json({ok:true});});
-api.get('/products',async(req,res)=>res.json(await listProducts(req.query)));
-api.get('/products/:slug',async(req,res)=>res.json(await getProduct(req.params.slug)));
+api.get('/products',async(req,res)=>res.set('Cache-Control','no-store').json(await listProducts(req.query,req.session.userId)));
+api.get('/products/:slug',async(req,res)=>res.set('Cache-Control','no-store').json(await getProduct(req.params.slug,req.session.userId)));
 api.get('/categories',async(req,res)=>res.json(await rows('SELECT * FROM product_categories')));
 api.get('/compatibility',async(req,res)=>res.json({manifest,fees,deliveryFees,components:(await rows('SELECT * FROM products WHERE option_field IS NOT NULL AND is_active=1')).map(product)}));
 api.get('/cart',auth,async(req,res)=>res.json(await getCart(req.user.id)));
@@ -51,4 +51,6 @@ api.get('/orders',auth,async(req,res)=>res.json(await rows('SELECT o.*,p.status 
 api.get('/orders/:number',auth,async(req,res)=>res.json(await orderDetails(req.params.number,req.user.id)));
 api.get('/account',auth,(req,res)=>res.json(req.user));
 api.patch('/account',auth,async(req,res)=>{const b=req.body;const first=text(b.first_name,'first_name',1,60),last=text(b.last_name,'last_name',1,60),mail=email(b.email);const phone=typeof b.phone==='string'?b.phone.slice(0,30):'';const address=b.address?shipping(b.address):null;try{await rows('UPDATE users SET first_name=?,last_name=?,email=?,phone=?,address=? WHERE id=?',[first,last,mail,phone,address?JSON.stringify(address):null,req.user.id]);}catch(e){if(e.code==='ER_DUP_ENTRY')throw new HttpError(409,'This email cannot be used.',{email:'Choose another email.'});throw e;}res.json({ok:true});});
-api.post('/contact',limit,async(req,res)=>{const b=req.body;await rows('INSERT INTO contact_messages(name,email,subject,message) VALUES(?,?,?,?)',[text(b.name,'name',2,100),email(b.email),text(b.subject,'subject',3,160),text(b.message,'message',10,3000)]);res.status(201).json({message:'Your message was saved in this local demo. No email was sent.'});});
+api.post('/contact',limit,async(req,res)=>{const b=req.body;await rows('INSERT INTO contact_messages(name,email,subject,message) VALUES(?,?,?,?)',[text(b.name,'name',2,100),email(b.email),text(b.subject,'subject',3,160),text(b.message,'message',10,3000)]);res.status(201).json({message:'Your message has been received.'});});
+
+api.get('/campaign',async(req,res)=>{res.set('Cache-Control','no-store');const p=await getPromotion(undefined,2);if(!visibleCampaign(p))return res.json(null);const featured=(await rows('SELECT slug FROM products WHERE id=? AND is_active=1',[p.featured_product_id]))[0];res.json({...p,active:activePromotion(p),server_now:Date.now(),featured:featured?await getProduct(featured.slug,req.session.userId):null});});

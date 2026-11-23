@@ -5,7 +5,7 @@ import {shipping,requireValue,HttpError,text} from '../validators.js';
 import {recordCheckoutStock} from './inventory.js';
 export const deliveryFees={standard:15000,express:30000,pickup:0};
 export async function checkout(userId,input){
- const address=shipping(input.address);requireValue(Object.hasOwn(deliveryFees,input.delivery),'Choose a delivery option.');requireValue(['cod','gcash-demo','card-demo'].includes(input.payment),'Choose a simulated payment method.');requireValue(input.simulationConsent===true,'Confirm that this is a simulated order.');
+ const address=shipping(input.address);requireValue(Object.hasOwn(deliveryFees,input.delivery),'Choose a delivery option.');requireValue(['cod','gcash-demo','card-demo'].includes(input.payment),'Choose a payment method.');requireValue(input.simulationConsent===true,'Confirm that you have reviewed your order.');
  const key=text(input.idempotencyKey,'checkout reference',16,80);
  return transaction(async db=>{
   const cartId=await lockCart(userId,db);const existing=(await rows('SELECT order_number FROM orders WHERE user_id=? AND idempotency_key=?',[userId,key],db))[0];if(existing)return existing.order_number;

@@ -1,13 +1,15 @@
+import {productCopy} from './store-copy.js';
 import {esc,money} from './core.js';
 import {orderStatusLabel} from './order-status.js';
 
 const actions={'product.create':'Product added','product.update':'Product updated','stock.adjust':'Stock adjusted','category.save':'Category saved','order.status':'Order status changed','order.note':'Order note added','account.access':'Account access changed','promotion.update':'Sale settings updated'};
-const fields={name:'Name',sku:'SKU',slug:'Store URL name',category_id:'Category',description:'Description',short_description:'Short description',price_cents:'Price',low_stock_threshold:'Low-stock alert at',layout:'Keyboard size',switch_type:'Switch type',connection_type:'Connection',material:'Material',rgb_supported:'RGB lighting',is_featured:'Featured product',is_active:'Active',images:'Product photos',compatibility:'Compatible components',title:'Sale title',message:'Sale message',discount_type:'Discount type',discount_value:'Discount',enabled:'Sale enabled',starts_at:'Starts at (UTC)',ends_at:'Ends at (UTC)',product_ids:'Eligible product IDs',category_ids:'Eligible categories',role:'Access level'};
-const bools=new Set(['rgb_supported','is_featured','is_active','enabled']);
+const fields={name:'Name',sku:'SKU',slug:'Store URL name',category_id:'Category',description:'Description',short_description:'Short description',price_cents:'Price',low_stock_threshold:'Low-stock alert at',layout:'Keyboard size',switch_type:'Switch type',connection_type:'Connection',material:'Material',rgb_supported:'RGB lighting',is_featured:'Featured product',is_active:'Active',images:'Product photos',compatibility:'Compatible components',title:'Sale title',message:'Sale message',discount_type:'Discount type',discount_value:'Discount',enabled:'Sale enabled',starts_at:'Starts at (UTC)',ends_at:'Ends at (UTC)',product_ids:'Eligible product IDs',category_ids:'Eligible categories',preview_at:'Preview starts (UTC)',include_builds:'Custom builds eligible',role:'Access level'};
+const bools=new Set(['rgb_supported','is_featured','is_active','enabled','include_builds']);
 function parse(value){if(typeof value!=='string')return value;try{return JSON.parse(value);}catch{return value;}}
 function value(key,input,context={}){
  if(input===null||input===undefined||input==='')return 'Not set';
  if(bools.has(key))return input===true||input===1||input==='1'?'Yes':'No';
+ if(key==='description')return productCopy(input);
  if(key==='price_cents')return money(input);
  if(key==='discount_value')return context.discount_type==='percent'?input+'%':context.discount_type==='fixed'?money(input):String(input);
  if(key==='role')return ({customer:'Customer',admin:'Admin',super_admin:'Super Admin'})[input]||String(input);
