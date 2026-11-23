@@ -1,7 +1,7 @@
 import {rows,json} from '../database/connection.js';
 import {HttpError} from '../validators.js';
-import {getOffers,bestProductPrice,activePromotion,availability} from './promotions.js';
-export const product=p=>{const compatibility=json(p.compatibility);if(p.option_field==='controlModule')compatibility.layouts=compatibility.layouts.filter(l=>l!=='60');return {...p,images:json(p.images).map(src=>src.replace(/(keyboard_60\.webp)(?:\?.*)?$/, '$1?v=3')),compatibility};};
+import {getOffers,bestProductPrice,activePromotion,availability,HOLIDAY_EDITIONS} from './promotions.js';
+export const product=p=>{const compatibility=json(p.compatibility);if(p.option_field==='controlModule')compatibility.layouts=compatibility.layouts.filter(l=>l!=='60');return {...p,images:json(p.images).map(src=>src.replace('/assets/images/noel-75.svg','/assets/images/noel-75.webp').replace(/(keyboard_60\.webp)(?:\?.*)?$/, '$1?v=3')),compatibility};};
 export async function listProducts(q={},userId=null){
  const where=['is_active=1'],args=[];
  const context=await getOffers(userId),now=Date.now(),offers=context.offers.filter(p=>activePromotion(p,now));
@@ -17,7 +17,7 @@ export async function listProducts(q={},userId=null){
  if(q.parts==='1')where.push("category_id<>'prebuilt'");
  for(const [key,column] of Object.entries({category:'category_id',layout:'layout',switch:'switch_type',connection:'connection_type'}))if(q[key]){where.push(`${column}=?`);args.push(String(q[key]));}
  if(q.q){where.push('(name LIKE ? OR short_description LIKE ?)');args.push('%'+String(q.q).slice(0,80)+'%','%'+String(q.q).slice(0,80)+'%');}
- if(q.available==='1'){where.push('stock_quantity>0');if(!activePromotion(context.campaign,now)){where.push('slug<>?');args.push('noel-75-limited-edition');if(context.campaign?.featured_product_id){where.push('id<>?');args.push(context.campaign.featured_product_id);}}}if(q.featured==='1')where.push('is_featured=1');
+ if(q.available==='1'){where.push('stock_quantity>0');if(!activePromotion(context.campaign,now)){where.push('slug NOT IN ('+HOLIDAY_EDITIONS.map(()=>'?').join(',')+') AND sku NOT IN ('+HOLIDAY_EDITIONS.map(()=>'?').join(',')+')');args.push(...HOLIDAY_EDITIONS.map(e=>e.slug),...HOLIDAY_EDITIONS.map(e=>e.sku));if(context.campaign?.featured_product_id){where.push('id<>?');args.push(context.campaign.featured_product_id);}}}if(q.featured==='1')where.push('is_featured=1');
  for(const [key,op] of [['min','>='],['max','<=']])if(q[key]!==undefined&&q[key]!==''&&Number.isFinite(Number(q[key]))){where.push(`effective_price${op}?`);args.push(Math.max(0,Math.round(Number(q[key])*100)));}
  const sort={'price-asc':'effective_price ASC,id ASC','price-desc':'effective_price DESC,id ASC',name:'name ASC',newest:'created_at DESC'}[q.sort]||'is_featured DESC,id ASC';
  const page=Math.max(1,Math.min(1000,parseInt(q.page)||1)),limit=12;

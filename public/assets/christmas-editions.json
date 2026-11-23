@@ -1,0 +1,50 @@
+[
+  {
+    "key": "candy-60",
+    "slug": "candy-cane-60-limited-edition",
+    "sku": "KLAY-CANDY60-2026",
+    "layout": "60",
+    "name": "Candy Cane 60",
+    "badge": "CANDY 60",
+    "price": 399000,
+    "case": "#A51E35",
+    "alpha": "#FFF2DE",
+    "modifier": "#D1474E",
+    "accent": "#2B7355",
+    "metal": "#E9C78F",
+    "rgb": "#FFB9A0",
+    "image": "/assets/images/candy-60.webp"
+  },
+  {
+    "key": "noel-75",
+    "slug": "noel-75-limited-edition",
+    "sku": "KLAY-NOEL75-2026",
+    "layout": "75",
+    "name": "Noël 75",
+    "badge": "NOËL 75",
+    "price": 499000,
+    "case": "#164D39",
+    "alpha": "#F4E8CC",
+    "modifier": "#A42235",
+    "accent": "#287254",
+    "metal": "#D9B66F",
+    "rgb": "#FFE1A1",
+    "image": "/assets/images/noel-75.webp"
+  },
+  {
+    "key": "frost-100",
+    "slug": "winter-frost-100-limited-edition",
+    "sku": "KLAY-FROST100-2026",
+    "layout": "100",
+    "name": "Winter Frost 100",
+    "badge": "FROST 100",
+    "price": 649000,
+    "case": "#416B91",
+    "alpha": "#EDF7FC",
+    "modifier": "#ADCDE3",
+    "accent": "#7786C0",
+    "metal": "#D7E5EE",
+    "rgb": "#A6DFFF",
+    "image": "/assets/images/frost-100.webp"
+  }
+]

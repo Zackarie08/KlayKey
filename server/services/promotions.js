@@ -1,3 +1,6 @@
+import fs from 'node:fs';
+export const HOLIDAY_EDITIONS=JSON.parse(fs.readFileSync(new URL('../../public/assets/christmas-editions.json',import.meta.url),'utf8'));
+export const holidayEdition=p=>HOLIDAY_EDITIONS.find(e=>e.slug===p.slug||e.sku===p.sku);
 import {rows,json,pool} from '../database/connection.js';
 export const HOLIDAY_SLUG='noel-75-limited-edition';
 export const utcTime=v=>v instanceof Date?v.getTime():Date.parse(String(v).replace(' ','T').replace(/Z$/,'')+'Z');
@@ -17,13 +20,13 @@ export function discountedBuild(build,campaign,assemblyCents,now=Date.now()){
  return {...build,original_price_cents:build.price_cents,price_cents:build.price_cents-discount,discount_cents:discount,promotion:{id:campaign.id,title:campaign.title,revision:campaign.revision},lines:[...build.lines,{name:campaign.title+' discount',quantity:1,amount:-discount}]};
 }
 export function availability(p,campaign,now=Date.now()){
- const limited=p.slug===HOLIDAY_SLUG||(campaign?.featured_product_id&&Number(p.id)===Number(campaign.featured_product_id));
+ const edition=holidayEdition(p);const limited=!!edition||(campaign?.featured_product_id&&Number(p.id)===Number(campaign.featured_product_id));
  if(!limited)return {purchasable:p.stock_quantity>0,availability_message:p.stock_quantity>0?'In stock':'Out of stock'};
- if(!campaign||!campaign.enabled||!Number.isFinite(utcTime(campaign.starts_at))||!Number.isFinite(utcTime(campaign.ends_at)))return {purchasable:false,limited_edition:true,availability_message:'This limited edition is currently unavailable.'};
+ if(!campaign||!campaign.enabled||!Number.isFinite(utcTime(campaign.starts_at))||!Number.isFinite(utcTime(campaign.ends_at)))return {purchasable:false,limited_edition:true,edition_key:edition?.key||'noel-75',availability_message:'This limited edition is currently unavailable.'};
  const range=new Intl.DateTimeFormat('en-PH',{dateStyle:'medium',timeZone:'Asia/Manila'});
  const dates=range.format(new Date(utcTime(campaign.starts_at)))+' – '+range.format(new Date(utcTime(campaign.ends_at)-1));
- if(!activePromotion(campaign,now))return {purchasable:false,limited_edition:true,availability_message:now<utcTime(campaign.starts_at)?'Available '+dates:'This limited-edition release has ended.'};
- return {purchasable:p.stock_quantity>0,limited_edition:true,availability_message:p.stock_quantity>0?p.stock_quantity+' left · Limited edition':'Sold out · Limited edition'};
+ if(!activePromotion(campaign,now))return {purchasable:false,limited_edition:true,edition_key:edition?.key||'noel-75',availability_message:now<utcTime(campaign.starts_at)?'Available '+dates:'This limited-edition release has ended.'};
+ return {purchasable:p.stock_quantity>0,limited_edition:true,edition_key:edition?.key||'noel-75',availability_message:p.stock_quantity>0?p.stock_quantity+' left · Limited edition':'Sold out · Limited edition'};
 }
 export async function getPromotion(db=pool,id=1){
  try{const p=(await rows("SELECT *,DATE_FORMAT(starts_at,'%Y-%m-%d %H:%i:%s') starts_at,DATE_FORMAT(ends_at,'%Y-%m-%d %H:%i:%s') ends_at FROM store_promotion WHERE id=?",[id],db))[0];

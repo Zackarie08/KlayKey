@@ -5,7 +5,7 @@ import {rows,json,transaction} from '../database/connection.js';
 import {auth} from '../middleware/security.js';
 import {HttpError,requireValue,text} from '../validators.js';
 import {integer,assertRoleChange,assertTransition,promotionInput,transitions} from '../services/admin-rules.js';
-import {getPromotion} from '../services/promotions.js';
+import {getPromotion,HOLIDAY_EDITIONS} from '../services/promotions.js';
 export const admin=Router();
 export function adminOnly(req,res,next){if(!['admin','super_admin'].includes(req.user?.role))return next(new HttpError(403,'Administrator access required.'));next();}
 admin.use(auth,adminOnly);
@@ -66,7 +66,7 @@ admin.get('/audit',async(req,res)=>res.json(await paged('admin_audit a JOIN user
 admin.get('/messages',async(req,res)=>res.json(await paged('contact_messages','1=1',[],req.query)));
 
 
-admin.get('/campaign',async(req,res)=>res.json(await getPromotion(undefined,2)));
+admin.get('/campaign',async(req,res)=>{const p=await getPromotion(undefined,2);if(!p)return res.json(null);const editions=await rows('SELECT id,name,layout FROM products WHERE sku IN (?,?,?) ORDER BY id',HOLIDAY_EDITIONS.map(e=>e.sku));res.json({...p,editions});});
 admin.put('/campaign',async(req,res)=>{
  const p=promotionInput({...req.body,discount_type:'percent'},{allowBuilds:true});
  requireValue(p.starts_at&&p.ends_at,'Set a sale start and end.');

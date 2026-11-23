@@ -3,27 +3,30 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 
-// A display-only edition of the existing 75% asset; purchasing still uses the product API.
-export async function mountNoelPreview(host,{zoom=false}={}){
+const editionLibrary=fetch('/assets/christmas-editions.json').then(r=>{if(!r.ok)throw Error('Edition library unavailable');return r.json();});
+
+// Display-only editions of the existing keyboard assets; purchasing still uses the product API.
+export async function mountNoelPreview(host,{zoom=false,editionKey='noel-75'}={}){
  let renderer,controls,observer,model,environment,disposed=false,toolbar;
  const fallback=host.querySelector('img');
  const cleanup=()=>{if(disposed)return;disposed=true;observer?.disconnect();controls?.dispose();window.removeEventListener('pagehide',cleanup);if(model){const geometries=new Set(),materials=new Set();model.traverse(o=>{if(o.geometry)geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:o.material?[o.material]:[])materials.add(m);});geometries.forEach(g=>g.dispose());materials.forEach(m=>{for(const v of Object.values(m))if(v?.isTexture)v.dispose();m.dispose();});}environment?.dispose();renderer?.dispose();renderer?.domElement.remove();toolbar?.remove();if(fallback)fallback.hidden=false;};
  try{
+ const editions=await editionLibrary,edition=editions.find(e=>e.key===editionKey)||editions.find(e=>e.key==='noel-75');
  renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;
- renderer.domElement.setAttribute('aria-label','Noël 75 Christmas keyboard in 3D. Drag or use arrow keys to rotate.'+(zoom?' Scroll, pinch, or use plus and minus to zoom.':''));renderer.domElement.tabIndex=0;
+ renderer.domElement.setAttribute('aria-label',edition.name+' Christmas keyboard in 3D. Drag or use arrow keys to rotate.'+(zoom?' Scroll, pinch, or use plus and minus to zoom.':''));renderer.domElement.tabIndex=0;
  const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(34,1,.001,10);
  const pmrem=new THREE.PMREMGenerator(renderer),room=new RoomEnvironment();environment=pmrem.fromScene(room,.04);scene.environment=environment.texture;room.dispose();pmrem.dispose();
  scene.add(new THREE.HemisphereLight(0xfff0ce,0x14352a,2));const light=new THREE.DirectionalLight(0xffefd1,3);light.position.set(1,2,2);scene.add(light);
- model=(await new GLTFLoader().loadAsync('/keyboard-3d/exports/keyboard_75.glb')).scene;
+ model=(await new GLTFLoader().loadAsync('/keyboard-3d/exports/keyboard_'+edition.layout+'.glb')).scene;
  if(!host.isConnected){cleanup();return cleanup;}
- const colors={MAT_CASE_ACTIVE:'#164D39',MAT_KEYCAP_ALPHA:'#F4E8CC',MAT_KEYCAP_MODIFIER:'#A42235',MAT_KEYCAP_ACCENT:'#287254',MAT_KNOB:'#D9B66F',MAT_HARDWARE:'#C8A467',MAT_KEYCAP_LEGEND:'#29261E'};
- model.traverse(o=>{if(!o.isMesh)return;for(const m of Array.isArray(o.material)?o.material:[o.material]){if(colors[m.name])m.color.set(colors[m.name]);if(m.name==='MAT_KNOB'){m.metalness=.8;m.roughness=.27;}if(m.name.startsWith('MAT_RGB_')){m.color.set('#FFE1A1');m.emissive.set('#FFE1A1');m.emissiveIntensity=1.1;}}});
+ const colors={MAT_CASE_ACTIVE:edition.case,MAT_KEYCAP_ALPHA:edition.alpha,MAT_KEYCAP_MODIFIER:edition.modifier,MAT_KEYCAP_ACCENT:edition.accent,MAT_KNOB:edition.metal,MAT_HARDWARE:edition.metal,MAT_KEYCAP_LEGEND:'#29261E'};
+ model.traverse(o=>{if(!o.isMesh)return;for(const m of Array.isArray(o.material)?o.material:[o.material]){if(colors[m.name])m.color.set(colors[m.name]);if(m.name==='MAT_KNOB'){m.metalness=.8;m.roughness=.27;}if(m.name.startsWith('MAT_RGB_')){m.color.set(edition.rgb);m.emissive.set(edition.rgb);m.emissiveIntensity=1.1;}}});
  if(model.getObjectByName('OPTION_DISPLAY'))model.getObjectByName('OPTION_DISPLAY').visible=false;
  if(model.getObjectByName('OPTION_KNOB'))model.getObjectByName('OPTION_KNOB').visible=true;
  if(model.getObjectByName('OPTION_CABLE'))model.getObjectByName('OPTION_CABLE').visible=true;
  model.updateMatrixWorld(true);
  const chassis=new THREE.Box3().setFromObject(model.getObjectByName('GROUP_CASE'));
- const label=document.createElement('canvas');label.width=512;label.height=96;const ctx=label.getContext('2d');ctx.fillStyle='#164D39';ctx.fillRect(0,0,512,96);ctx.strokeStyle='#D9B66F';ctx.lineWidth=4;ctx.strokeRect(4,4,504,88);ctx.fillStyle='#F9DF9D';ctx.font='bold 42px Georgia';ctx.textAlign='center';ctx.fillText('✦  NOËL 75  ✦',256,62);
+ const label=document.createElement('canvas');label.width=512;label.height=96;const ctx=label.getContext('2d');ctx.fillStyle=edition.case;ctx.fillRect(0,0,512,96);ctx.strokeStyle=edition.metal;ctx.lineWidth=4;ctx.strokeRect(4,4,504,88);ctx.fillStyle=edition.metal;ctx.font='bold 42px Georgia';ctx.textAlign='center';ctx.fillText('✦  '+edition.badge+'  ✦',256,62);
  const texture=new THREE.CanvasTexture(label);texture.colorSpace=THREE.SRGBColorSpace;
  const badge=new THREE.Mesh(new THREE.PlaneGeometry(.065,.012),new THREE.MeshStandardMaterial({map:texture,roughness:.4,metalness:.25}));badge.position.set(chassis.getCenter(new THREE.Vector3()).x,(chassis.min.y+chassis.max.y)/2,chassis.max.z+.0004);model.add(badge);scene.add(model);
  // Frame the keyboard itself, rather than pulling back to include the entire cable.

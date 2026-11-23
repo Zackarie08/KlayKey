@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {activePromotion,visibleCampaign,availability,bestProductPrice,discountedBuild,firstPurchaseEligible,HOLIDAY_SLUG} from '../server/services/promotions.js';
+import {activePromotion,visibleCampaign,availability,bestProductPrice,discountedBuild,firstPurchaseEligible,HOLIDAY_SLUG,HOLIDAY_EDITIONS} from '../server/services/promotions.js';
 import {snapshot} from '../server/services/cart.js';
 import {promotionInput} from '../server/services/admin-rules.js';
 const sale={id:2,kind:'seasonal',enabled:1,preview_at:'2026-11-22 16:00:00',starts_at:'2026-11-30 16:00:00',ends_at:'2026-12-31 16:00:00',discount_type:'percent',discount_value:15,include_builds:1,product_ids:[123],category_ids:[],featured_product_id:123,title:'Christmas',revision:1};
@@ -47,4 +47,16 @@ test('Cart revalidation blocks limited inventory with expired or missing campaig
 test('Only seasonal editor may enable a build-only campaign',()=>{
  const input={title:'Holiday',message:'Holiday offer',discount_type:'percent',discount_value:15,enabled:true,include_builds:true,product_ids:[],category_ids:[]};
  assert.throws(()=>promotionInput(input),/eligible/);assert.equal(promotionInput(input,{allowBuilds:true}).enabled,true);
+});
+
+
+test('All three editions retain their distinct preview identity and December purchase restrictions',()=>{
+ assert.deepEqual(HOLIDAY_EDITIONS.map(e=>e.layout),['60','75','100']);
+ assert.equal(new Set(HOLIDAY_EDITIONS.map(e=>e.case)).size,3);
+ for(const e of HOLIDAY_EDITIONS){const product={id:999,slug:e.slug,sku:e.sku,stock_quantity:50};
+  for(const now of [start-1,start,end]){const result=availability(product,sale,now);assert.equal(result.edition_key,e.key);assert.equal(result.limited_edition,true);assert.equal(result.purchasable,now===start);}
+  assert.equal(availability({...product,slug:'renamed-product'},sale,start-1).purchasable,false);
+  assert.equal(availability(product,null,start).purchasable,false);
+  assert.equal(availability({...product,stock_quantity:0},sale,start).purchasable,false);
+ }
 });

@@ -38,3 +38,17 @@ Before publishing, check the popup at desktop and mobile widths in both themes; 
 The popup now records dismissal before promo-link navigation and records an initial impression per tab. Product detail pages do not auto-open the popup; their gift button still opens it manually. The landscape layout adapts to mobile and scales down for short viewports without an internal scrollbar.
 
 Both the popup and limited product page use the existing 75% GLB with pine-green case, ivory/cranberry/evergreen keycaps, warm lighting, gold knob and a Noël front badge. Drag or arrow keys rotate the preview. Original product images remain as a WebGL/load fallback; the product gallery and View in 3D button switch views. Only the preview mesh and Three.js library files are served publicly; builder APIs retain their existing protection. No additional SQL is needed for this update. Browser visual validation remains pending.
+
+## Three-edition collection update
+
+After the original Christmas setup has already been applied, run **server/database/manual/christmas-three-editions.sql** in the selected klaykey database. Do not rerun christmas-2026.sql or the old admin setup. This new script has no ALTER statements and preserves existing prices, stock, and custom product images on rerun.
+
+- Candy Cane 60: cranberry case, cream/candy-red keys, evergreen accents; ₱3,990, initial stock 50.
+- Noël 75: pine-green case, ivory/cranberry/evergreen keys and gold knob; existing ₱4,990 price and remaining stock preserved.
+- Winter Frost 100: arctic-blue case, white/ice-blue/lavender keys and silver knob; ₱6,490, initial stock 50.
+
+The two new products join the campaign's selected-product list. Default 15% sale prices are ₱3,391.50 / ₱4,241.50 / ₱5,516.50. All editions share the existing campaign schedule and stock rules. The SQL does not change schedule, percentage or custom-build inclusion. Existing admin-customized campaign text is preserved.
+
+Shop cards use static WebP images rendered from the actual Blender sources. Popup size buttons switch the live model, product name, price, availability and product link together; product pages retain interactive rotation/zoom. The popup only lists products installed in the database, so it keeps working with just the original Noël 75 until you apply the new script. Admin → Christmas sale links to each edition's product/stock editor.
+
+Design colors live in public/assets/christmas-editions.json, shared by the browser models and keyboard-3d/scripts/render_christmas.py. Rendered images were visually inspected together; full browser and live-database verification remain pending. No SQL was executed and no deployment was performed by Codex.

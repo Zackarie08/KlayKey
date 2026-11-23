@@ -11,7 +11,7 @@ import {manifest,quote,fees,ownedBuild} from '../services/builds.js';
 import {getCart,addCart,updateCart,lockCart} from '../services/cart.js';
 import {checkout,orderDetails,deliveryFees} from '../services/orders.js';
 import {admin} from './admin.js';
-import {getPromotion,getOffers,activePromotion,visibleCampaign} from '../services/promotions.js';
+import {getPromotion,getOffers,activePromotion,visibleCampaign,HOLIDAY_EDITIONS} from '../services/promotions.js';
 export const api=Router();
 api.use('/admin',admin);
 api.get('/promotion',async(req,res)=>{res.set('Cache-Control','no-store');const c=await getOffers(req.session.userId);res.json(activePromotion(c.first)&&(!req.session.userId||c.eligible)?c.first:null);});
@@ -53,4 +53,6 @@ api.get('/account',auth,(req,res)=>res.json(req.user));
 api.patch('/account',auth,async(req,res)=>{const b=req.body;const first=text(b.first_name,'first_name',1,60),last=text(b.last_name,'last_name',1,60),mail=email(b.email);const phone=typeof b.phone==='string'?b.phone.slice(0,30):'';const address=b.address?shipping(b.address):null;try{await rows('UPDATE users SET first_name=?,last_name=?,email=?,phone=?,address=? WHERE id=?',[first,last,mail,phone,address?JSON.stringify(address):null,req.user.id]);}catch(e){if(e.code==='ER_DUP_ENTRY')throw new HttpError(409,'This email cannot be used.',{email:'Choose another email.'});throw e;}res.json({ok:true});});
 api.post('/contact',limit,async(req,res)=>{const b=req.body;await rows('INSERT INTO contact_messages(name,email,subject,message) VALUES(?,?,?,?)',[text(b.name,'name',2,100),email(b.email),text(b.subject,'subject',3,160),text(b.message,'message',10,3000)]);res.status(201).json({message:'Your message has been received.'});});
 
-api.get('/campaign',async(req,res)=>{res.set('Cache-Control','no-store');const p=await getPromotion(undefined,2);if(!visibleCampaign(p))return res.json(null);const featured=(await rows('SELECT slug FROM products WHERE id=? AND is_active=1',[p.featured_product_id]))[0];res.json({...p,active:activePromotion(p),server_now:Date.now(),featured:featured?await getProduct(featured.slug,req.session.userId):null});});
+api.get('/campaign',async(req,res)=>{res.set('Cache-Control','no-store');const p=await getPromotion(undefined,2);if(!visibleCampaign(p))return res.json(null);
+ const entries=await rows("SELECT slug FROM products WHERE is_active=1 AND (id=? OR slug IN (?,?,?) OR sku IN (?,?,?)) ORDER BY FIELD(layout,'60','75','100'),id",[p.featured_product_id,...HOLIDAY_EDITIONS.map(e=>e.slug),...HOLIDAY_EDITIONS.map(e=>e.sku)]);
+ const editions=await Promise.all(entries.map(e=>getProduct(e.slug,req.session.userId)));res.json({...p,active:activePromotion(p),server_now:Date.now(),featured:editions.find(e=>Number(e.id)===Number(p.featured_product_id))||editions[0]||null,editions});});
