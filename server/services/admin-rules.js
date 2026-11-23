@@ -1,5 +1,5 @@
 import {HttpError,requireValue,text} from '../validators.js';
-export const roles=['customer','admin','super_admin'];
+export const roles=['customer','admin','super_admin','delivery'];
 export const transitions={pending:['confirmed','cancelled'],confirmed:['processing','cancelled'],processing:['ready-to-ship','cancelled'],'ready-to-ship':['shipped','completed','cancelled'],shipped:['completed'],completed:[],cancelled:[]};
 export function integer(value,min,max,label){const n=Number(value);requireValue((typeof value==='number'||typeof value==='string'&&/^-?\d+$/.test(value))&&Number.isSafeInteger(n)&&n>=min&&n<=max,`${label} must be a whole number between ${min} and ${max}.`);return n;}
 export function assertRoleChange(actor,target,role){requireValue(roles.includes(role),'Invalid role.');if(actor.role!=='super_admin')throw new HttpError(403,'Only Super Admins can manage access.');requireValue(Number(actor.id)!==Number(target.id),'You cannot change your own access.');}

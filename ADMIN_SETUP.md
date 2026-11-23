@@ -94,3 +94,40 @@ Apply server/database/manual/input-length-limits.sql manually before publishing 
 Names, titles, subjects, materials and custom-build names: 50 characters. Product descriptions and short descriptions: 500. Email: 254; street: 180; barangay/city/province and search: 100; delivery notes and promo copy: 500; internal order notes: 2,000; support messages: 3,000. Reason fields retain their existing 255/500 limits. Fixed formats retain their rules: Philippine postal code is four digits and custom color is a six-digit hex code plus #. Numeric/date/select controls use type and range validation instead of text lengths.
 
 Signup hint now says At least 10 characters; the existing 72-character/72-byte bcrypt password ceiling remains enforced. All dynamically rendered text inputs receive a maxlength, and persisted user-facing fields are checked server-side. Overlong existing values are shown for correction instead of silently truncated. Profile delivery addresses now have a separate recipient-name field so users can edit it without altering their account names. Browser and real-database verification remain pending.
+
+
+## Orders, saved addresses, notifications and delivery roles
+
+The local implementation requires **server/database/manual/orders-delivery-notifications.sql**. It is intentionally outside the automatic migration directory. The code does not apply this SQL. Run it manually on the target database before using this version of the application. Existing admin, promotions and input-length setup must already be present.
+
+1. Back up the target database. Open the MySQL service console and enter the MySQL client using the existing connection procedure.
+2. At the mysql prompt, run: `USE klaykey;`
+3. Open the SQL file locally and paste its complete contents into the MySQL client once. A local computer path cannot be used with SOURCE in a remote container unless the file has been copied there.
+4. Check `SHOW TABLES;` for saved_addresses, order_events, order_notifications and delivery_assignments. Check `SHOW COLUMNS FROM users LIKE 'role';` for delivery, and `SHOW COLUMNS FROM payments LIKE 'status';` for collected-cod.
+5. Restart/deploy the updated app yourself after the schema is ready. No deployment or database writes were performed by the coding agent.
+
+The SQL extends roles and payment states, copies existing default address objects into the address book, and adds four tables. It does not remove orders or existing addresses. It is a one-time script, not an automatic startup migration. If execution stops partway, inspect which statements succeeded before continuing: MySQL DDL is not rolled back as one transaction. Do not drop tables or rerun the legacy address import blindly.
+
+### Staff workflow
+
+- Super Admin: Customers & access → open an existing registered account → Edit → Delivery role → Save changes. The rider opens **/delivery**, also linked from their account navigation. Delivery access does not grant admin access.
+- Admin: prepare the order and mark Ready to ship. Open Delivery assignment, choose an active rider, add a reason and assign. Orders filters include Needs rider, Assigned, On delivery, Failed attempt and Delivered. Already-shipped orders without an assignment can be adopted into the new workflow.
+- Assigned rider: Start delivery → enter recipient name → take/select a proof photo → confirm receipt (and cash collection for COD) → Confirm delivered. A failed attempt requires a reason; the admin arranges retry or reassignment. Riders cannot retry failed attempts independently. Reassignment is blocked while a rider is out delivering.
+- Pickup: stays with Admin. Mark collected only after handover and any cash collection. COD collection is recorded on completion; card/GCash retain their existing recorded payment behavior and no payment provider is added.
+- Cancellation before shipping still restores stock. Cancelled deliveries disappear from the rider queue and cannot be started.
+
+Proof images use the existing persistent upload volume in **UPLOAD_DIR/.delivery-proofs**. They are not public product image URLs. The proof endpoint checks the order owner, assigned delivery account or admin before serving the image, with private/no-store caching. The mobile file picker requests the rear camera where supported and accepts JPG, PNG or WebP; devices may also offer existing photos. Use HTTPS on deployed devices. If the existing volume is not writable, correct its ownership/mount before testing proof uploads. No new storage service is required.
+
+### Customer workflow
+
+Profile details start read-only, with Edit then Save/Cancel. Save up to three complete addresses and choose a default; checkout requires a valid profile phone and an owned saved address. Signup remains unchanged. Existing orders keep their original address snapshots after profile/address edits. An incomplete legacy address must be edited before checkout.
+
+The navbar bell links to **/account/notifications**, with an unread count refreshed every 30 seconds while the page is visible. Order updates, rider assignment, delivery outcomes and eligible sale/promo announcements appear there. Promo announcements are created when the signed-in customer checks notifications: once per promotion revision and preview/live phase. Read state belongs to each customer. There is no email/SMS delivery. The latest 50 notifications appear in the list; Mark all as read also clears older unread entries.
+
+Existing product, promotion and access forms now begin in view mode with Edit. New-record forms and direct actions such as stock adjustments, status changes, notes and address creation remain actionable. Customer order details include rider information, progress history and authorized proof viewing. Old orders are not given fabricated past activity events.
+
+### Validation
+
+Focused tests (including mocked database transactions, ownership checks, stale updates, address requirements and completion proof requirements) pass. Full MySQL integration and visual/mobile camera testing require a separately prepared development database with this SQL applied; they were not run against the live database. The commerce integration test has been updated for saved-address checkout and fixture cleanup.
+
+Before release, test with a customer, two different delivery accounts and an admin: verify another rider cannot open the assignment/proof; confirm start, failed attempt, retry, photo completion and COD collection; check customer notifications and proof; test pickup separately; test Edit/Cancel and all three addresses on mobile and desktop.

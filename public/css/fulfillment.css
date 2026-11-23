@@ -1,0 +1,14 @@
+
+/* Account, notifications and mobile delivery workspace */
+.record-edit-actions{grid-column:1/-1}.record-edit-actions [hidden],form[data-edit-mode] button[hidden]{display:none!important}
+form[data-edit-mode="view"] input,form[data-edit-mode="view"] textarea,form[data-edit-mode="view"] select{opacity:.8;cursor:default}
+.address-card{border:1px solid var(--line,#50465c);border-radius:12px;padding:18px}.address-card small{font-size:.75rem;color:var(--accent,#b49ae0)}
+.notification-page{max-width:880px}.notification-item h2{font-size:1.2rem}.notification-item.unread{border-left:4px solid #a780ef}.notification-item time,.order-event-list time{font-size:.8rem;opacity:.7}
+#notification-bell{position:relative;flex-shrink:0}#notification-bell span[hidden]{display:none}
+.delivery-workspace{width:min(100% - 32px,620px);margin:auto;display:grid;gap:20px}.delivery-workspace h1{font-size:clamp(1.6rem,5vw,2.6rem);overflow-wrap:anywhere}.delivery-workspace .button{min-height:48px}.delivery-workspace input[type=file]{max-width:100%}.delivery-proof{display:block;max-width:100%;width:360px;max-height:320px;object-fit:contain;border-radius:12px}.order-event-list{padding-left:22px}.order-event-list li{padding:8px 0}.order-event-list p{margin:5px 0 14px}.delivery-workspace details summary{cursor:pointer;padding:8px 0;font-weight:600}
+@media(max-width:1100px){.nav-tools{gap:12px}.nav-tools>a[href="/shop?focus=search"]{display:none}}
+@media(max-width:600px){.nav-tools{gap:9px}.nav-shell{gap:10px}.nav-tools .account-link{font-size:.8rem}.nav-tools .cart-link{min-width:28px}.nav-shell>.brand{font-size:1rem}.nav-shell .logo{font-size:1.5rem}.notification-page .section-title{align-items:flex-start;flex-direction:column;gap:12px}}
+
+.nav-tools .account-link{display:flex;align-items:center;gap:6px}.nav-tools .account-link svg{display:none}.nav-tools .cart-link{position:relative;justify-content:center;min-width:36px;height:44px}.nav-tools .cart-link span{position:absolute;top:0;right:-6px;width:19px;height:19px;font-size:11px}.nav-tools .cart-link span[hidden]{display:none}
+@media(max-width:600px){.nav-tools .account-link svg{display:block}.nav-tools .account-link span{display:none}.nav-tools .account-link{width:32px;min-width:32px;height:44px;justify-content:center}.nav-tools{gap:5px}.nav-tools .cart-link{width:32px;min-width:32px}.nav-shell{gap:6px}.nav-shell .theme-toggle{width:32px}.nav-shell .menu-button{min-width:32px;padding:6px}}
+@media(max-width:360px){.nav-shell>.brand{font-size:0}.nav-shell>.brand .logo{font-size:25px}}

@@ -1,3 +1,6 @@
+import {delivery,serveProof} from './delivery.js';
+import {addresses,saveAddress,removeAddress} from '../services/addresses.js';
+import {syncPromoNotifications} from '../services/order-events.js';
 import {productOptions} from '../services/product-options.js';
 import {config} from '../config.js';
 import {Router} from 'express';
@@ -14,7 +17,7 @@ import {checkout,orderDetails,deliveryFees} from '../services/orders.js';
 import {admin} from './admin.js';
 import {getPromotion,getOffers,activePromotion,visibleCampaign,HOLIDAY_EDITIONS} from '../services/promotions.js';
 export const api=Router();
-api.use('/admin',admin);
+api.use('/admin',admin);api.use('/delivery',delivery);api.get('/orders/:id/proof',auth,serveProof);
 api.get('/promotion',async(req,res)=>{res.set('Cache-Control','no-store');const c=await getOffers(req.session.userId);res.json(activePromotion(c.first)&&(!req.session.userId||c.eligible)?c.first:null);});
 const limit=rateLimit({windowMs:15*60*1000,limit:30,standardHeaders:'draft-8',legacyHeaders:false,message:{error:'Too many attempts. Please try again in 15 minutes.'}});
 const publicUser=u=>u?{id:u.id,first_name:u.first_name,last_name:u.last_name,email:u.email,role:u.role}:null;
@@ -48,10 +51,10 @@ api.delete('/builds/:id',auth,async(req,res)=>{await ownedBuild(req.params.id,re
 api.post('/builds/:id/duplicate',auth,async(req,res)=>{const b=await ownedBuild(req.params.id,req.user.id),q=await quote(b.configuration,undefined,req.user.id);const r=await rows('INSERT INTO custom_builds(user_id,name,configuration,snapshot,price_cents,compatibility_version) VALUES(?,?,?,?,?,?)',[req.user.id,(b.name.slice(0,45)+' copy'),JSON.stringify(q.configuration),JSON.stringify(q),q.price_cents,q.compatibilityVersion]);res.status(201).json(await ownedBuild(r.insertId,req.user.id));});
 api.post('/builds/:id/add-to-cart',auth,async(req,res)=>{const b=await ownedBuild(req.params.id,req.user.id);res.status(201).json(await addCart(req.user.id,{name:b.name,configuration:b.configuration,quantity:req.body.quantity||1}));});
 api.post('/checkout',auth,async(req,res)=>res.status(201).json({orderNumber:await checkout(req.user.id,req.body)}));
-api.get('/orders',auth,async(req,res)=>res.json(await rows('SELECT o.*,p.status payment_status,(SELECT SUM(quantity) FROM order_items WHERE order_id=o.id) item_count FROM orders o JOIN payments p ON p.order_id=o.id WHERE user_id=? ORDER BY o.created_at DESC',[req.user.id])));
-api.get('/orders/:number',auth,async(req,res)=>res.json(await orderDetails(req.params.number,req.user.id)));
-api.get('/account',auth,(req,res)=>res.json(req.user));
-api.patch('/account',auth,async(req,res)=>{const b=req.body;const first=text(b.first_name,'first_name',1,50),last=text(b.last_name,'last_name',1,50),mail=email(b.email);const phone=typeof b.phone==='string'?text(b.phone,'phone',0,50):'';const address=b.address?shipping(b.address):null;try{await rows('UPDATE users SET first_name=?,last_name=?,email=?,phone=?,address=? WHERE id=?',[first,last,mail,phone,address?JSON.stringify(address):null,req.user.id]);}catch(e){if(e.code==='ER_DUP_ENTRY')throw new HttpError(409,'This email cannot be used.',{email:'Choose another email.'});throw e;}res.json({ok:true});});
+api.get('/orders',auth,async(req,res)=>res.set('Cache-Control','private, no-store').json(await rows('SELECT o.*,p.status payment_status,(SELECT SUM(quantity) FROM order_items WHERE order_id=o.id) item_count FROM orders o JOIN payments p ON p.order_id=o.id WHERE user_id=? ORDER BY o.created_at DESC',[req.user.id])));
+api.get('/orders/:number',auth,async(req,res)=>res.set('Cache-Control','private, no-store').json(await orderDetails(req.params.number,req.user.id)));
+api.get('/account',auth,async(req,res)=>res.set('Cache-Control','private, no-store').json({...req.user,addresses:await addresses(req.user.id)}));
+api.patch('/account',auth,async(req,res)=>{const b=req.body;const first=text(b.first_name,'first_name',1,50),last=text(b.last_name,'last_name',1,50),mail=email(b.email);const phone=typeof b.phone==='string'?text(b.phone,'phone',0,50):'';requireValue(/^[0-9+ ()-]{7,50}$/.test(phone),'Enter a valid phone number.',{phone:'Phone number is required.'});try{await rows('UPDATE users SET first_name=?,last_name=?,email=?,phone=? WHERE id=?',[first,last,mail,phone,req.user.id]);}catch(e){if(e.code==='ER_DUP_ENTRY')throw new HttpError(409,'This email cannot be used.',{email:'Choose another email.'});throw e;}res.json({ok:true});});
 api.post('/contact',limit,async(req,res)=>{const b=req.body;await rows('INSERT INTO contact_messages(name,email,subject,message) VALUES(?,?,?,?)',[text(b.name,'name',2,50),email(b.email),text(b.subject,'subject',3,50),text(b.message,'message',10,3000)]);res.status(201).json({message:'Your message has been received.'});});
 
 api.get('/campaign',async(req,res)=>{res.set('Cache-Control','no-store');const p=await getPromotion(undefined,2);if(!visibleCampaign(p))return res.json(null);
@@ -62,3 +65,11 @@ api.get('/product-options',(req,res)=>res.json(productOptions));
 
 api.get('/promotions',async(req,res)=>{res.set('Cache-Control','no-store');const c=await getOffers(req.session.userId),now=Date.now();const visible=c.all.filter(p=>(p.audience!=='first_purchase'||!req.session.userId||c.eligible)&&(p.display_type==='popup'?visibleCampaign(p,now):activePromotion(p,now))).sort((a,b)=>b.priority-a.priority||a.id-b.id);
  const result=[];for(const p of visible){let entries=[];if(p.id===2)entries=await rows('SELECT slug FROM products WHERE is_active=1 AND sku IN (?,?,?)',HOLIDAY_EDITIONS.map(e=>e.sku));else if(p.featured_product_id)entries=await rows('SELECT slug FROM products WHERE is_active=1 AND id=?',[p.featured_product_id]);const editions=await Promise.all(entries.map(e=>getProduct(e.slug,req.session.userId)));result.push({...p,active:activePromotion(p,now),featured:editions.find(e=>Number(e.id)===Number(p.featured_product_id))||editions[0]||null,editions,server_now:now});}res.json(result);});
+
+api.get('/notifications',auth,async(req,res)=>{res.set('Cache-Control','no-store');await syncPromoNotifications(req.user.id);const items=await rows('SELECT n.id,n.title,n.message,n.url,n.read_at,n.created_at,o.order_number FROM order_notifications n LEFT JOIN orders o ON o.id=n.order_id WHERE n.user_id=? ORDER BY n.id DESC LIMIT 50',[req.user.id]);const unread=(await rows('SELECT COUNT(*) total FROM order_notifications WHERE user_id=? AND read_at IS NULL',[req.user.id]))[0].total;res.json({items,unread});});
+api.patch('/notifications/read',auth,async(req,res)=>{await rows('UPDATE order_notifications SET read_at=COALESCE(read_at,UTC_TIMESTAMP()) WHERE user_id=?',[req.user.id]);res.json({ok:true});});
+api.patch('/notifications/:id/read',auth,async(req,res)=>{const result=await rows('UPDATE order_notifications SET read_at=COALESCE(read_at,UTC_TIMESTAMP()) WHERE id=? AND user_id=?',[req.params.id,req.user.id]);if(!result.affectedRows)throw new HttpError(404,'Notification not found.');res.json({ok:true});});
+
+api.post('/addresses',auth,async(req,res)=>res.status(201).json({id:await saveAddress(req.user.id,req.body)}));
+api.put('/addresses/:id',auth,async(req,res)=>res.json({id:await saveAddress(req.user.id,req.body,req.params.id)}));
+api.delete('/addresses/:id',auth,async(req,res)=>{await removeAddress(req.user.id,req.params.id);res.json({ok:true});});
