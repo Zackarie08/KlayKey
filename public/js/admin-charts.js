@@ -1,0 +1,26 @@
+import {esc,money} from './core.js';
+import {orderStatusLabel} from './order-status.js';
+const dayLabel=value=>new Intl.DateTimeFormat('en-PH',{month:'short',day:'numeric',timeZone:'Asia/Manila'}).format(new Date(value+'T00:00:00+08:00'));
+const short=value=>new Intl.NumberFormat('en-PH',{notation:'compact',maximumFractionDigits:1}).format(value);
+function plot(series,field,title,kind){
+ const width=600,height=220,left=65,right=16,top=18,bottom=36,w=width-left-right,h=height-top-bottom;
+ const values=series.map(r=>r[field]),max=Math.max(...values,1),ceiling=field==='orders'?Math.max(4,Math.ceil(max/4)*4):max*1.12;
+ const x=i=>left+(i+.5)*w/series.length,y=value=>top+h-value/ceiling*h;
+ const format=value=>field==='value'?money(value):value+' order'+(value===1?'':'s');
+ const points=values.map((v,i)=>x(i)+','+y(v)).join(' ');
+ const ticks=Array.from({length:5},(_,i)=>{const value=ceiling*i/4,yy=y(value);return '<line class="chart-gridline" x1="'+left+'" x2="'+(width-right)+'" y1="'+yy+'" y2="'+yy+'"/><text x="'+(left-10)+'" y="'+(yy+4)+'" text-anchor="end">'+esc(field==='value'?'₱'+short(value/100):String(Math.round(value)))+'</text>';}).join('');
+ const indexes=[...new Set([0,Math.floor((series.length-1)/2),series.length-1])];
+ const dates=indexes.map(i=>'<text x="'+x(i)+'" y="'+(height-8)+'" text-anchor="middle">'+esc(dayLabel(series[i].day))+'</text>').join('');
+ const hitWidth=w/series.length;
+ const marks=values.map((v,i)=>{const label=dayLabel(series[i].day)+': '+format(v);return '<g class="chart-point" tabindex="0" role="img" aria-label="'+esc(label)+'" data-chart-detail="'+esc(label)+'"><title>'+esc(label)+'</title><rect class="chart-hit" x="'+(x(i)-hitWidth/2)+'" y="'+top+'" width="'+hitWidth+'" height="'+h+'"/>'+(kind==='bar'?'<rect class="chart-bar" x="'+(x(i)-hitWidth*.33)+'" y="'+y(v)+'" width="'+(hitWidth*.66)+'" height="'+(v/ceiling*h)+'" rx="2"/>':'<circle class="chart-dot" cx="'+x(i)+'" cy="'+y(v)+'" r="3"/>')+'</g>';}).join('');
+ return '<svg class="admin-chart-svg" viewBox="0 0 '+width+' '+height+'" role="group" aria-label="'+esc(title)+'"><g>'+ticks+'</g>'+(kind==='line'?'<polygon class="chart-area" points="'+x(0)+','+y(0)+' '+points+' '+x(values.length-1)+','+y(0)+'"/><polyline class="chart-line" points="'+points+'"/>':'')+marks+dates+'</svg>';
+}
+export function overviewCharts(a){
+ const count=a.daily.reduce((n,r)=>n+r.orders,0),value=a.daily.reduce((n,r)=>n+r.value,0);
+ const statusOrder=['pending','confirmed','processing','ready-to-ship','shipped','completed','cancelled'];
+ const statuses=[...a.statuses].sort((x,y)=>statusOrder.indexOf(x.status)-statusOrder.indexOf(y.status));
+ const label=s=>s==='completed'?'Delivered / collected':s==='ready-to-ship'?'Ready to ship / pick up':orderStatusLabel(s);
+ const summary=(title,total,note,chart)=>'<article class="panel analytics-card"><h3>'+title+'</h3><strong class="analytics-total">'+total+'</strong><p class="muted">'+note+'</p>'+chart+'<p class="chart-readout muted" aria-live="polite">Hover or focus a day to see its value.</p></article>';
+ return '<section class="overview-analytics" aria-label="Order analytics"><div class="section-title"><div><h3>Order trends</h3><p class="muted">'+esc(dayLabel(a.from)+' – '+dayLabel(a.to))+' · Philippine time · Today is partial</p></div><label>Period<select id="analytics-period">'+[7,30,90].map(n=>'<option value="'+n+'" '+(n===a.days?'selected':'')+'>Last '+n+' days</option>').join('')+'</select></label></div><p id="analytics-status" role="status"></p><div class="analytics-grid">'+summary('Recorded order value',money(value),'Excludes cancelled orders; includes delivery fees. Not collected revenue.',plot(a.daily,'value','Daily recorded order value','line'))+summary('Orders placed',String(count),'Includes cancelled orders, grouped by the date the order was placed.',plot(a.daily,'orders','Daily orders placed','bar'))+'</div>'+(count?'':'<p class="notice">No orders were placed in this period. Charts show zero values.</p>')+'<article class="panel analytics-status-card"><h3>Where these orders are now</h3><p class="muted">Current status of orders placed in this period—not the dates their statuses changed.</p><div class="status-chart">'+(count?statuses.map(s=>'<div class="status-chart-row"><span>'+esc(label(s.status))+'</span><div class="status-track" aria-hidden="true"><i class="status-'+esc(s.status)+'" style="width:'+s.orders/count*100+'%"></i></div><strong>'+s.orders+' <small>('+Math.round(s.orders/count*100)+'%)</small></strong></div>').join(''):'<p class="muted">Status breakdown will appear after your first order.</p>')+'</div></article><details class="analytics-table"><summary>View daily figures</summary><div class="admin-table-wrap" tabindex="0"><table class="admin-table"><thead><tr><th>Date (PH)</th><th>Orders placed</th><th>Order value</th></tr></thead><tbody>'+a.daily.map(r=>'<tr><td>'+esc(r.day)+'</td><td>'+r.orders+'</td><td>'+money(r.value)+'</td></tr>').join('')+'</tbody></table></div></details></section>';
+}
+export function bindChartReadouts(root){root.querySelectorAll('[data-chart-detail]').forEach(point=>{const update=()=>{point.closest('.analytics-card').querySelector('.chart-readout').textContent=point.dataset.chartDetail;};point.addEventListener('pointerenter',update);point.addEventListener('focus',update);});}

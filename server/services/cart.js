@@ -1,6 +1,6 @@
 import {rows,json,pool,transaction} from '../database/connection.js';
 import {quote} from './builds.js';
-import {HttpError,quantity,requireValue} from '../validators.js';
+import {HttpError,quantity,requireValue,text} from '../validators.js';
 import {getOffers,bestProductPrice,availability} from './promotions.js';
 export async function lockCart(userId,db){await rows('INSERT IGNORE INTO carts(user_id) VALUES(?)',[userId],db);return (await rows('SELECT id FROM carts WHERE user_id=? FOR UPDATE',[userId],db))[0].id;}
 export async function snapshot(item,db=pool,context=null,userId=null){
@@ -10,7 +10,7 @@ export async function snapshot(item,db=pool,context=null,userId=null){
 export async function getCart(userId,db=pool){const items=await rows('SELECT ci.* FROM cart_items ci JOIN carts c ON c.id=ci.cart_id WHERE c.user_id=? ORDER BY ci.id',[userId],db);const context=await getOffers(userId,db);const result=[];for(const item of items){try{const s=await snapshot(item,db,context,userId);result.push({...item,snapshot:s,configuration:s.configuration||json(item.configuration),notices:s.notices||[],available:s.components.every(c=>c.stock>=c.quantity*item.quantity),lineTotal:s.price_cents*item.quantity});}catch(e){if(!e.status)throw e;result.push({...item,snapshot:json(item.snapshot),available:false,error:e.message,lineTotal:0});}}return {items:result,count:items.reduce((n,i)=>n+i.quantity,0),subtotal:result.reduce((n,i)=>n+i.lineTotal,0)};}
 export async function addCart(userId,input){return transaction(async db=>{
  const cartId=await lockCart(userId,db),qty=quantity(input.quantity??1);let item={product_id:null,configuration:null,name:'Custom build',quantity:qty};
- if(input.productId){requireValue(Number.isSafeInteger(Number(input.productId)),'Invalid product.');item.product_id=Number(input.productId);}else{const s=await quote(input.configuration,db,userId);item.configuration=JSON.stringify(s.configuration);item.name=typeof input.name==='string'?input.name.trim().slice(0,80)||s.name:s.name;}
+ if(input.productId){requireValue(Number.isSafeInteger(Number(input.productId)),'Invalid product.');item.product_id=Number(input.productId);}else{const s=await quote(input.configuration,db,userId);item.configuration=JSON.stringify(s.configuration);item.name=typeof input.name==='string'?(input.name.trim()?text(input.name,'name',1,50):s.name):s.name;}
  const s=await snapshot(item,db,await getOffers(userId,db),userId);const current=await getCart(userId,db);const demand=new Map();for(const line of [...current.items,{quantity:qty,snapshot:s}])for(const c of line.snapshot.components||[])demand.set(c.productId,(demand.get(c.productId)||0)+c.quantity*line.quantity);
  for(const c of s.components)requireValue(c.stock>=(demand.get(c.productId)||0),`Not enough stock for ${c.name}.`);
  await rows('INSERT INTO cart_items(cart_id,product_id,name,configuration,snapshot,quantity) VALUES(?,?,?,?,?,?)',[cartId,item.product_id,item.product_id?s.name:item.name,item.configuration,JSON.stringify(s),qty],db);return getCart(userId,db);

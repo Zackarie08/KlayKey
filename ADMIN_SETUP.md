@@ -86,3 +86,11 @@ Product layout, switch and connection dropdowns come from the same keyboard mani
 To select homepage cards: Admin → Products & stock → Manage → **Show in homepage collection** → Save. Only active selected products display, in stable product-ID order. The Homepage filter finds them in admin, and the former three-item limit is removed. Hero artwork and category tiles are still the site's designed content, not product-card selections.
 
 The homepage benefit cards now have individual borders and the sale close control uses a centered SVG X. Lint, focused unit/regression tests and keyboard-asset tests passed. Browser visual checks, manual migration execution and real-MySQL integration/concurrency tests remain pending. Test overlapping events and new/returning account checkout on an isolated database before publishing.
+
+## Input length limits
+
+Apply server/database/manual/input-length-limits.sql manually before publishing this update. It widens SKU/category IDs/phone storage to 50 and short descriptions to 500; existing names, descriptions, and history are not truncated. The category foreign key is recreated after widening both sides; use a maintenance window and stop if any statement fails. No SQL has been run by Codex.
+
+Names, titles, subjects, materials and custom-build names: 50 characters. Product descriptions and short descriptions: 500. Email: 254; street: 180; barangay/city/province and search: 100; delivery notes and promo copy: 500; internal order notes: 2,000; support messages: 3,000. Reason fields retain their existing 255/500 limits. Fixed formats retain their rules: Philippine postal code is four digits and custom color is a six-digit hex code plus #. Numeric/date/select controls use type and range validation instead of text lengths.
+
+Signup hint now says At least 10 characters; the existing 72-character/72-byte bcrypt password ceiling remains enforced. All dynamically rendered text inputs receive a maxlength, and persisted user-facing fields are checked server-side. Overlong existing values are shown for correction instead of silently truncated. Profile delivery addresses now have a separate recipient-name field so users can edit it without altering their account names. Browser and real-database verification remain pending.

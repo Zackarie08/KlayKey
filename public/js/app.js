@@ -1,6 +1,7 @@
+import {installInputLimits} from './input-limits.js';
 import {session,errorState,brand} from './core.js';
 import {shell} from './components.js';
-const main=document.querySelector('#main');
+const main=document.querySelector('#main');installInputLimits();
 try{await session();document.title=brand+' - Shape your board.';shell();const p=location.pathname;
  if(p==='/'){await (await import('./pages/home.js')).render(main);}
  else if(p==='/admin'||p.startsWith('/admin/'))await (await import('./pages/admin.js')).render(main);

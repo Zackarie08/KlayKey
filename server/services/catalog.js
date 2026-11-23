@@ -19,7 +19,7 @@ export async function listProducts(q={},userId=null){
  for(const [key,column] of Object.entries({category:'category_id',layout:'layout',connection:'connection_type'}))if(q[key]){where.push(`${column}=?`);args.push(String(q[key]));}
  if(q.switch){const values=switchFilterValues(q.switch);if(values.length){const slots=values.map(()=>'?').join(',');where.push("(switch_type IN ("+slots+") OR (option_field='switch' AND option_value IN ("+slots+")))");args.push(...values,...values);}else where.push('1=0');}
  if(q.rgb==='1')where.push('rgb_supported=1');if(q.rgb==='0')where.push('rgb_supported=0');
- if(q.q){where.push('(name LIKE ? OR short_description LIKE ?)');args.push('%'+String(q.q).slice(0,80)+'%','%'+String(q.q).slice(0,80)+'%');}
+ if(q.q){where.push('(name LIKE ? OR short_description LIKE ?)');args.push('%'+String(q.q).slice(0,100)+'%','%'+String(q.q).slice(0,80)+'%');}
  if(q.available==='1'){where.push('stock_quantity>0');if(!activePromotion(context.campaign,now)){where.push('slug NOT IN ('+HOLIDAY_EDITIONS.map(()=>'?').join(',')+') AND sku NOT IN ('+HOLIDAY_EDITIONS.map(()=>'?').join(',')+')');args.push(...HOLIDAY_EDITIONS.map(e=>e.slug),...HOLIDAY_EDITIONS.map(e=>e.sku));if(context.campaign?.featured_product_id){where.push('id<>?');args.push(context.campaign.featured_product_id);}}}if(q.featured==='1')where.push('is_featured=1');
  for(const [key,op] of [['min','>='],['max','<=']])if(q[key]!==undefined&&q[key]!==''&&Number.isFinite(Number(q[key]))){where.push(`effective_price${op}?`);args.push(Math.max(0,Math.round(Number(q[key])*100)));}
  const sort={'price-asc':'effective_price ASC,id ASC','price-desc':'effective_price DESC,id ASC',name:'name ASC',newest:'created_at DESC'}[q.sort]||'is_featured DESC,id ASC';
