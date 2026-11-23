@@ -1,11 +1,12 @@
+import {validatedSpec,canonicalSpec,productOptions} from '../services/product-options.js';
 import {Router} from 'express';
 import rateLimit from 'express-rate-limit';
 import {receiveProductImage} from '../services/product-images.js';
 import {rows,json,transaction} from '../database/connection.js';
 import {auth} from '../middleware/security.js';
 import {HttpError,requireValue,text} from '../validators.js';
-import {integer,assertRoleChange,assertTransition,promotionInput,transitions} from '../services/admin-rules.js';
-import {getPromotion,HOLIDAY_EDITIONS} from '../services/promotions.js';
+import {integer,assertRoleChange,assertTransition,promotionInput,eventInput,transitions} from '../services/admin-rules.js';
+import {getPromotion,listPromotions,HOLIDAY_EDITIONS} from '../services/promotions.js';
 export const admin=Router();
 export function adminOnly(req,res,next){if(!['admin','super_admin'].includes(req.user?.role))return next(new HttpError(403,'Administrator access required.'));next();}
 admin.use(auth,adminOnly);
@@ -20,17 +21,17 @@ admin.get('/overview',async(req,res)=>{
  const stock=(await rows('SELECT COUNT(*) products,COALESCE(SUM(stock_quantity<=low_stock_threshold),0) low_stock,COALESCE(SUM(stock_quantity=0),0) out_of_stock FROM products WHERE is_active=1'))[0];
  res.json({stats:{...stats,...stock,customers:(await rows("SELECT COUNT(*) n FROM users WHERE role='customer'"))[0].n},recent:await rows('SELECT order_number,total_cents,status,created_at FROM orders ORDER BY id DESC LIMIT 8'),lowStock:await rows('SELECT id,name,sku,stock_quantity,low_stock_threshold FROM products WHERE is_active=1 AND stock_quantity<=low_stock_threshold ORDER BY stock_quantity,id LIMIT 10'),daily:await rows("SELECT DATE(created_at) day,COUNT(*) orders,SUM(total_cents) total FROM orders WHERE created_at>=UTC_TIMESTAMP()-INTERVAL 30 DAY AND status<>'cancelled' GROUP BY DATE(created_at) ORDER BY day")});
 });
-admin.get('/products',async(req,res)=>{const where=['1=1'],args=[];if(req.query.q){where.push('(name LIKE ? OR sku LIKE ?)');args.push('%'+String(req.query.q).slice(0,100)+'%','%'+String(req.query.q).slice(0,100)+'%');}if(req.query.low==='1')where.push('is_active=1 AND stock_quantity<=low_stock_threshold');if(['0','1'].includes(req.query.active)){where.push('is_active=?');args.push(req.query.active);}const data=await paged('products',where.join(' AND '),args,req.query);data.items=data.items.map(p=>({...p,images:json(p.images),compatibility:json(p.compatibility)}));res.json(data);});
-admin.get('/products/:id',async(req,res)=>{const p=(await rows('SELECT * FROM products WHERE id=?',[id(req.params.id)]))[0];if(!p)throw new HttpError(404,'Product not found.');res.json({...p,images:json(p.images),compatibility:json(p.compatibility),movements:await rows('SELECT delta,balance,reason,created_at FROM stock_movements WHERE product_id=? ORDER BY id DESC LIMIT 30',[p.id])});});
+admin.get('/products',async(req,res)=>{const where=['1=1'],args=[];if(req.query.q){where.push('(name LIKE ? OR sku LIKE ?)');args.push('%'+String(req.query.q).slice(0,100)+'%','%'+String(req.query.q).slice(0,100)+'%');}if(req.query.featured==='1')where.push('is_featured=1');if(req.query.low==='1')where.push('is_active=1 AND stock_quantity<=low_stock_threshold');if(['0','1'].includes(req.query.active)){where.push('is_active=?');args.push(req.query.active);}const data=await paged('products',where.join(' AND '),args,req.query);data.items=data.items.map(p=>({...p,images:json(p.images),compatibility:json(p.compatibility)}));res.json(data);});
+admin.get('/products/:id',async(req,res)=>{const p=(await rows('SELECT * FROM products WHERE id=?',[id(req.params.id)]))[0];if(!p)throw new HttpError(404,'Product not found.');res.json({...p,layout:canonicalSpec('layout',p.layout)||p.layout,switch_type:canonicalSpec('switch_type',p.option_field==='switch'?p.option_value:p.switch_type)||p.switch_type,connection_type:canonicalSpec('connection_type',p.connection_type)||p.connection_type,images:json(p.images),compatibility:json(p.compatibility),movements:await rows('SELECT delta,balance,reason,created_at FROM stock_movements WHERE product_id=? ORDER BY id DESC LIMIT 30',[p.id])});});
 function productInput(b){
  const slug=text(b.slug,'Slug',1,100);requireValue(/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug),'Slug must contain lowercase letters, numbers and hyphens.');
  requireValue(Array.isArray(b.images)&&b.images.length>0&&b.images.length<=8&&b.images.every(s=>typeof s==='string'&&s.length<500&&(/^\/assets\/images\/[a-zA-Z0-9_./-]+\.(?:webp|png|jpg|jpeg|svg)$/.test(s)||/^\/uploads\/[a-f0-9-]{36}\.webp$/.test(s))&&!s.includes('..')),'Upload or select 1–8 product images.');
  const c=b.compatibility;requireValue(c&&typeof c==='object'&&!Array.isArray(c),'Compatibility is required.');for(const key of ['layouts','connections'])requireValue(Array.isArray(c[key])&&c[key].length>0&&c[key].length<=10&&c[key].every(x=>typeof x==='string'&&x.length<=30),'Compatibility needs '+key+'.');
- for(const [key,allowed] of [['layouts',['60','75','100']],['connections',['wired','wireless','tri-mode']]])requireValue(c[key].every(x=>allowed.includes(x)),'Unsupported compatibility '+key+'.');
+ for(const [key,allowed] of [['layouts',['60','75','100']],['connections',productOptions.connections.map(o=>o.id)]])requireValue(c[key].every(x=>allowed.includes(x)),'Unsupported compatibility '+key+'.');
  for(const key of ['widths','heights'])if(c[key]!==undefined)requireValue(Array.isArray(c[key])&&c[key].length<=30&&c[key].every(x=>typeof x==='number'&&x>0&&x<=10),'Invalid keycap '+key+'.');
  requireValue(JSON.stringify(c).length<=4000,'Compatibility is too large.');
- const optional=(v,max)=>v?text(v,'Product specification',1,max):null;
- return {name:text(b.name,'Name',1,160),slug,sku:text(b.sku,'SKU',1,40),category_id:text(b.category_id,'Category',1,30),description:text(b.description,'Description',1,10000),short_description:text(b.short_description,'Short description',1,255),price_cents:integer(b.price_cents,1,100000000,'Price in centavos'),low_stock_threshold:integer(b.low_stock_threshold,0,100000,'Low-stock threshold'),layout:optional(b.layout,10),switch_type:optional(b.switch_type,20),connection_type:optional(b.connection_type,20),material:typeof b.material==='string'?b.material.slice(0,60):'',rgb_supported:b.rgb_supported===true,is_featured:b.is_featured===true,is_active:b.is_active===true,images:JSON.stringify(b.images),compatibility:JSON.stringify(c)};
+
+ return {name:text(b.name,'Name',1,160),slug,sku:text(b.sku,'SKU',1,40),category_id:text(b.category_id,'Category',1,30),description:text(b.description,'Description',1,10000),short_description:text(b.short_description,'Short description',1,255),price_cents:integer(b.price_cents,1,100000000,'Price in centavos'),low_stock_threshold:integer(b.low_stock_threshold,0,100000,'Low-stock threshold'),layout:validatedSpec('layout',b.layout),switch_type:validatedSpec('switch_type',b.switch_type),connection_type:validatedSpec('connection_type',b.connection_type),material:typeof b.material==='string'?b.material.slice(0,60):'',rgb_supported:b.rgb_supported===true,is_featured:b.is_featured===true,is_active:b.is_active===true,images:JSON.stringify(b.images),compatibility:JSON.stringify(c)};
 }
 async function saveProduct(req,res){const b=productInput(req.body),productId=req.params.id?id(req.params.id):null;try{const saved=await transaction(async db=>{
  requireValue((await rows('SELECT id FROM product_categories WHERE id=?',[b.category_id],db)).length,'Choose an existing category.');let before=null;if(productId){before=(await rows('SELECT * FROM products WHERE id=? FOR UPDATE',[productId],db))[0];if(!before)throw new HttpError(404,'Product not found.');requireValue(Number(req.body.row_version)===before.row_version,'Product changed. Reload before saving.');}
@@ -78,5 +79,21 @@ admin.put('/campaign',async(req,res)=>{
  await rows('UPDATE store_promotion SET title=?,message=?,discount_type=?,discount_value=?,enabled=?,starts_at=?,ends_at=?,product_ids=?,category_ids=?,preview_at=?,include_builds=?,revision=revision+1 WHERE id=2',[p.title,p.message,'percent',p.discount_value,p.enabled,p.starts_at,p.ends_at,JSON.stringify(p.product_ids),JSON.stringify(p.category_ids),p.preview_at,p.include_builds],db);await audit(db,req.user,'promotion.update','promotion',2,{before,after:p});});res.json({ok:true});
 });
 
+
+admin.get('/promotions',async(req,res)=>res.json(await listPromotions()));
+admin.get('/promotions/:id',async(req,res)=>{const p=await getPromotion(undefined,id(req.params.id));if(!p)throw new HttpError(404,'Promotion not found.');res.json(p);});
+async function saveEvent(req,res){const p=eventInput(req.body),eventId=req.params.id?id(req.params.id):null;const saved=await transaction(async db=>{
+ // Explicit schema check gives a helpful error before any mutation on old installations.
+ await rows('SELECT display_type FROM store_promotion LIMIT 1',[],db);
+ let before=null;if(eventId){before=(await rows('SELECT * FROM store_promotion WHERE id=? FOR UPDATE',[eventId],db))[0];requireValue(before&&Number(req.body.revision)===before.revision,'Promotion changed. Reload before saving.');}
+ if(eventId===2){requireValue(p.display_type==='popup'&&p.audience==='everyone','The limited Christmas release must remain a popup for everyone.');p.kind='seasonal';}
+ for(const productId of [...new Set([...p.product_ids,...(p.featured_product_id?[p.featured_product_id]:[])])])requireValue((await rows('SELECT id FROM products WHERE id=? AND is_active=1',[productId],db)).length,'An eligible or featured product is inactive or missing.');
+ for(const category of p.category_ids)requireValue((await rows('SELECT id FROM product_categories WHERE id=?',[category],db)).length,'Unknown category.');
+ if(p.featured_product_id){const product=(await rows('SELECT category_id FROM products WHERE id=?',[p.featured_product_id],db))[0];requireValue(p.product_ids.includes(p.featured_product_id)||p.category_ids.includes(product.category_id),'The featured product must be eligible for this promotion.');}
+ const fields=Object.keys(p),values=fields.map(k=>Array.isArray(p[k])?JSON.stringify(p[k]):p[k]);let savedId=eventId;
+ if(eventId)await rows('UPDATE store_promotion SET '+fields.map(k=>k+'=?').join(',')+',revision=revision+1 WHERE id=?',[...values,eventId],db);else savedId=(await rows('INSERT INTO store_promotion('+fields.join(',')+') VALUES('+fields.map(()=>'?').join(',')+')',values,db)).insertId;
+ await audit(db,req.user,eventId?'promotion.update':'promotion.create','promotion',savedId,{before,after:p});return savedId;});res.json({id:saved});}
+admin.post('/promotions',saveEvent);admin.put('/promotions/:id',saveEvent);
+
 // Schema errors are actionable during manual installation; no DDL runs here.
-admin.use((error,req,res,next)=>{if(['ER_NO_SUCH_TABLE','ER_BAD_FIELD_ERROR'].includes(error.code))return res.status(503).json({error:'Admin setup is pending. Apply server/database/manual/admin-and-promotions.sql, then christmas-2026.sql using your database client.'});next(error);});
+admin.use((error,req,res,next)=>{if(['ER_NO_SUCH_TABLE','ER_BAD_FIELD_ERROR'].includes(error.code))return res.status(503).json({error:'Admin setup is pending. Apply server/database/manual/admin-and-promotions.sql, christmas-2026.sql and multi-promotions.sql as applicable. Run only setup files not already applied.'});next(error);});
