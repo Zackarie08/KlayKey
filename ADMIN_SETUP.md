@@ -140,3 +140,18 @@ Admin → Promotions → open an event → Edit → Design now offers Default pl
 Before saving any of the four new themes, manually run **server/database/manual/seasonal-sale-themes.sql** in the selected store database, after multi-promotions.sql. It expands the existing theme enum and preserves all promotions. The statement is safe to repeat. This file is not an automatic migration and has not been executed by the coding agent.
 
 All seasonal decorations are local inline SVG artwork: Christmas ornaments/pine tree, summer sun/palm tree, Halloween pumpkin/bat, New Year fireworks/confetti, and Valentine's hearts/love letter. No external image host, new runtime dependency or image-generation service is needed. The modal continues to fit its viewport without inner scrolling.
+
+
+## Support replies and rider assignment notifications
+
+Manually run **server/database/manual/support-replies.sql** once, after orders-delivery-notifications.sql, before using this code version. It adds a nullable verified user ID to contact_messages and creates support_replies. No database changes were executed by the coding agent. The assignment notifications reuse order_notifications and need no further SQL.
+
+Signed-in contact submissions use the authenticated account identity, not a typed email or client-supplied user ID. Admin → Support inbox → Open inquiry shows the original message, reply history and Send reply form. Replies are stored together with customer notifications in one transaction, and a request key prevents duplicate replies on retry. The notification links to Account → Support inquiries, where only the ticket owner can read the conversation. No email is sent.
+
+Existing/guest submissions remain unlinked, even if their email matches an account. Email text alone is not verified ownership; the admin UI explains why in-site replies are unavailable for these records. The customer can submit a new inquiry while signed in. Guest submissions continue to be accepted with this limitation clearly displayed.
+
+Assigning or retrying a delivery sends a notification to the assigned rider linking directly to /delivery?id=ORDER_ID. Reassigning also informs the previous rider, whose notification links to their remaining delivery queue. Existing delivery access checks continue to apply. The bell uses the existing 30-second refresh while visible.
+
+Promotion picker labels now distinguish **Include in discount** (eligible item) from **Feature in popup** (also includes it and selects the primary product showcased in the large popup). These controls serve different purposes and both remain available.
+
+Validation: focused support/notification, fulfillment and audit tests pass using mocked database transactions; lint passes. No real database integration or browser visual test was run for this change.

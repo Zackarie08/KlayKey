@@ -1,3 +1,4 @@
+import {supportThread,replyToInquiry} from '../services/support.js';
 import {assignDelivery,deliveryInfo} from '../services/delivery.js';
 import {orderEvent} from '../services/order-events.js';
 import {orderAnalytics} from '../services/order-analytics.js';
@@ -70,7 +71,9 @@ admin.post('/customers/:id/access',async(req,res)=>{const targetId=id(req.params
 admin.get('/promotion',async(req,res)=>res.json(await getPromotion()));
 admin.put('/promotion',async(req,res)=>{const p=promotionInput({...req.body,discount_type:'percent',discount_value:10});await transaction(async db=>{const before=(await rows('SELECT * FROM store_promotion WHERE id=1 FOR UPDATE',[],db))[0];requireValue(before&&Number(req.body.revision)===before.revision,'Promotion changed. Reload before saving.');for(const productId of p.product_ids)requireValue((await rows('SELECT id FROM products WHERE id=? AND is_active=1',[productId],db)).length,'An eligible product is inactive or missing.');for(const category of p.category_ids)requireValue((await rows('SELECT id FROM product_categories WHERE id=?',[category],db)).length,'Unknown category.');await rows('UPDATE store_promotion SET title=?,message=?,discount_type=?,discount_value=?,enabled=?,starts_at=?,ends_at=?,product_ids=?,category_ids=?,revision=revision+1 WHERE id=1',[p.title,p.message,p.discount_type,p.discount_value,p.enabled,p.starts_at,p.ends_at,JSON.stringify(p.product_ids),JSON.stringify(p.category_ids)],db);await audit(db,req.user,'promotion.update','promotion',1,{before,after:p});});res.json({ok:true});});
 admin.get('/audit',async(req,res)=>res.json(await paged('admin_audit a JOIN users u ON u.id=a.actor_id','1=1',[],req.query,'a.*,u.email actor_email','a.id DESC')));
-admin.get('/messages',async(req,res)=>res.json(await paged('contact_messages','1=1',[],req.query)));
+admin.get('/messages',async(req,res)=>res.json(await paged('contact_messages m','1=1',[],req.query,'m.*,(SELECT COUNT(*) FROM support_replies r WHERE r.message_id=m.id) reply_count','m.id DESC')));
+admin.get('/messages/:id',async(req,res)=>res.json(await supportThread(id(req.params.id))));
+admin.post('/messages/:id/replies',async(req,res)=>res.status(201).json({id:await replyToInquiry(req.user,id(req.params.id),req.body)}));
 
 
 admin.get('/campaign',async(req,res)=>{const p=await getPromotion(undefined,2);if(!p)return res.json(null);const editions=await rows('SELECT id,name,layout FROM products WHERE sku IN (?,?,?) ORDER BY id',HOLIDAY_EDITIONS.map(e=>e.sku));res.json({...p,editions});});

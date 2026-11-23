@@ -46,3 +46,10 @@
 @media(max-width:800px){.auth-layout{gap:32px}.admin-search label{min-width:min(160px,100%)}.admin-heading{gap:16px}}
 @media(max-width:600px){:root{--panel-gap:20px}.panel{padding:20px}.actions{gap:10px}.order-confirmation>.confirmation-head{padding-block:0 8px}.order-confirmation .two-col{gap:20px}.sale-card{padding:48px 20px 20px;bottom:12px;right:12px}.christmas-scene{padding-top:52px}.christmas-actions .button{min-width:0}.notification-page .section-title{gap:16px}.record-edit-actions .button{flex:1}.section-title>a{white-space:normal}}
 @media(max-height:440px){.christmas-scene{padding-top:48px}.christmas-editions{gap:6px}.christmas-dialog .christmas-terms{padding-top:0}}
+
+.support-workspace{max-width:1000px}.support-workspace>.actions{margin-bottom:24px}.support-message{white-space:pre-wrap;overflow-wrap:anywhere}.support-workspace .account-nav{row-gap:8px}.admin-content .support-message{max-width:75ch}
+
+/* Home statistics describe the current builder catalog, rather than decorative counters. */
+.stat-strip.builder-stats{grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:24px;align-items:center}.builder-stats>div{min-width:0}.builder-stats>div>span{display:grid;gap:6px;line-height:1.4}.builder-stats b{font-size:14px;color:var(--color-text);font-weight:550}.builder-stats small{font-size:12px;color:var(--color-text-muted)}.builder-stats .builder-stats-link{font-size:13px;color:var(--color-primary);padding-block:12px;white-space:nowrap}
+@media(max-width:1100px){.stat-strip.builder-stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.builder-stats .builder-stats-link{grid-column:1/-1;border-top:1px solid var(--color-border);padding-top:16px;padding-bottom:0}}
+@media(max-width:560px){.stat-strip.builder-stats{gap:16px 12px}.builder-stats b{font-size:13px}.builder-stats small{font-size:11px}.builder-stats>div{gap:10px}.builder-stats .builder-stats-link{font-size:13px}}

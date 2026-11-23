@@ -2,7 +2,7 @@ import {productCopy} from './store-copy.js';
 import {esc,money} from './core.js';
 import {orderStatusLabel} from './order-status.js';
 
-const actions={'delivery.assign':'Delivery assigned','product.create':'Product added','product.update':'Product updated','stock.adjust':'Stock adjusted','category.save':'Category saved','order.status':'Order status changed','order.note':'Order note added','account.access':'Account access changed','promotion.update':'Sale settings updated','promotion.create':'Promotion created'};
+const actions={'support.reply':'Support reply sent','delivery.assign':'Delivery assigned','product.create':'Product added','product.update':'Product updated','stock.adjust':'Stock adjusted','category.save':'Category saved','order.status':'Order status changed','order.note':'Order note added','account.access':'Account access changed','promotion.update':'Sale settings updated','promotion.create':'Promotion created'};
 const fields={name:'Name',sku:'SKU',slug:'Store URL name',category_id:'Category',description:'Description',short_description:'Short description',price_cents:'Price',low_stock_threshold:'Low-stock alert at',layout:'Keyboard size',switch_type:'Switch type',connection_type:'Connection',material:'Material',rgb_supported:'RGB lighting',is_featured:'Featured product',is_active:'Active',images:'Product photos',compatibility:'Compatible components',title:'Sale title',message:'Sale message',discount_type:'Discount type',discount_value:'Discount',enabled:'Sale enabled',starts_at:'Starts at (UTC)',ends_at:'Ends at (UTC)',product_ids:'Eligible product IDs',category_ids:'Eligible categories',display_type:'Display type',audience:'Eligible customers',theme:'Design',priority:'Display priority',featured_product_id:'Featured product',preview_at:'Preview starts (UTC)',include_builds:'Custom builds eligible',role:'Access level'};
 const bools=new Set(['rgb_supported','is_featured','is_active','enabled','include_builds']);
 function parse(value){if(typeof value!=='string')return value;try{return JSON.parse(value);}catch{return value;}}
@@ -34,6 +34,7 @@ export function auditDetails(entry){
  if(entry.action==='stock.adjust')body=fact('Stock change',`${Number(d.delta)>0?'+':''}${d.delta} units`)+fact('Stock after change',`${d.balance} units`);
  else if(entry.action==='order.status')body=fact('Previous status',value('status',d.from))+fact('New status',value('status',d.to));
  else if(entry.action==='delivery.assign')body=fact('Assigned rider',d.rider_name||'Account #'+d.rider_id)+fact('Action',d.retry?'Delivery retry arranged':'Rider assigned');
+ else if(entry.action==='support.reply')body=fact('Reply','Response #'+d.reply_id+' sent to the customer’s account and notifications.');
  else if(entry.action==='order.note')body=fact('Internal note',d.note||'No note recorded');
  else {
   const before=d.before&&typeof d.before==='object'?d.before:{};

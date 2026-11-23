@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import {requireValue} from '../validators.js';
 const manifest=JSON.parse(fs.readFileSync(new URL('../../keyboard-3d/exports/keyboard_manifest.json',import.meta.url),'utf8'));
-export const productOptions={layouts:manifest.layouts.map(({id,name})=>({id,name})),connections:manifest.connectionTypes.map(({id,name})=>({id,name})),switches:manifest.switches.map(({id,name,type})=>({id,name,type})),switchTypes:[...new Set(manifest.switches.map(s=>s.type))].map(id=>({id,name:id[0].toUpperCase()+id.slice(1)}))};
+export const productOptions={keycapThemes:manifest.keycapThemes.map(({id,name})=>({id,name})),layouts:manifest.layouts.map(({id,name})=>({id,name})),connections:manifest.connectionTypes.map(({id,name})=>({id,name})),switches:manifest.switches.map(({id,name,type})=>({id,name,type})),switchTypes:[...new Set(manifest.switches.map(s=>s.type))].map(id=>({id,name:id[0].toUpperCase()+id.slice(1)}))};
 const normalize=s=>String(s||'').trim().toLowerCase().replace(/[_\s]+/g,'-');
 export function canonicalSpec(field,value){if(!value)return null;const key=normalize(value);let options=field==='layout'?productOptions.layouts:field==='connection_type'?productOptions.connections:[...productOptions.switchTypes,...productOptions.switches];const direct=options.find(o=>normalize(o.id)===key||normalize(o.name)===key);if(direct)return direct.id;
  if(field==='layout'){const v=key.replace(/^ansi-?/,'').replace('%','');if(productOptions.layouts.some(o=>o.id===v))return v;}

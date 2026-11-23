@@ -5,6 +5,7 @@ import {shell} from './components.js';
 const main=document.querySelector('#main');installInputLimits();installEditModes();
 try{await session();document.title=brand+' - Shape your board.';shell();const p=location.pathname;
  if(p==='/account/notifications')await (await import('./notifications.js')).render(main);
+ else if(p==='/account/support')await (await import('./pages/support.js')).render(main);
  else if(p==='/delivery')await (await import('./pages/delivery.js')).render(main);
  else if(p==='/'){await (await import('./pages/home.js')).render(main);}
  else if(p==='/admin'||p.startsWith('/admin/'))await (await import('./pages/admin.js')).render(main);
